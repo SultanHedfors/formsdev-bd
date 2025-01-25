@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+
+
+    <!-- Create the EntryEntity table -->
+    <changeSet id="4" author="yourname">
+        <createTable tableName="entry_entity">
+            <column name="id" type="BIGINT">
+                <constraints primaryKey="true" nullable="true"/>
+            </column>
+            <column name="user_name" type="VARCHAR(255)">
+                <constraints nullable="true"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="1-create-sequence-and-trigger" author="your-name">
+        <!-- Create the sequence -->
+        <createSequence sequenceName="gen_entry_entity_id"/>
+
+        <!-- Add a trigger for auto-generating ID -->
+        <sql>
+            CREATE OR ALTER TRIGGER bi_entry_entity FOR entry_entity
+        ACTIVE BEFORE INSERT POSITION 0
+        AS
+            BEGIN
+            IF (NEW.ID IS NULL) THEN
+                NEW.ID = NEXT VALUE FOR gen_entry_entity_id;
+            END;
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>
