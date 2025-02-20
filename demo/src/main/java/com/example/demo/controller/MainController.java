@@ -6,6 +6,7 @@ import com.example.demo.mapper.EntryMapper;
 import com.example.demo.service.EntryService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.Optional;
 
 @RestController
@@ -17,13 +18,13 @@ public class MainController {
     EntryService entryService;
     EntryMapper entryMapper;
 
-    public  MainController(EntryService entryService, EntryMapper entryMapper){
-    this.entryService=entryService;
-    this.entryMapper=entryMapper;
+    public MainController(EntryService entryService, EntryMapper entryMapper) {
+        this.entryService = entryService;
+        this.entryMapper = entryMapper;
     }
 
     @GetMapping("/entries/{id}")
-    public ResponseEntity<EntryDto> getEntries(@PathVariable long id){
+    public ResponseEntity<EntryDto> getEntries(@PathVariable long id) {
         Optional<EntryEntity> entryOptional = entryService.handleGet(id);
 
         return entryOptional.map(entryEntity -> ResponseEntity.ok(entryMapper.entryEntityToDto(entryEntity))).orElseGet(() -> ResponseEntity.notFound().build());
@@ -31,8 +32,8 @@ public class MainController {
     }
 
     @PostMapping("/entries")
-    public ResponseEntity<EntryDto> createEntries(@RequestBody EntryDto entryDto){
-    entryService.handlePost(entryDto);
-    return ResponseEntity.ok(entryDto);
+    public ResponseEntity<EntryDto> createEntries(@RequestBody EntryDto entryDto) {
+        entryService.handlePost(entryDto);
+        return ResponseEntity.ok(entryDto);
     }
 }

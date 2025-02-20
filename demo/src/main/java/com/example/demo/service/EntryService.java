@@ -20,12 +20,11 @@ public class EntryService {
         this.entryMapper = entryMapper;
     }
 
-    public EntryDto handlePost(EntryDto entryDto){
-    entryRepository.save(entryMapper.entryDtoToEntity(entryDto));
-    return entryDto;
+    public void handlePost(EntryDto entryDto) {
+        entryRepository.save(entryMapper.entryDtoToEntity(entryDto));
     }
 
-    public Optional<EntryEntity> handleGet(long id){
+    public Optional<EntryEntity> handleGet(long id) {
         return entryRepository.findById(id);
     }
 }
