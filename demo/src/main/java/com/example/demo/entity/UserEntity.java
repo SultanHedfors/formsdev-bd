@@ -9,18 +9,18 @@ import lombok.NoArgsConstructor;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(name = "EMPLOYEE")
 public class UserEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "EMPLOYEE_ID")
     private Long id;
 
-    @Column(unique = true)
+    @Column(unique = true,name = "EMPLOYEE_USERNAME")
     private String username;
 
+    @Column(name = "EMPLOYEE_PASSWORD")
     private String password;
-
-    @Column(unique = true)
-    private String email;
 
 }
