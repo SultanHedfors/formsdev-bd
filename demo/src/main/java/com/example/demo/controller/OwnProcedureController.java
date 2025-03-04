@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.service.OwnProcedureService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import com.example.demo.dto.bsn_logic_dto.OwnProcedureDto;
@@ -12,6 +13,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/own-procedures")
 @RequiredArgsConstructor
+@Slf4j
 public class OwnProcedureController {
 
     private final OwnProcedureService ownProcedureService;

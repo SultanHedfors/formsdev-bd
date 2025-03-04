@@ -6,6 +6,8 @@ import com.example.demo.dto.UserRegistrationDto;
 import com.example.demo.mapper.UserMapper;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.util.JwtUtil;
+import com.example.demo.util.ScheduleReader;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -21,32 +23,25 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api")
+@Slf4j
 public class AuthController {
 
-    private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
-    private final UserMapper userMapper;
 
-    public AuthController(UserRepository userRepository,
-                          PasswordEncoder passwordEncoder,
-                          AuthenticationManager authenticationManager,
-                          JwtUtil jwtUtil, UserMapper userMapper) {
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
+    private final ScheduleReader scheduleReader;
+
+    public AuthController(AuthenticationManager authenticationManager,
+                          JwtUtil jwtUtil, ScheduleReader scheduleReader) {
         this.authenticationManager = authenticationManager;
         this.jwtUtil = jwtUtil;
-        this.userMapper = userMapper;
+        this.scheduleReader=scheduleReader;
     }
 
+//    #TODO theres not gonna be registration fctionality, this is left for easy testing
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody UserRegistrationDto user) {
-        if (userRepository.findByUsername(user.getUsername()).isPresent()) {
-            return ResponseEntity.badRequest().body("Username already exists");
-        }
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        userRepository.save(userMapper.userRegistrationDtoToEntity(user));
+        scheduleReader.loadExcelData();
         return ResponseEntity.ok("User registered successfully");
     }
 
