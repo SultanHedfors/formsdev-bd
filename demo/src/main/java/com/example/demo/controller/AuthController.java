@@ -45,7 +45,7 @@ public class AuthController {
         if (userRepository.findByUsername(user.getUsername()).isPresent()) {
             return ResponseEntity.badRequest().body("Username already exists");
         }
-        user.setPassword(user.getPassword());
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(userMapper.userRegistrationDtoToEntity(user));
         return ResponseEntity.ok("User registered successfully");
     }
