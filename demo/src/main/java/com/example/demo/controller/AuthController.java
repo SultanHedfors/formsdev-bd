@@ -41,7 +41,7 @@ public class AuthController {
 //    #TODO theres not gonna be registration fctionality, this is left for easy testing
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody UserRegistrationDto user) {
-        scheduleReader.loadExcelData();
+//        scheduleReader.loadExcelData();
         return ResponseEntity.ok("User registered successfully");
     }
 

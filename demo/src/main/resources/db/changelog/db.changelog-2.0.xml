@@ -9,21 +9,59 @@
 
 
 
-    <changeSet id="2-create-sequence-and-trigger" author="your-name">
+
+    <changeSet id="001-create-work_schedule-table" author="your_name">
+        <createTable tableName="work_schedule">
+            <column name="id" type="INTEGER" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="year_month" type="VARCHAR(7)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="day_of_month" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="employee_id" type="INTEGER">
+                <constraints nullable="false" foreignKeyName="fk_ws_emp" references="employee(employee_id)"/>
+            </column>
+            <column name="substitute_employee_id" type="INTEGER">
+                <constraints foreignKeyName="fk_ws_sub_emp" references="employee(employee_id)"/>
+            </column>
+            <column name="room_symbol" type="VARCHAR(50)"/>
+            <column name="work_mode" type="VARCHAR(3)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="work_start_time" type="VARCHAR(8)"/> <!-- Zamiast TIME -->
+            <column name="work_end_time" type="VARCHAR(8)"/> <!-- Zamiast TIME -->
+            <column name="work_duration_minutes" type="INTEGER"/>
+        </createTable>
+
+        <createIndex indexName="idx_ws_year_month" tableName="work_schedule">
+            <column name="year_month"/>
+        </createIndex>
+
+        <createIndex indexName="idx_ws_emp" tableName="work_schedule">
+            <column name="employee_id"/>
+        </createIndex>
+
+        <createIndex indexName="idx_ws_sub_emp" tableName="work_schedule">
+            <column name="substitute_employee_id"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="1-create-sequence-and-trigger" author="your-name">
         <!-- Create the sequence -->
-        <createSequence sequenceName="gen_employee_id"/>
+        <createSequence sequenceName="gen_work_schedule_id4"/>
 
         <!-- Add a trigger for auto-generating ID -->
         <sql>
-            CREATE OR ALTER TRIGGER bi_employee FOR employee
+            CREATE OR ALTER TRIGGER bi_work_schedule FOR work_schedule
         ACTIVE BEFORE INSERT POSITION 0
         AS
             BEGIN
-            IF (NEW.employee_id IS NULL) THEN
-                NEW.employee_id = NEXT VALUE FOR gen_employee_id;
+            IF (NEW.ID IS NULL) THEN
+                NEW.ID = NEXT VALUE FOR gen_work_schedule_id4;
             END;
         </sql>
     </changeSet>
-
-
 </databaseChangeLog>

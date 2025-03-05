@@ -26,20 +26,10 @@ public class UserEntity {
     @Column(name = "EMPLOYEE_PASSWORD")
     private String password;
 
-    private LocalDateTime employeeCreationdate;
+    @Column(name = "EMPLOYEE_KODKASJERA")
+    private String employeeCode;
 
-    private int employee_kod_systemu;
 
-    private int zmianatyp_id;
 
-    private int employee_is_admin;
-
-    @PrePersist
-    protected void onCreate() {
-        this.employeeCreationdate = LocalDateTime.now();
-        this.employee_kod_systemu = 1;
-        this.zmianatyp_id = 4;
-        this.employee_is_admin = 0;
-    }
 
 }
