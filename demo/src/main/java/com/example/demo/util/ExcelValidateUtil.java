@@ -14,7 +14,7 @@ import static com.example.demo.util.ScheduleReader.MODE_SET;
 @Slf4j
 public class ExcelValidateUtil {
 
-    private static final String EMPLOYEE_CODE_HEADER = "imię i nazwisko";
+
 
     /**
      * Validates the first column of the sheet to ensure each entry is a valid employee code, "OK", or a room name.
@@ -35,7 +35,7 @@ public class ExcelValidateUtil {
             if (firstCell == null) continue;
 
             String cellValue = dataFormatter.formatCellValue(firstCell).trim();
-            if (!headerFound && cellValue.equalsIgnoreCase(EMPLOYEE_CODE_HEADER)) {
+            if (!headerFound && cellValue.equalsIgnoreCase(ScheduleReader.EMPLOYEE_CODE_HEADER)) {
                 headerFound = true;
                 continue;
             }

@@ -31,13 +31,14 @@ import static com.example.demo.util.TimeUtil.formatTime;
 @Component
 public class ScheduleReader {
 
-//    F -fizyko,
+    //    F -fizyko,
 //    B-Balneo,
 //    U-praca100% czasu,
 //    UW-urlop(czas nie liczony),
 //    ZL-zwolnienie(czas nie liczony)
     protected static final Set<String> MODE_SET = Set.of("F", "B", "U", "UW", "ZL");
 
+    public static final String EMPLOYEE_CODE_HEADER="imie i nazwisko";
 
     @Value("${schedule.filepath}")
     private String excelFilePath;
@@ -50,21 +51,20 @@ public class ScheduleReader {
     List<String> validationErrors = new ArrayList<>();
 
     public ScheduleReader(UserRepository userRepository, ScheduleRepository scheduleRepository,
-    RoomRepository roomRepository) {
+                          RoomRepository roomRepository) {
         this.userRepository = userRepository;
         this.scheduleRepository = scheduleRepository;
-        this.roomRepository=roomRepository;
+        this.roomRepository = roomRepository;
     }
-
-//    #TODO add a trigger for this method, currently works post bean construct
+    //    #TODO add a trigger for this method, currently works post bean construct
     @PostConstruct
     public List<WorkSchedule> mapRowsToEntities() {
         log.info("Attempting load of Excel file at: {}", excelFilePath);
 
-
         List<WorkSchedule> workSchedules = new ArrayList<>();
         List<Integer> employeesRowsIndexes = null;
         File excelFile = null;
+        YearMonth yearMonth = null;
         try {
             excelFile = ExcelUtil.getLatestExcelFile(excelFilePath);
             if (excelFile == null) {
@@ -74,15 +74,13 @@ public class ScheduleReader {
                 writeLogFile(excelFilePath, logMessages, false, workSchedules, "File not found");
                 return null;
             }
-
-
             try (FileInputStream fis = new FileInputStream(excelFile);
                  Workbook workbook = new XSSFWorkbook(fis)) {
 
                 Sheet sheet = workbook.getSheetAt(0);
 
 //                #todo implement reading month and year reading (from file name probably)
-                YearMonth yearMonth = YearMonth.of(2025, 1);
+                yearMonth = YearMonth.of(2025, 1);
 
                 List<String> employeesCodes = employeesCodes();
                 List<String> roomCodes = getAllRoomCodes();
@@ -105,7 +103,8 @@ public class ScheduleReader {
                     String roomSymbol = null;
                     if (aboveRow != null) {
                         String val = getCellValueAsString(aboveRow.getCell(0)).trim();
-                        if (!val.equalsIgnoreCase("OK") && !val.isEmpty()) {
+                        log.info("room v: {} equals? {} header: {} ", val, val.equalsIgnoreCase(EMPLOYEE_CODE_HEADER),EMPLOYEE_CODE_HEADER);
+                        if (!val.equalsIgnoreCase("OK") && !val.isEmpty() && !val.equalsIgnoreCase(EMPLOYEE_CODE_HEADER)) {
                             roomSymbol = val;
                         }
                     }
@@ -145,15 +144,16 @@ public class ScheduleReader {
             writeLogFile(excelFilePath, logMessages, false, workSchedules, excelFile.getName());
         }
 
+        if (yearMonth != null) {
+            scheduleRepository.deleteByYearMonth(yearMonth.toString());
+        }
         scheduleRepository.saveAll(workSchedules);
         assert employeesRowsIndexes != null;
         logMessages.add("Processing completed successfully. Total employees processed: " + employeesRowsIndexes.size());
-        writeLogFile(excelFilePath, logMessages, true, workSchedules,excelFile.getName());
+        writeLogFile(excelFilePath, logMessages, true, workSchedules, excelFile.getName());
 
         return workSchedules;
     }
-
-
     public void processWorkScheduleRows(Row aboveRow,
                                         Row workModeRow,
                                         Row startTimeRow,
@@ -201,7 +201,6 @@ public class ScheduleReader {
             if (dayBasedSubCode != null) {
                 builder.substituteEmployee(findEmployeeByCode(dayBasedSubCode));
             }
-
             // Work mode logic
             String infoVal = getCellValueAsString(workInfoCell).toUpperCase().trim();
             if (MODE_SET.contains(infoVal)) {
@@ -214,11 +213,9 @@ public class ScheduleReader {
             } else {
                 builder.workMode("no");
             }
-
             WorkSchedule schedule = builder.build();
 
-
-            log.info("Saving schedule entry: {}",schedule.getEmployee());
+            log.info("Saving schedule entry: {}", schedule.getEmployee());
             workSchedules.add(schedule);
         });
     }
@@ -226,7 +223,6 @@ public class ScheduleReader {
     private UserEntity findEmployeeByCode(String employeeCode) {
         return userRepository.findByEmployeeCode(employeeCode.toUpperCase()).orElseThrow();
     }
-
 
     private List<UserEntity> findAllEmployees() {
         return userRepository.findAll();
@@ -267,8 +263,7 @@ public class ScheduleReader {
                 })
                 .collect(Collectors.toList());
     }
-
-    private List<String> getAllRoomCodes(){
+    private List<String> getAllRoomCodes() {
         List<RoomEntity> rooms = roomRepository.findAll();
         return rooms.stream().map(RoomEntity::getRoomCode).collect(Collectors.toList());
     }
