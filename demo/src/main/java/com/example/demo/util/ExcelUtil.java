@@ -8,6 +8,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class ExcelUtil {
 
@@ -53,5 +55,10 @@ public class ExcelUtil {
             e.printStackTrace();
             return null;
         }
+    }
+
+    protected static List<Integer> getActualExcelIndexes(List<Integer> poiReadIndexes){
+        return poiReadIndexes.stream().map(i->i+1)
+                .collect(Collectors.toList());
     }
 }

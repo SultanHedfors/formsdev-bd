@@ -1,7 +1,9 @@
 package com.example.demo.util;
 
+import com.example.demo.entity.RoomEntity;
 import com.example.demo.entity.UserEntity;
 import com.example.demo.entity.WorkSchedule;
+import com.example.demo.repository.RoomRepository;
 import com.example.demo.repository.ScheduleRepository;
 import com.example.demo.repository.UserRepository;
 import jakarta.annotation.PostConstruct;
@@ -21,6 +23,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static com.example.demo.util.ExcelUtil.getCellValueAsString;
+import static com.example.demo.util.ReportCreator.writeLogFile;
 import static com.example.demo.util.TimeUtil.calculateDuration;
 import static com.example.demo.util.TimeUtil.formatTime;
 
@@ -33,7 +36,7 @@ public class ScheduleReader {
 //    U-praca100% czasu,
 //    UW-urlop(czas nie liczony),
 //    ZL-zwolnienie(czas nie liczony)
-    private static final Set<String> MODE_SET = Set.of("F", "B", "U", "UW", "ZL");
+    protected static final Set<String> MODE_SET = Set.of("F", "B", "U", "UW", "ZL");
 
 
     @Value("${schedule.filepath}")
@@ -41,22 +44,37 @@ public class ScheduleReader {
 
     private final UserRepository userRepository;
     private final ScheduleRepository scheduleRepository;
+    private final RoomRepository roomRepository;
 
-    public ScheduleReader(UserRepository userRepository, ScheduleRepository scheduleRepository) {
+    public List<String> logMessages = new ArrayList<>();
+    List<String> validationErrors = new ArrayList<>();
+
+    public ScheduleReader(UserRepository userRepository, ScheduleRepository scheduleRepository,
+    RoomRepository roomRepository) {
         this.userRepository = userRepository;
         this.scheduleRepository = scheduleRepository;
+        this.roomRepository=roomRepository;
     }
 
 //    #TODO add a trigger for this method, currently works post bean construct
     @PostConstruct
     public List<WorkSchedule> mapRowsToEntities() {
+        log.info("Attempting load of Excel file at: {}", excelFilePath);
+
+
         List<WorkSchedule> workSchedules = new ArrayList<>();
+        List<Integer> employeesRowsIndexes = null;
+        File excelFile = null;
         try {
-            File excelFile = ExcelUtil.getLatestExcelFile(excelFilePath);
+            excelFile = ExcelUtil.getLatestExcelFile(excelFilePath);
             if (excelFile == null) {
-                log.error("No Excel file found in the specified directory.");
+                String errorMsg = "No Excel file found in the specified directory: " + excelFilePath;
+                log.error(errorMsg);
+                logMessages.add(errorMsg);
+                writeLogFile(excelFilePath, logMessages, false, workSchedules, "File not found");
                 return null;
             }
+
 
             try (FileInputStream fis = new FileInputStream(excelFile);
                  Workbook workbook = new XSSFWorkbook(fis)) {
@@ -67,7 +85,18 @@ public class ScheduleReader {
                 YearMonth yearMonth = YearMonth.of(2025, 1);
 
                 List<String> employeesCodes = employeesCodes();
-                List<Integer> employeesRowsIndexes = getRowsWithEmployees(sheet, employeesCodes);
+                List<String> roomCodes = getAllRoomCodes();
+                employeesRowsIndexes = getRowsWithEmployees(sheet, employeesCodes);
+
+                validateFile(sheet, employeesCodes, roomCodes, employeesRowsIndexes, validationErrors);
+                // If there are validation errors, log them and stop processing
+                if (!validationErrors.isEmpty()) {
+                    logMessages.addAll(validationErrors);
+                    writeLogFile(excelFile.getAbsolutePath(), logMessages, false, workSchedules, excelFile.getName());
+                    return null;
+                }
+
+                logMessages.add("Employees were found in rows: " + ExcelUtil.getActualExcelIndexes(employeesRowsIndexes));
 
                 for (Integer rowIndex : employeesRowsIndexes) {
                     Row employeeRow = sheet.getRow(rowIndex);
@@ -104,13 +133,23 @@ public class ScheduleReader {
                 }
 
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error("Processing failed: {}", e.getMessage());
+                logMessages.add("Processing failed: " + e.getMessage());
+                writeLogFile(excelFile.getAbsolutePath(), logMessages, false, workSchedules, excelFile.getName());
+                return null;
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Unexpected failure: {}", e.getMessage());
+            logMessages.add("Unexpected failure: " + e.getMessage());
+            assert excelFile != null;
+            writeLogFile(excelFilePath, logMessages, false, workSchedules, excelFile.getName());
         }
 
         scheduleRepository.saveAll(workSchedules);
+        assert employeesRowsIndexes != null;
+        logMessages.add("Processing completed successfully. Total employees processed: " + employeesRowsIndexes.size());
+        writeLogFile(excelFilePath, logMessages, true, workSchedules,excelFile.getName());
+
         return workSchedules;
     }
 
@@ -139,12 +178,14 @@ public class ScheduleReader {
             Cell startCell = startTimeRow.getCell(day);
             Cell endCell = endTimeRow.getCell(day);
 
+
             String startVal = (startCell != null) ? getCellValueAsString(startCell).trim() : "";
             String endVal = (endCell != null) ? getCellValueAsString(endCell).trim() : "";
             if (startVal.isEmpty() || endVal.isEmpty()) return;
 
             String cleanedStart = formatTime(startVal);
             String cleanedEnd = formatTime(endVal);
+
             if (cleanedStart == null || cleanedEnd == null) return;
 
             // Build schedule
@@ -175,6 +216,9 @@ public class ScheduleReader {
             }
 
             WorkSchedule schedule = builder.build();
+
+
+            log.info("Saving schedule entry: {}",schedule.getEmployee());
             workSchedules.add(schedule);
         });
     }
@@ -224,4 +268,14 @@ public class ScheduleReader {
                 .collect(Collectors.toList());
     }
 
+    private List<String> getAllRoomCodes(){
+        List<RoomEntity> rooms = roomRepository.findAll();
+        return rooms.stream().map(RoomEntity::getRoomCode).collect(Collectors.toList());
+    }
+
+    private void validateFile(Sheet sheet, List<String> employeesCodes, List<String> roomCodes, List<Integer> employeesRowsIndexes, List<String> validationErrors) {
+        ExcelValidateUtil.validateFirstColumnEntries(sheet, employeesCodes, roomCodes, validationErrors);
+        ExcelValidateUtil.validateEmployeeRowEntries(sheet, employeesRowsIndexes, employeesCodes, validationErrors);
+        ExcelValidateUtil.validateRoomRows(sheet, employeesCodes, roomCodes, validationErrors);
+    }
 }

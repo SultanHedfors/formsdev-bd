@@ -5,8 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
 
 @Data
 @Entity
@@ -23,7 +21,7 @@ public class UserEntity {
     @Column(unique = true,name = "EMPLOYEE_USERNAME")
     private String username;
 
-    @Column(name = "EMPLOYEE_PASSWORD")
+    @Column(name = "EMPLOYEE_POSCE")
     private String password;
 
     @Column(name = "EMPLOYEE_KODKASJERA")
