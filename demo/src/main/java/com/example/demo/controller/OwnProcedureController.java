@@ -1,11 +1,10 @@
 package com.example.demo.controller;
 
+import com.example.demo.dto.bsn_logic_dto.ActivityDto;
 import com.example.demo.service.OwnProcedureService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import com.example.demo.dto.bsn_logic_dto.OwnProcedureDto;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,16 +18,12 @@ public class OwnProcedureController {
     private final OwnProcedureService ownProcedureService;
 
     @GetMapping
-    public ResponseEntity<List<OwnProcedureDto>> getAllOwnProcedures() {
-        List<OwnProcedureDto> ownProcedures = ownProcedureService.findAll();
+    public ResponseEntity<List<ActivityDto>> getAllOwnProcedures() {
+        List<ActivityDto> ownProcedures = ownProcedureService.findAll();
         return ResponseEntity.ok(ownProcedures);
     }
 
-    @PostMapping
-    public ResponseEntity<OwnProcedureDto> createOwnProcedure(@RequestBody OwnProcedureDto ownProcedureDto) {
-        OwnProcedureDto saved = ownProcedureService.save(ownProcedureDto);
-        return new ResponseEntity<>(saved, HttpStatus.CREATED);
-    }
+
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteOwnProcedure(@PathVariable Long id) {

@@ -20,7 +20,7 @@ public class ReportCreator {
         String baseFileName = new File(excelFilePath).getName().replace(".xlsx", "");
         String fileSuffix = success ? "_processing_successful_report.txt" : "_processing_failure_report.txt";
 //        String logDirectory = excelFilePath;
-        String logFilePath = excelFilePath + File.separator + baseFileName + fileSuffix;
+        String logFilePath = excelFilePath + fileSuffix;
 
         // Delete existing report files
         deleteOldReports(excelFilePath);

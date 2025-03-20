@@ -38,7 +38,7 @@ public class ScheduleReader {
 //    ZL-zwolnienie(czas nie liczony)
     protected static final Set<String> MODE_SET = Set.of("F", "B", "U", "UW", "ZL");
 
-    public static final String EMPLOYEE_CODE_HEADER="imie i nazwisko";
+    public static final String EMPLOYEE_CODE_HEADER="Kod pracownika";
 
     @Value("${schedule.filepath}")
     private String excelFilePath;
@@ -57,7 +57,7 @@ public class ScheduleReader {
         this.roomRepository = roomRepository;
     }
     //    #TODO add a trigger for this method, currently works post bean construct
-    @PostConstruct
+//    @PostConstruct
     public List<WorkSchedule> mapRowsToEntities() {
         log.info("Attempting load of Excel file at: {}", excelFilePath);
 

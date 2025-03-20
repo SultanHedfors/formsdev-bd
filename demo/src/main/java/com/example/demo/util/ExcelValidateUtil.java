@@ -65,6 +65,10 @@ public class ExcelValidateUtil {
      * @param validationErrors    List to store validation errors
      */
     protected static void validateEmployeeRowEntries(Sheet sheet, List<Integer> employeesRowsIndexes, List<String> employeesCodes, List<String> validationErrors) {
+        if(employeesRowsIndexes.isEmpty()) {
+            String errorMsg= "No rows with employees codes were found. Schedule file is invalid.";
+            validationErrors.add(errorMsg);
+        }
         for (Integer rowIndex : employeesRowsIndexes) {
             Row row = sheet.getRow(rowIndex);
             if (row == null) continue;

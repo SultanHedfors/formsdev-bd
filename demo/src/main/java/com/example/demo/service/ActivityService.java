@@ -7,7 +7,7 @@ import java.util.Collections;
 import java.util.List;
 
 @Service
-public class ProcedureService {
+public class ActivityService {
 
     public List<ProcedureDto> findAll() {
         // TODO: Implement service logic to retrieve all procedures

@@ -13,6 +13,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import static com.example.demo.service.CustomUserDetailsService.Role.ADMIN;
+import static com.example.demo.service.CustomUserDetailsService.Role.REASSIGN_ALLOWED;
+
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
@@ -23,6 +26,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests((authz) -> authz
                         .requestMatchers("/api/register", "/api/login", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                        .requestMatchers(("/api/procedures")).hasAnyRole(REASSIGN_ALLOWED.name(), ADMIN.name())
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

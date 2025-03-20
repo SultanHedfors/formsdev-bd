@@ -65,4 +65,47 @@
         </sql>
     </changeSet>
 
+
+    <changeSet id="create-roles-table" author="yourname">
+        <createTable tableName="ROLES">
+            <column name="ROLE_NAME" type="VARCHAR(50)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+        </createTable>
+
+        <!-- Insert predefined roles -->
+        <insert tableName="ROLES">
+            <column name="ROLE_NAME" value="ADMIN"/>
+        </insert>
+        <insert tableName="ROLES">
+            <column name="ROLE_NAME" value="REASSIGN_ALLOWED"/>
+        </insert>
+        <insert tableName="ROLES">
+            <column name="ROLE_NAME" value="DEFAULT"/>
+        </insert>
+
+    </changeSet>
+
+    <changeSet id="drop-and-recreate-user-roles" author="yourname">
+
+        <!-- Recreate USER_ROLES table with a foreign key -->
+        <createTable tableName="USER_ROLES">
+            <column name="USER_ID" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ROLE" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <!-- Add Foreign Key Constraint -->
+        <addForeignKeyConstraint
+                baseTableName="USER_ROLES"
+                baseColumnNames="USER_ID"
+                referencedTableName="EMPLOYEE"
+                referencedColumnNames="EMPLOYEE_ID"
+                constraintName="FK_USER_ROLES_EMPLOYEE"
+                onDelete="CASCADE"/>
+
+    </changeSet>
 </databaseChangeLog>

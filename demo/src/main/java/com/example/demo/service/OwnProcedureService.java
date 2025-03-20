@@ -1,7 +1,7 @@
 package com.example.demo.service;
 
 
-import com.example.demo.dto.bsn_logic_dto.OwnProcedureDto;
+import com.example.demo.dto.bsn_logic_dto.ActivityDto;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
@@ -10,14 +10,14 @@ import java.util.List;
 @Service
 public class OwnProcedureService {
 
-    public List<OwnProcedureDto> findAll() {
+    public List<ActivityDto> findAll() {
         // TODO: Implement service logic to retrieve all own procedures
         return Collections.emptyList();
     }
 
-    public OwnProcedureDto save(OwnProcedureDto ownProcedureDto) {
+    public ActivityDto save(ActivityDto activityDto) {
         // TODO: Implement service logic to save a new own procedure
-        return ownProcedureDto;
+        return activityDto;
     }
 
     public void delete(Long id) {
