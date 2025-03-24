@@ -34,20 +34,24 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain chain)
             throws ServletException, IOException {
 
+        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
+            response.setStatus(HttpServletResponse.SC_OK);
+            return;
+        }
+
         final String header = request.getHeader("Authorization");
         String username = null;
         String jwt = null;
 
-        // Check if the Authorization header is valid and starts with "Bearer "
         if (header != null && header.startsWith("Bearer ")) {
             jwt = header.substring(7);
             try {
                 username = jwtUtil.extractUsername(jwt);
             } catch (Exception e) {
+                // Optional: log parsing errors
             }
         }
 
-        // Validate the token and set the authentication context
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = customUserDetailsService.loadUserByUsername(username);
             if (jwtUtil.validateToken(jwt, userDetails)) {
@@ -57,6 +61,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             }
         }
+
         chain.doFilter(request, response);
     }
 }

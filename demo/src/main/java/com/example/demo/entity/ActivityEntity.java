@@ -24,6 +24,9 @@ public class ActivityEntity {
     @Column(name = "ZAJECIE_GODZ")
     private Timestamp activityTime;
 
+    @Column(name= "ZAJECIE_DATA_DODANIA")
+    private Timestamp recordAddedTime;
+
     @ManyToOne()
     @JoinColumn(name = "zabieg_id", referencedColumnName = "zabieg_id")
     private ProcedureEntity procedure;

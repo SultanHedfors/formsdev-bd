@@ -15,4 +15,6 @@ public class ActivityDto {
 
     private Timestamp activityTime;
     private Long employeeId;
+
+    private String employeeFullName;
 }

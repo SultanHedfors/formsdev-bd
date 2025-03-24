@@ -33,7 +33,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         String role = retrieveRole(user).name();
         return new UserDto(
                 user.getId(),
-                user.getUsername(),
+                user.getEmployeeCode(),
                 user.getPassword(),
                 Collections.singleton(new SimpleGrantedAuthority(role))
         );
@@ -41,6 +41,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     private Role retrieveRole(UserEntity user){
         Integer loyaltyPin = user.getLoyaltyPin();
+        System.out.println("loyalty pin: "+ loyaltyPin) ;
         return switch (loyaltyPin) {
             case 1 -> REASSIGN_ALLOWED;
             case 2 -> ADMIN;
