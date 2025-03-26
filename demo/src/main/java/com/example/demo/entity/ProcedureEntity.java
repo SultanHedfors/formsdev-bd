@@ -30,4 +30,10 @@ public class ProcedureEntity {
     @OneToMany(mappedBy = "activityId")
     private List<ActivityEntity> activities;
 
+    @Column(name = "ZABIEG_NAZWA")
+    private String procedureName;
+
+    @Column(name = "ZABIEG_NAZWA2")
+    private String procedureType;
+
 }

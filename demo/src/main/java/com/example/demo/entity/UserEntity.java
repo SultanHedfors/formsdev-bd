@@ -25,10 +25,13 @@ public class UserEntity implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "EMPLOYEE_ID")
-    private Long id;
+    private Integer id;
 
     @Column(unique = true,name = "EMPLOYEE_USERNAME")
     private String username;
+
+    @Column(unique = true,name = "EMPLOYEE_FULLNAME")
+    private String fullName;
 
     @Column(name = "EMPLOYEE_POSCE")
     private String password;

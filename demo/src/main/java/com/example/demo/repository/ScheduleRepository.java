@@ -9,4 +9,5 @@ import org.springframework.stereotype.Repository;
 public interface ScheduleRepository extends JpaRepository<WorkSchedule, Long> {
     @Transactional
     void deleteByYearMonth(String yearMonth);
+    boolean existsByEmployee_IdAndYearMonthAndDayOfMonth(Integer employeeId, String yearMonth, Integer dayOfMonth);
 }

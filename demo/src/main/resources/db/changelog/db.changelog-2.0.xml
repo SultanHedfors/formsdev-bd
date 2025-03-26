@@ -108,4 +108,67 @@
                 onDelete="CASCADE"/>
 
     </changeSet>
+
+
+
+    <changeSet id="create-activity-assignment-log" author="your_name">
+
+        <createTable tableName="activity_assignment_log">
+            <column name="id" type="INTEGER" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+
+            <column name="activity_id" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="employee_id" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="assigned_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <!-- FOREIGN KEY: activity_id → zajecie.zajecie_id -->
+        <addForeignKeyConstraint
+                baseTableName="activity_assignment_log"
+                baseColumnNames="activity_id"
+                referencedTableName="zajecie"
+                referencedColumnNames="zajecie_id"
+                constraintName="fk_activity_assignment_activity"/>
+
+        <!-- FOREIGN KEY: employee_id → employee.employee_id -->
+        <addForeignKeyConstraint
+                baseTableName="activity_assignment_log"
+                baseColumnNames="employee_id"
+                referencedTableName="employee"
+                referencedColumnNames="employee_id"
+                constraintName="fk_activity_assignment_employee"/>
+
+    </changeSet>
+
+    <changeSet id="add-generator-activity-assignment-log" author="your_name">
+        <sql>
+            CREATE SEQUENCE activity_assignment_log_seq;
+        </sql>
+    </changeSet>
+
+    <changeSet id="add-trigger-activity-assignment-log" author="your_name">
+        <sql>
+            CREATE OR ALTER TRIGGER bi_activity_assignment_log
+        FOR activity_assignment_log
+        ACTIVE BEFORE INSERT POSITION 0
+        AS
+            BEGIN
+            IF (NEW.id IS NULL) THEN
+                NEW.id = NEXT VALUE FOR activity_assignment_log_seq;
+            END
+        </sql>
+    </changeSet>
+
+
+
+
 </databaseChangeLog>

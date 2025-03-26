@@ -14,7 +14,14 @@ public class ActivityDto {
     private Timestamp activityDate;
 
     private Timestamp activityTime;
-    private Long employeeId;
 
+    private Integer employeeId;
+
+    private String employeeCode;
     private String employeeFullName;
+    private String procedureName;
+    private String procedureType;
+    private boolean isAssignedToLoggedUser;
+    private boolean hasHistory;
+    private boolean procedureScheduledOnEmployeesWorkingDay;
 }

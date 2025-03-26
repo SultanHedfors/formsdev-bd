@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.dto.bsn_logic_dto.ActivityDto;
 import com.example.demo.dto.bsn_logic_dto.ProcedureDto;
+import com.example.demo.exception.CurrentUserNotFoundException;
 import com.example.demo.service.ActivityService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,9 +26,17 @@ public class ActivityController {
 
     @GetMapping
     public ResponseEntity<Page<ActivityDto>> getAllActivities(@RequestParam(defaultValue = "0") int page,
-                                                               @RequestParam(defaultValue = "20") int size) {
-        return ResponseEntity.ok(activityService.findAll(page, size));
+                                                              @RequestParam(defaultValue = "20") int size) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Object principal = authentication.getPrincipal();
+
+        if (!(principal instanceof UserDetails userDetails)) {
+            throw new CurrentUserNotFoundException();
+        }
+        String username = userDetails.getUsername();
+        return ResponseEntity.ok(activityService.findAll(page, size, username));
     }
+
 
     @GetMapping("/{id}")
     public ResponseEntity<ProcedureDto> getActivity(@PathVariable Long id) {
@@ -40,20 +49,20 @@ public class ActivityController {
     public ResponseEntity<ActivityDto> markActivityAsOwn(@RequestBody ActivityDto activityDto) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Object principal = authentication.getPrincipal();
-        if (principal instanceof UserDetails) {
-            String username = ((UserDetails) principal).getUsername();
-            activityService.markActivityAsOwn(activityDto, username);
-        } else {
-            log.error("Could not retrieve user to assign an activity");
-            return ResponseEntity.badRequest().body(activityDto);
+
+        if (!(principal instanceof UserDetails userDetails)) {
+            throw new CurrentUserNotFoundException();
         }
 
-        return new ResponseEntity<>(HttpStatus.OK);
+        String username = userDetails.getUsername();
+        ActivityDto returnedDto = activityService.markActivityAsOwn(activityDto, username);
+        return ResponseEntity.ok(returnedDto);
     }
 
-    @PostMapping
-    public ResponseEntity<ProcedureDto> makeOwnerAsPerSchedule(@RequestBody ProcedureDto procedureDto) {
-        ProcedureDto saved = activityService.save(procedureDto);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+
+    @PostMapping("/old")
+    public ResponseEntity<ActivityDto> returnToOldAssignment(@RequestBody ActivityDto activityDto) {
+        ActivityDto returnedActivityDto = activityService.returnToOldAssignment(activityDto);
+        return new ResponseEntity<>(returnedActivityDto, HttpStatus.CREATED);
     }
 }

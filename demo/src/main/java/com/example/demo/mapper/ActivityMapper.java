@@ -1,10 +1,8 @@
 package com.example.demo.mapper;
 
 
-import com.example.demo.dto.UserRegistrationDto;
 import com.example.demo.dto.bsn_logic_dto.ActivityDto;
 import com.example.demo.entity.ActivityEntity;
-import com.example.demo.entity.UserEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -18,6 +16,11 @@ public interface ActivityMapper {
     ActivityEntity userRegistrationDtoToEntity(ActivityDto activityDto);
 
 
-    ActivityDto userRegistrationEntityToDto(ActivityEntity activityEntity);
+    @Mapping(source = "employee.id", target = "employeeId")
+    @Mapping(source = "employee.employeeCode", target = "employeeCode")
+    @Mapping(source = "employee.fullName", target = "employeeFullName")
+    @Mapping(source="procedure.procedureName",target = "procedureName")
+    @Mapping(source="procedure.procedureType",target = "procedureType")
+    ActivityDto activityEntityToDto(ActivityEntity activityEntity);
 
 }

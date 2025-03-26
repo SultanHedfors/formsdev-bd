@@ -12,7 +12,7 @@ import java.util.Collection;
 @NoArgsConstructor
 @Data
 public class UserDto implements UserDetails {
-    private Long id;
+    private Integer id;
     private String username;
     private String password;
     private Collection<? extends GrantedAuthority> authorities;
