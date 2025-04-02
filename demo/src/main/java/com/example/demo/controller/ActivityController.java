@@ -7,6 +7,7 @@ import com.example.demo.service.ActivityService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -14,6 +15,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -26,7 +28,9 @@ public class ActivityController {
 
     @GetMapping
     public ResponseEntity<Page<ActivityDto>> getAllActivities(@RequestParam(defaultValue = "0") int page,
-                                                              @RequestParam(defaultValue = "20") int size) {
+                                                              @RequestParam(defaultValue = "20") int size,
+                                                              @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+                                                              @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Object principal = authentication.getPrincipal();
 
@@ -34,7 +38,7 @@ public class ActivityController {
             throw new CurrentUserNotFoundException();
         }
         String username = userDetails.getUsername();
-        return ResponseEntity.ok(activityService.findAll(page, size, username));
+        return ResponseEntity.ok(activityService.findAll(page, size, username, startDate, endDate));
     }
 
 

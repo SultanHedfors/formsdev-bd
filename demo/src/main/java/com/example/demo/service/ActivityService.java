@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -42,28 +43,39 @@ public class ActivityService {
         this.userRepository = userRepository;
     }
 
-    public Page<ActivityDto> findAll(int page, int size, String username) {
-        final UserEntity user = userRepository.findByEmployeeCode(username).orElseThrow(RuntimeException::new);
+    public Page<ActivityDto> findAll(int page, int size, String username, LocalDate startDate, LocalDate endDate) {
+        final UserEntity user = userRepository.findByEmployeeCode(username)
+                .orElseThrow(RuntimeException::new);
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "activityDate", "activityTime"));
 
-        Page<ActivityEntity> activitiesEntityPage = activityRepository.findAll(pageable);
+        Page<ActivityEntity> activitiesEntityPage;
+
+        if (startDate != null && endDate != null) {
+            LocalDateTime start = startDate.atStartOfDay();
+            LocalDateTime end = endDate.atTime(LocalTime.MAX);
+            activitiesEntityPage = activityRepository.findByActivityDateBetween(start, end, pageable);
+        } else {
+            activitiesEntityPage = activityRepository.findAll(pageable);
+        }
+
         Page<ActivityDto> activitiesDtoPage = activitiesEntityPage.map(activityMapper::activityEntityToDto);
-        setWorkdayFlag(activitiesEntityPage,activitiesDtoPage, user.getId());
+        setWorkdayFlag(activitiesEntityPage, activitiesDtoPage, user.getId());
+
         activitiesDtoPage.forEach(a -> {
             if (user.getId().equals(a.getEmployeeId())) {
                 a.setAssignedToLoggedUser(true);
             }
         });
+
         List<Integer> activityIdsOnPage = activitiesDtoPage.stream()
                 .map(ActivityDto::getActivityId)
-                .collect(Collectors.toList());
-        List<Integer> idsWithHistory = activityAssignmentLogRepository
-                .findExistingActivityIdsInLog(activityIdsOnPage);
-        Set<Integer> historySet = new HashSet<>(idsWithHistory);
+                .toList();
+        Set<Integer> historySet = new HashSet<>(activityAssignmentLogRepository.findExistingActivityIdsInLog(activityIdsOnPage));
         activitiesDtoPage.forEach(a -> a.setHasHistory(historySet.contains(a.getActivityId())));
 
         return activitiesDtoPage;
     }
+
 
     private void setWorkdayFlag(Page<ActivityEntity> activitiesEntityPage, Page<ActivityDto> activitiesDtoPage, Integer employeeId) {
         List<ActivityEntity> entities = activitiesEntityPage.getContent();
