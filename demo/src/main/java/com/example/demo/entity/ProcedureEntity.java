@@ -24,8 +24,8 @@ public class ProcedureEntity {
     @Column(name = "ZABIEG_PUNKTY")
     private Integer procedureActualTime;
 
-    @ManyToMany(mappedBy = "procedures")
-    private Set<RoomEntity> rooms = new HashSet<>();
+//    @ManyToMany(mappedBy = "procedures")
+//    private Set<RoomEntity> rooms = new HashSet<>();
 
     @OneToMany(mappedBy = "activityId")
     private List<ActivityEntity> activities;
@@ -35,5 +35,8 @@ public class ProcedureEntity {
 
     @Column(name = "ZABIEG_NAZWA2")
     private String procedureType;
+
+    @Column(name = "ZABIEG_UWAGI")
+    private String workMode;
 
 }

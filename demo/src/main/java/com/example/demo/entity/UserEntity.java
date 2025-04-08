@@ -58,6 +58,9 @@ public class UserEntity implements UserDetails {
     @Column(name = "ROLE")
     private List<String> roles;
 
+    @ManyToMany(mappedBy = "employees")
+    private Set<ActivityEntity> activities = new HashSet<>();
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return roles.stream()

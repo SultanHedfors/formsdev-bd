@@ -209,9 +209,9 @@ public class ScheduleReader {
                 builder.substituteEmployee(findEmployeeByCode(infoVal));
 
 //                todo should work mode be allowed to be null?
-                builder.workMode("no");
+                builder.workMode("S");
             } else {
-                builder.workMode("no");
+                builder.workMode("S");
             }
             WorkSchedule schedule = builder.build();
 

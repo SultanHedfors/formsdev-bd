@@ -168,7 +168,86 @@
         </sql>
     </changeSet>
 
+    <changeSet id="20250406-activity-assignment-log-employee" author="twoja_nazwa">
+        <createTable tableName="act_assign_log_emp">
+            <column name="activity_assignment_log_id" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="employee_id" type="INT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
 
+        <addPrimaryKey
+                tableName="act_assign_log_emp"
+                columnNames="activity_assignment_log_id, employee_id"
+                constraintName="pk_act_assign_log_emp"/>
+
+        <addForeignKeyConstraint
+                baseTableName="act_assign_log_emp"
+                baseColumnNames="activity_assignment_log_id"
+                referencedTableName="activity_assignment_log"
+                referencedColumnNames="id"
+                constraintName="fk_act_assign_log"/>
+
+        <addForeignKeyConstraint
+                baseTableName="act_assign_log_emp"
+                baseColumnNames="employee_id"
+                referencedTableName="employee"
+                referencedColumnNames="employee_id"
+                constraintName="fk_act_emp"/>
+
+    </changeSet>
+
+
+    <changeSet id="20250406-add-activity-to-work-schedule" author="twoja_nazwa">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="work_schedule" columnName="activity_id"/>
+            </not>
+        </preConditions>
+
+        <addColumn tableName="work_schedule">
+            <column name="activity_id" type="INT"/>
+        </addColumn>
+
+        <addForeignKeyConstraint
+                baseTableName="work_schedule"
+                baseColumnNames="activity_id"
+                referencedTableName="ZAJECIE"
+                referencedColumnNames="ZAJECIE_ID"
+                constraintName="fk_work_schedule_activity"/>
+    </changeSet>
+
+    <changeSet id="20250406-create-activity-employee" author="twoja_nazwa">
+        <createTable tableName="activity_employee">
+            <column name="activity_id" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="employee_id" type="INT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addPrimaryKey
+                tableName="activity_employee"
+                columnNames="activity_id, employee_id"
+                constraintName="pk_activity_employee"/>
+
+        <addForeignKeyConstraint
+                baseTableName="activity_employee"
+                baseColumnNames="activity_id"
+                referencedTableName="ZAJECIE"
+                referencedColumnNames="ZAJECIE_ID"
+                constraintName="fk_activity_employee_activity"/>
+
+        <addForeignKeyConstraint
+                baseTableName="activity_employee"
+                baseColumnNames="employee_id"
+                referencedTableName="EMPLOYEE"
+                referencedColumnNames="EMPLOYEE_ID"
+                constraintName="fk_activity_employee_employee"/>
+    </changeSet>
 
 
 </databaseChangeLog>

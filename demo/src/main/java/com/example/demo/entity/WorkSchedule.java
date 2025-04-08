@@ -49,14 +49,16 @@ public class WorkSchedule {
     @Column
     private Integer workDurationMinutes;
 
+    @ManyToOne
+    @JoinColumn(name = "activity_id")
+    private ActivityEntity activity;
+
     private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm:ss");
 
-    // Convert from LocalTime to String (for database storage)
     public void setWorkStartTimeFromLocalTime(java.time.LocalTime time) {
         this.workStartTime = time != null ? time.format(TIME_FORMATTER) : null;
     }
 
-    // Convert from String to LocalTime (for Java application use)
     public java.time.LocalTime getWorkStartTimeAsLocalTime() {
         return workStartTime != null ? java.time.LocalTime.parse(workStartTime, TIME_FORMATTER) : null;
     }

@@ -25,6 +25,10 @@ public class RoomEntity {
     @Column(name = "STANOWISKO_UWAGI", unique = true)
     private String roomCode;
 
+    // Relacja one-to-many: jedno stanowisko ma wiele rekordów zajęć
+    @OneToMany(mappedBy = "room")
+    private Set<ActivityEntity> activities = new HashSet<>();
+
     @ManyToMany
     @JoinTable(
             name = "stanzabieg",
@@ -33,3 +37,4 @@ public class RoomEntity {
     )
     private Set<ProcedureEntity> procedures = new HashSet<>();
 }
+
