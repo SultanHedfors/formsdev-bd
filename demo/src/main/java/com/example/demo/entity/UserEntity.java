@@ -1,36 +1,34 @@
 package com.example.demo.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
-
-@Data
-@Entity
-@AllArgsConstructor
+@Getter
+@Setter
 @NoArgsConstructor
+@AllArgsConstructor
+@Entity
 @Table(name = "EMPLOYEE")
+@ToString(exclude = {"procedures", "activities"})
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class UserEntity implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "EMPLOYEE_ID")
+    @EqualsAndHashCode.Include
     private Integer id;
 
-    @Column(unique = true,name = "EMPLOYEE_USERNAME")
+    @Column(unique = true, name = "EMPLOYEE_USERNAME")
     private String username;
 
-    @Column(unique = true,name = "EMPLOYEE_FULLNAME")
+    @Column(unique = true, name = "EMPLOYEE_FULLNAME")
     private String fullName;
 
     @Column(name = "EMPLOYEE_POSCE")
@@ -53,7 +51,7 @@ public class UserEntity implements UserDetails {
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(
             name = "USER_ROLES",
-            joinColumns = @JoinColumn(name = "user_id") // Ensure correct column name
+            joinColumns = @JoinColumn(name = "user_id")
     )
     @Column(name = "ROLE")
     private List<String> roles;
@@ -67,12 +65,6 @@ public class UserEntity implements UserDetails {
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toList());
     }
-
-    @Override
-    public String getPassword() { return password; }
-
-    @Override
-    public String getUsername() { return username; }
 
     @Override
     public boolean isAccountNonExpired() { return true; }

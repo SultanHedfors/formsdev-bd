@@ -1,5 +1,7 @@
 package com.example.demo.repository;
 
+import com.example.demo.entity.ActivityEmployeeEntity;
+import com.example.demo.entity.ActivityEntity;
 import com.example.demo.entity.WorkSchedule;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -7,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
 
@@ -27,4 +30,14 @@ public interface ScheduleRepository extends JpaRepository<WorkSchedule, Integer>
     @Query(value = "SELECT MIN(ws.YEAR_MONTH || '-' || LPAD(ws.DAY_OF_MONTH, 2, '0')) FROM WORK_SCHEDULE ws", nativeQuery = true)
     String findEarliestScheduleDate();
 
+    @Query("SELECT ws FROM WorkSchedule ws JOIN FETCH ws.employee WHERE ws.activity = :activity")
+    List<WorkSchedule> findByActivityWithEmployee(@Param("activity") ActivityEntity activity);
+
+//    @Query("SELECT ws FROM WorkSchedule ws " +
+//            "WHERE ws.activity IS NULL " +
+//            "AND (CAST(:startDate AS date) <= CAST(ws. AS date))")
+//    List<WorkSchedule> findSchedulesWithNoActivityAfterDate(@Param("startDate") LocalDate startDate);
+
+    @Query("SELECT ws FROM WorkSchedule ws WHERE ws.activity IS NULL")
+    List<WorkSchedule> findByActivityIsNull();
 }

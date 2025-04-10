@@ -1,22 +1,24 @@
 package com.example.demo.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.HashSet;
 import java.util.Set;
 
-@Data
-@Entity
-@AllArgsConstructor
+@Getter
+@Setter
 @NoArgsConstructor
+@AllArgsConstructor
+@Entity
 @Table(name = "STANOWISKO")
+@ToString(exclude = {"activities", "procedures"})
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class RoomEntity {
 
     @Id
     @Column(name = "STANOWISKO_ID")
+    @EqualsAndHashCode.Include
     private Integer roomId;
 
     @Column(name = "STANOWISKO_NAZWA")
@@ -25,7 +27,6 @@ public class RoomEntity {
     @Column(name = "STANOWISKO_UWAGI", unique = true)
     private String roomCode;
 
-    // Relacja one-to-many: jedno stanowisko ma wiele rekordów zajęć
     @OneToMany(mappedBy = "room")
     private Set<ActivityEntity> activities = new HashSet<>();
 
@@ -37,4 +38,3 @@ public class RoomEntity {
     )
     private Set<ProcedureEntity> procedures = new HashSet<>();
 }
-

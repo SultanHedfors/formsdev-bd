@@ -1,23 +1,25 @@
 package com.example.demo.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.sql.Timestamp;
 import java.util.HashSet;
 import java.util.Set;
 
-@Data
-@Entity
-@AllArgsConstructor
+@Getter
+@Setter
 @NoArgsConstructor
+@AllArgsConstructor
+@Entity
 @Table(name = "ZAJECIE")
+@ToString(exclude = {"procedure", "employee", "room", "employees"})
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class ActivityEntity {
 
     @Id
     @Column(name = "ZAJECIE_ID")
+    @EqualsAndHashCode.Include
     private Integer activityId;
 
     @Column(name = "ZAJECIE_DATA")
@@ -29,15 +31,15 @@ public class ActivityEntity {
     @Column(name = "ZAJECIE_DATA_DODANIA")
     private Timestamp recordAddedTime;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "zabieg_id", referencedColumnName = "zabieg_id")
     private ProcedureEntity procedure;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "employee_id", referencedColumnName = "employee_id")
     private UserEntity employee;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "stanowisko_id", referencedColumnName = "STANOWISKO_ID")
     private RoomEntity room;
 

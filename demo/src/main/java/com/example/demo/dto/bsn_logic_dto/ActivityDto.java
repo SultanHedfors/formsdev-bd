@@ -13,15 +13,14 @@ import java.util.List;
 @AllArgsConstructor
 public class ActivityDto {
     private Integer activityId;
+
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX", timezone = "Europe/Warsaw")
     private Timestamp activityDate;
 
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX", timezone = "Europe/Warsaw")
     private Timestamp activityTime;
 
-
     private Integer employeeId;
-
     private String employeeCode;
     private String employeeFullName;
     private String procedureName;
@@ -32,4 +31,7 @@ public class ActivityDto {
     private String roomCode;
 
     private List<String> employeesAssigned;
+
+    // Dodane pole do rozróżniania jednoznacznie userów
+    private List<Integer> employeeIdsAssigned;
 }

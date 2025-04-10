@@ -248,6 +248,40 @@
                 referencedColumnNames="EMPLOYEE_ID"
                 constraintName="fk_activity_employee_employee"/>
     </changeSet>
+    <changeSet id="20250409-add-id-and-user-modified-to-activity-employee" author="twoja_nazwa">
 
+        <!-- Dodaj kolumnę ID -->
+        <addColumn tableName="activity_employee">
+            <column name="id" type="INTEGER"/>
+        </addColumn>
+
+        <!-- Dodaj kolumnę user_modified -->
+        <addColumn tableName="activity_employee">
+            <column name="user_modified" type="BOOLEAN" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+
+        <!-- Utwórz sekwencję dla ID -->
+        <createSequence sequenceName="activity_employee_seq"/>
+
+        <!-- Dodaj trigger dla auto-generowania ID -->
+        <sql>
+            CREATE OR ALTER TRIGGER bi_activity_employee
+        FOR activity_employee
+        ACTIVE BEFORE INSERT POSITION 0
+        AS
+            BEGIN
+            IF (NEW.id IS NULL) THEN
+                NEW.id = NEXT VALUE FOR activity_employee_seq;
+            END
+        </sql>
+
+        <!-- (Opcjonalnie) Dodaj unikalny index dla kolumny ID -->
+        <createIndex tableName="activity_employee" indexName="idx_activity_employee_id" unique="true">
+            <column name="id"/>
+        </createIndex>
+
+    </changeSet>
 
 </databaseChangeLog>

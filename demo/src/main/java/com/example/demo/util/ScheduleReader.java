@@ -6,7 +6,9 @@ import com.example.demo.entity.WorkSchedule;
 import com.example.demo.repository.RoomRepository;
 import com.example.demo.repository.ScheduleRepository;
 import com.example.demo.repository.UserRepository;
+import com.example.demo.service.ScheduledActivityToWSService;
 import jakarta.annotation.PostConstruct;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -31,14 +33,8 @@ import static com.example.demo.util.TimeUtil.formatTime;
 @Component
 public class ScheduleReader {
 
-    //    F -fizyko,
-//    B-Balneo,
-//    U-praca100% czasu,
-//    UW-urlop(czas nie liczony),
-//    ZL-zwolnienie(czas nie liczony)
     protected static final Set<String> MODE_SET = Set.of("F", "B", "U", "UW", "ZL");
-
-    public static final String EMPLOYEE_CODE_HEADER="Kod pracownika";
+    public static final String EMPLOYEE_CODE_HEADER = "Kod pracownika";
 
     @Value("${schedule.filepath}")
     private String excelFilePath;
@@ -46,40 +42,48 @@ public class ScheduleReader {
     private final UserRepository userRepository;
     private final ScheduleRepository scheduleRepository;
     private final RoomRepository roomRepository;
+    private final ScheduledActivityToWSService scheduledActivityToWSService;
 
     public List<String> logMessages = new ArrayList<>();
     List<String> validationErrors = new ArrayList<>();
 
-    public ScheduleReader(UserRepository userRepository, ScheduleRepository scheduleRepository,
-                          RoomRepository roomRepository) {
+    public ScheduleReader(UserRepository userRepository,
+                          ScheduleRepository scheduleRepository,
+                          RoomRepository roomRepository,
+                          ScheduledActivityToWSService scheduledActivityToWSService) {
         this.userRepository = userRepository;
         this.scheduleRepository = scheduleRepository;
         this.roomRepository = roomRepository;
+        this.scheduledActivityToWSService = scheduledActivityToWSService;
     }
-    //    #TODO add a trigger for this method, currently works post bean construct
+
+    @Transactional
 //    @PostConstruct
-    public List<WorkSchedule> mapRowsToEntities() {
+    public List<WorkSchedule> mapRowsToEntities() throws InterruptedException {
+
         log.info("Attempting load of Excel file at: {}", excelFilePath);
 
         List<WorkSchedule> workSchedules = new ArrayList<>();
         List<Integer> employeesRowsIndexes = null;
         File excelFile = null;
         YearMonth yearMonth = null;
+
         try {
             excelFile = ExcelUtil.getLatestExcelFile(excelFilePath);
             if (excelFile == null) {
                 String errorMsg = "No Excel file found in the specified directory: " + excelFilePath;
                 log.error(errorMsg);
                 logMessages.add(errorMsg);
-                writeLogFile(excelFilePath, logMessages, false, workSchedules, "File not found");
+                writeLogFile(excelFilePath, logMessages, false, List.of(errorMsg), "File not found");
                 return null;
             }
+
             try (FileInputStream fis = new FileInputStream(excelFile);
                  Workbook workbook = new XSSFWorkbook(fis)) {
 
                 Sheet sheet = workbook.getSheetAt(0);
 
-//                #todo implement reading month and year reading (from file name probably)
+                // #TODO: dynamic reading from filename or cell
                 yearMonth = YearMonth.of(2025, 1);
 
                 List<String> employeesCodes = employeesCodes();
@@ -87,10 +91,9 @@ public class ScheduleReader {
                 employeesRowsIndexes = getRowsWithEmployees(sheet, employeesCodes);
 
                 validateFile(sheet, employeesCodes, roomCodes, employeesRowsIndexes, validationErrors);
-                // If there are validation errors, log them and stop processing
                 if (!validationErrors.isEmpty()) {
                     logMessages.addAll(validationErrors);
-                    writeLogFile(excelFile.getAbsolutePath(), logMessages, false, workSchedules, excelFile.getName());
+                    writeLogFile(excelFile.getAbsolutePath(), logMessages, false, validationErrors, excelFile.getName());
                     return null;
                 }
 
@@ -100,10 +103,10 @@ public class ScheduleReader {
                     Row employeeRow = sheet.getRow(rowIndex);
                     if (employeeRow == null) continue;
                     Row aboveRow = (rowIndex - 1 >= 0) ? sheet.getRow(rowIndex - 1) : null;
+
                     String roomSymbol = null;
                     if (aboveRow != null) {
                         String val = getCellValueAsString(aboveRow.getCell(0)).trim();
-                        log.info("room v: {} equals? {} header: {} ", val, val.equalsIgnoreCase(EMPLOYEE_CODE_HEADER),EMPLOYEE_CODE_HEADER);
                         if (!val.equalsIgnoreCase("OK") && !val.isEmpty() && !val.equalsIgnoreCase(EMPLOYEE_CODE_HEADER)) {
                             roomSymbol = val;
                         }
@@ -113,7 +116,6 @@ public class ScheduleReader {
                     Row startTimeRow = sheet.getRow(rowIndex + 1);
                     Row endTimeRow = sheet.getRow(rowIndex + 2);
 
-                    // Name
                     String employeeName = getCellValueAsString(employeeRow.getCell(0)).trim();
 
                     if (startTimeRow != null && endTimeRow != null) {
@@ -132,28 +134,48 @@ public class ScheduleReader {
                 }
 
             } catch (Exception e) {
-                log.error("Processing failed: {}", e.getMessage());
+                log.error("Processing failed: {}", e.getMessage(), e);
                 logMessages.add("Processing failed: " + e.getMessage());
-                writeLogFile(excelFile.getAbsolutePath(), logMessages, false, workSchedules, excelFile.getName());
+                writeLogFile(excelFile.getAbsolutePath(), logMessages, false, List.of("Processing failed: " + e.getMessage()), excelFile.getName());
                 return null;
             }
+
         } catch (Exception e) {
-            log.error("Unexpected failure: {}", e.getMessage());
+            log.error("Unexpected failure: {}", e.getMessage(), e);
             logMessages.add("Unexpected failure: " + e.getMessage());
-            assert excelFile != null;
-            writeLogFile(excelFilePath, logMessages, false, workSchedules, excelFile.getName());
+            if (excelFile != null) {
+                writeLogFile(excelFilePath, logMessages, false, List.of("Unexpected failure: " + e.getMessage()), excelFile.getName());
+            }
+            return null;
         }
 
         if (yearMonth != null) {
             scheduleRepository.deleteByYearMonth(yearMonth.toString());
         }
+
         scheduleRepository.saveAll(workSchedules);
+
+        scheduledActivityToWSService.assignActivitiesToSchedules(true);
+
         assert employeesRowsIndexes != null;
         logMessages.add("Processing completed successfully. Total employees processed: " + employeesRowsIndexes.size());
-        writeLogFile(excelFilePath, logMessages, true, workSchedules, excelFile.getName());
+
+        // 🔥 Podsumowanie do loga (bez encji JPA!)
+        List<String> scheduleSummary = workSchedules.stream()
+                .map(ws -> "YearMonth: " + ws.getYearMonth()
+                        + ", Day: " + ws.getDayOfMonth()
+                        + ", Employee: " + (ws.getEmployee() != null ? ws.getEmployee().getEmployeeCode() : "None")
+                        + ", Start: " + ws.getWorkStartTime()
+                        + ", End: " + ws.getWorkEndTime()
+                        + ", Room: " + (ws.getRoomSymbol() != null ? ws.getRoomSymbol() : "None"))
+                .toList();
+
+        writeLogFile(excelFilePath, logMessages, true, scheduleSummary, excelFile.getName());
 
         return workSchedules;
     }
+
+
     public void processWorkScheduleRows(Row aboveRow,
                                         Row workModeRow,
                                         Row startTimeRow,
@@ -178,7 +200,6 @@ public class ScheduleReader {
             Cell startCell = startTimeRow.getCell(day);
             Cell endCell = endTimeRow.getCell(day);
 
-
             String startVal = (startCell != null) ? getCellValueAsString(startCell).trim() : "";
             String endVal = (endCell != null) ? getCellValueAsString(endCell).trim() : "";
             if (startVal.isEmpty() || endVal.isEmpty()) return;
@@ -188,7 +209,6 @@ public class ScheduleReader {
 
             if (cleanedStart == null || cleanedEnd == null) return;
 
-            // Build schedule
             WorkSchedule.WorkScheduleBuilder builder = WorkSchedule.builder()
                     .yearMonth(yearMonth.toString())
                     .dayOfMonth(day)
@@ -201,21 +221,18 @@ public class ScheduleReader {
             if (dayBasedSubCode != null) {
                 builder.substituteEmployee(findEmployeeByCode(dayBasedSubCode));
             }
-            // Work mode logic
+
             String infoVal = getCellValueAsString(workInfoCell).toUpperCase().trim();
             if (MODE_SET.contains(infoVal)) {
                 builder.workMode(infoVal);
             } else if (employeesCodes.contains(infoVal)) {
                 builder.substituteEmployee(findEmployeeByCode(infoVal));
-
-//                todo should work mode be allowed to be null?
                 builder.workMode("S");
             } else {
                 builder.workMode("S");
             }
-            WorkSchedule schedule = builder.build();
 
-            log.info("Saving schedule entry: {}", schedule.getEmployee());
+            WorkSchedule schedule = builder.build();
             workSchedules.add(schedule);
         });
     }
@@ -229,8 +246,7 @@ public class ScheduleReader {
     }
 
     private List<String> employeesCodes() {
-        List<UserEntity> employeesEntities = findAllEmployees();
-        return employeesEntities.stream()
+        return findAllEmployees().stream()
                 .map(e -> e.getEmployeeCode().toUpperCase())
                 .collect(Collectors.toList());
     }
@@ -247,9 +263,7 @@ public class ScheduleReader {
     }
 
     private List<Integer> getRowsWithEmployees(Sheet sheet, List<String> employeesCodes) {
-        List<Integer> populatedRows = getPopulatedRowsInFirstColumn(sheet);
-
-        return populatedRows.stream()
+        return getPopulatedRowsInFirstColumn(sheet).stream()
                 .filter(rowIndex -> {
                     Row row = sheet.getRow(rowIndex);
                     if (row != null) {
@@ -263,9 +277,11 @@ public class ScheduleReader {
                 })
                 .collect(Collectors.toList());
     }
+
     private List<String> getAllRoomCodes() {
-        List<RoomEntity> rooms = roomRepository.findAll();
-        return rooms.stream().map(RoomEntity::getRoomCode).collect(Collectors.toList());
+        return roomRepository.findAll().stream()
+                .map(RoomEntity::getRoomCode)
+                .collect(Collectors.toList());
     }
 
     private void validateFile(Sheet sheet, List<String> employeesCodes, List<String> roomCodes, List<Integer> employeesRowsIndexes, List<String> validationErrors) {

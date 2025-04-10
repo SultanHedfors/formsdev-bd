@@ -66,7 +66,14 @@ public class ActivityController {
 
     @PostMapping("/old")
     public ResponseEntity<ActivityDto> returnToOldAssignment(@RequestBody ActivityDto activityDto) {
-        ActivityDto returnedActivityDto = activityService.returnToOldAssignment(activityDto);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Object principal = authentication.getPrincipal();
+
+        if (!(principal instanceof UserDetails userDetails)) {
+            throw new CurrentUserNotFoundException();
+        }
+        String username = userDetails.getUsername();
+        ActivityDto returnedActivityDto = activityService.returnToOldAssignment(activityDto, username);
         return new ResponseEntity<>(returnedActivityDto, HttpStatus.CREATED);
     }
 }

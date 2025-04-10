@@ -1,8 +1,7 @@
 package com.example.demo.service;
 
-import com.example.demo.entity.ActivityEntity;
-import com.example.demo.entity.ProcedureEntity;
-import com.example.demo.entity.WorkSchedule;
+import com.example.demo.entity.*;
+import com.example.demo.repository.ActivityEmployeeRepository;
 import com.example.demo.repository.ActivityRepository;
 import com.example.demo.repository.ScheduleRepository;
 import lombok.RequiredArgsConstructor;
@@ -14,9 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -26,103 +23,147 @@ public class ScheduledActivityToWSService {
 
     private final ActivityRepository activityRepository;
     private final ScheduleRepository scheduleRepository;
+    private final ActivityEmployeeRepository activityEmployeeRepository;
 
     private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm:ss");
     private static final DateTimeFormatter YM_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM");
 
+    private volatile boolean processLock = false;
+
     @Transactional
     @Scheduled(fixedDelayString = "${scheduler.assign-activities.delay:10000}")
-    public void assignActivitiesToSchedules() {
-        try {
-            String earliestScheduleDateStr = scheduleRepository.findEarliestScheduleDate();
-            if (earliestScheduleDateStr == null) {
-                log.debug("No schedules found. Skipping activity assignment.");
-                return;
-            }
-
-            LocalDate earliestScheduleDate = LocalDate.parse(earliestScheduleDateStr);
-            List<ActivityEntity> activities = activityRepository.findActivitiesWithoutScheduleFromDate(earliestScheduleDate.atStartOfDay());
-
-            if (activities.isEmpty()) {
-                log.debug("No unassigned activities found from date {}.", earliestScheduleDate);
-                return;
-            }
-
-            Set<String> activityDates = activities.stream()
-                    .map(a -> a.getActivityDate().toLocalDateTime().toLocalDate().toString())
-                    .collect(Collectors.toSet());
-
-            List<WorkSchedule> schedules = scheduleRepository.findByDateIn(activityDates);
-
-            if (schedules.isEmpty()) {
-                log.debug("No schedules found for activity dates: {}", activityDates);
-                return;
-            }
-
-            log.info("Processing {} activities against {} schedules.", activities.size(), schedules.size());
-
-            activities.forEach(activity -> processActivity(activity, schedules));
-
-        } catch (Exception ex) {
-            log.error("Error while assigning activities to schedules: ", ex);
-        }
-    }
-
-    private void processActivity(ActivityEntity activity, List<WorkSchedule> schedules) {
-        LocalDate activityDate = activity.getActivityDate().toLocalDateTime().toLocalDate();
-        LocalTime activityLocalTime = activity.getActivityTime().toLocalDateTime().toLocalTime();
-
-        List<WorkSchedule> matchingSchedules = schedules.stream()
-                .filter(ws -> isScheduleMatchingActivity(ws, activityDate, activityLocalTime))
-                .toList();
-
-        if (matchingSchedules.isEmpty()) {
-            log.debug("No matching schedules found for activity {} (date: {}, time: {}).",
-                    activity.getActivityId(), activityDate, activityLocalTime);
+    public void scheduledAssignActivitiesToSchedules() {
+        if (processLock) {
+            log.debug("Process lock active, skipping scheduled execution.");
             return;
         }
+        assignActivitiesToSchedules(false);
+    }
 
-        for (WorkSchedule ws : matchingSchedules) {
-            if (ws.getActivity() != null) {
-                log.debug("Schedule {} already has assigned activity, skipping.", ws.getId());
-                continue;
+    @Transactional
+    public void assignActivitiesToSchedules(boolean fromScheduleImport) {
+        try {
+            if (fromScheduleImport) {
+                processLock = true;
             }
 
-            if (!isWorkModeMatching(ws, activity.getProcedure())) {
-                log.debug("Work mode does not match for schedule {} and activity {}.", ws.getId(), activity.getActivityId());
-                continue;
+            List<WorkSchedule> schedules = scheduleRepository.findByActivityIsNull();
+
+            if (schedules.isEmpty()) {
+                log.debug("No schedules with null activity found.");
+                return;
             }
 
-            ws.setActivity(activity);
-            scheduleRepository.save(ws);
-            log.info("Assigned activity {} to schedule {}", activity.getActivityId(), ws.getId());
+            log.info("Found {} schedules with null activity", schedules.size());
+
+            Set<Integer> assignedActivityIds = new HashSet<>();
+
+            for (WorkSchedule ws : schedules) {
+                Optional<ActivityEntity> optionalActivity = findMatchingActivity(ws);
+                if (optionalActivity.isPresent()) {
+                    ActivityEntity activity = optionalActivity.get();
+
+                    if (!isWorkModeMatching(ws, activity.getProcedure())) {
+                        continue;
+                    }
+
+                    ws.setActivity(activity);
+                    scheduleRepository.save(ws);
+                    assignedActivityIds.add(activity.getActivityId());
+                    log.info("Assigned activity {} to schedule {}", activity.getActivityId(), ws.getId());
+                }
+            }
+
+            if (!assignedActivityIds.isEmpty()) {
+                if (fromScheduleImport) {
+                    log.info("Cleaning ActivityEmployeeEntity for activities: {}", assignedActivityIds);
+                    activityEmployeeRepository.deleteByActivityActivityIdInAndUserModifiedFalse(assignedActivityIds);
+                    scheduleRepository.flush();
+                }
+
+                log.info("Creating new ActivityEmployeeEntity entries...");
+                createNewActivityEmployeeEntries(assignedActivityIds);
+            }
+
+        } catch (Exception ex) {
+            log.error("Error while assigning activities to schedules", ex);
+            throw ex;
+        } finally {
+            if (fromScheduleImport) {
+                processLock = false;
+            }
         }
     }
 
-    private boolean isScheduleMatchingActivity(WorkSchedule ws, LocalDate activityDate, LocalTime activityLocalTime) {
+    private Optional<ActivityEntity> findMatchingActivity(WorkSchedule ws) {
         try {
-            String wsTime = ws.getWorkStartTime();
-            if (wsTime.length() == 5) {
-                wsTime = wsTime + ":00";
+            LocalDate date = LocalDate.of(Integer.parseInt(ws.getYearMonth().substring(0, 4)),
+                    Integer.parseInt(ws.getYearMonth().substring(5, 7)),
+                    ws.getDayOfMonth());
+
+            LocalTime time;
+            try {
+                String timeStr = ws.getWorkStartTime().length() == 5 ? ws.getWorkStartTime() + ":00" : ws.getWorkStartTime();
+                time = LocalTime.parse(timeStr, TIME_FORMATTER);
+            } catch (Exception e) {
+                log.warn("Invalid time format in schedule {}: {}", ws.getId(), ws.getWorkStartTime());
+                return Optional.empty();
             }
-            LocalTime scheduleTime = LocalTime.parse(wsTime, TIME_FORMATTER);
 
-            return ws.getYearMonth().equals(activityDate.format(YM_FORMATTER))
-                    && ws.getDayOfMonth() == activityDate.getDayOfMonth()
-                    && scheduleTime.equals(activityLocalTime);
+            return activityRepository.findFirstActivityWithoutScheduleByDateTime(
+                    date.getYear(),
+                    date.getMonthValue(),
+                    date.getDayOfMonth(),
+                    time.getHour(),
+                    time.getMinute(),
+                    time.getSecond()
+            );
+        } catch (Exception ex) {
+            log.warn("Failed to resolve date/time for schedule {}", ws.getId(), ex);
+            return Optional.empty();
+        }
+    }
 
-        } catch (Exception e) {
-            log.warn("Failed to parse schedule time for WorkSchedule ID {}: {}", ws.getId(), e.getMessage());
-            return false;
+    private void createNewActivityEmployeeEntries(Set<Integer> activityIds) {
+        List<ActivityEntity> activities = activityRepository.findAllById(activityIds);
+
+        Set<Integer> skipIds = activityEmployeeRepository
+                .findByActivityActivityIdInAndUserModifiedTrue(activityIds)
+                .stream()
+                .map(ae -> ae.getActivity().getActivityId())
+                .collect(Collectors.toSet());
+
+        List<ActivityEmployeeEntity> toCreate = new ArrayList<>();
+
+        for (ActivityEntity activity : activities) {
+            if (skipIds.contains(activity.getActivityId())) {
+                continue;
+            }
+
+            List<WorkSchedule> related = scheduleRepository.findByActivityWithEmployee(activity);
+            Set<UserEntity> employees = related.stream()
+                    .map(WorkSchedule::getEmployee)
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toSet());
+
+            for (UserEntity emp : employees) {
+                ActivityEmployeeEntity ae = new ActivityEmployeeEntity();
+                ae.setActivity(activity);
+                ae.setEmployee(emp);
+                ae.setUserModified(false);
+                toCreate.add(ae);
+            }
+        }
+
+        if (!toCreate.isEmpty()) {
+            activityEmployeeRepository.saveAll(toCreate);
+            log.info("Created {} new employee assignments", toCreate.size());
         }
     }
 
     private boolean isWorkModeMatching(WorkSchedule ws, ProcedureEntity procedure) {
-        String scheduleWorkMode = ws.getWorkMode();
-        String procedureWorkMode = Optional.ofNullable(procedure)
-                .map(ProcedureEntity::getWorkMode)
-                .orElse(null);
-
-        return scheduleWorkMode == null || scheduleWorkMode.equals(procedureWorkMode);
+        String scheduleMode = ws.getWorkMode();
+        String procMode = Optional.ofNullable(procedure).map(ProcedureEntity::getWorkMode).orElse(null);
+        return scheduleMode == null || scheduleMode.equals(procMode);
     }
 }
