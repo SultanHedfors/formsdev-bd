@@ -31,7 +31,7 @@ public class ActivityEntity {
     @Column(name = "ZAJECIE_DATA_DODANIA")
     private Timestamp recordAddedTime;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "zabieg_id", referencedColumnName = "zabieg_id")
     private ProcedureEntity procedure;
 

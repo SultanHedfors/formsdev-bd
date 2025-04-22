@@ -52,7 +52,7 @@ public class ScheduleReader {
         this.scheduledActivityToWSService = scheduledActivityToWSService;
     }
 
-//    @Transactional
+    @Transactional
     public List<WorkSchedule> mapRowsToEntities(String filePath) {
 
         log.info("Attempting load of Excel file at: {}", filePath);
@@ -60,7 +60,7 @@ public class ScheduleReader {
         List<WorkSchedule> workSchedules = new ArrayList<>();
         List<Integer> employeesRowsIndexes;
         File excelFile = new File(filePath);
-        YearMonth yearMonth = null;
+        YearMonth yearMonth = YearMonth.parse("2025-01");
 
         try (FileInputStream fis = new FileInputStream(excelFile)) {
 
@@ -155,7 +155,7 @@ public class ScheduleReader {
         scheduleRepository.saveAll(workSchedules);
 
         log.info("Assigning scheduled activities to work schedules...");
-        scheduledActivityToWSService.assignActivitiesToSchedules(true);
+        scheduledActivityToWSService.assignActivitiesToSchedules(true, yearMonth.toString());
 
         logMessages.add("Processing completed successfully. Total employees processed: " + workSchedules.size());
 

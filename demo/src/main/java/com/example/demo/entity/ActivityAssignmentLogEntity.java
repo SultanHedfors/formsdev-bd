@@ -22,13 +22,9 @@ public class ActivityAssignmentLogEntity {
     @JoinColumn(name = "activity_id", nullable = false)
     private ActivityEntity activity;
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "act_assign_log_emp",
-            joinColumns = @JoinColumn(name = "activity_assignment_log_id"),
-            inverseJoinColumns = @JoinColumn(name = "employee_id")
-    )
-    private List<UserEntity> employees;
+    @ManyToOne
+    @JoinColumn(name = "employee_id")
+    private UserEntity employee;
 
     @Column(name = "assigned_at", nullable = false)
     private LocalDateTime assignedAt;

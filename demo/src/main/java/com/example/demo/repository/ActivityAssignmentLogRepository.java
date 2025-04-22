@@ -17,5 +17,6 @@ public interface ActivityAssignmentLogRepository extends JpaRepository<ActivityA
     @Query("SELECT DISTINCT a.activity.activityId FROM ActivityAssignmentLogEntity a WHERE a.activity.activityId IN :activityIds")
     List<Integer> findExistingActivityIdsInLog(@Param("activityIds") List<Integer> activityIds);
 
+    List<ActivityAssignmentLogEntity> findByActivity_ActivityIdOrderByAssignedAtDesc(Integer activityId);
 
 }

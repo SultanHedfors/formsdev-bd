@@ -30,6 +30,8 @@ public class ActivityDto {
     private boolean procedureScheduledOnEmployeesWorkingDay;
     private String roomCode;
 
+    private String workMode;
+
     private List<String> employeesAssigned;
 
     // Dodane pole do rozróżniania jednoznacznie userów

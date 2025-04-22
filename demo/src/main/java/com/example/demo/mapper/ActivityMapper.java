@@ -1,6 +1,5 @@
 package com.example.demo.mapper;
 
-
 import com.example.demo.dto.bsn_logic_dto.ActivityDto;
 import com.example.demo.entity.ActivityEntity;
 import com.example.demo.entity.ProcedureEntity;
@@ -20,6 +19,7 @@ public interface ActivityMapper {
     @Mapping(target = "employeeFullName", ignore = true)
     @Mapping(source = "procedure", target = "procedureName", qualifiedByName = "procedureNameResolver")
     @Mapping(source = "procedure", target = "procedureType", qualifiedByName = "procedureTypeResolver")
+    @Mapping(source = "procedure", target = "workMode", qualifiedByName = "procedureWorkModeResolver") // 👈 nowy mapping
     ActivityDto activityEntityToDto(ActivityEntity activityEntity);
 
     @Named("procedureNameResolver")
@@ -36,5 +36,13 @@ public interface ActivityMapper {
             return null;
         }
         return procedureEntity.getProcedureType();
+    }
+
+    @Named("procedureWorkModeResolver") // 👈 nowa metoda
+    default String resolveProcedureWorkMode(ProcedureEntity procedureEntity) {
+        if (procedureEntity == null || !Hibernate.isInitialized(procedureEntity)) {
+            return null;
+        }
+        return procedureEntity.getWorkMode();
     }
 }

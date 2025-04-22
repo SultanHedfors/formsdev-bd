@@ -412,6 +412,27 @@
                 onDelete="CASCADE"/>
 
     </changeSet>
+    <changeSet id="add-activity-employee-indexes" author="yourname">
+        <createIndex indexName="idx_activity_user_modified" tableName="activity_employee">
+            <column name="activity_id"/>
+            <column name="user_modified"/>
+        </createIndex>
+
+        <createIndex indexName="uq_activity_employee_unique" tableName="activity_employee" unique="true">
+            <column name="activity_id"/>
+            <column name="employee_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet id="add-activity-employee-indexes-v2" author="gr1nd">
+        <comment>Indexes for faster lookups in activity_employee table</comment>
+
+
+        <!-- Indeks do szybkiego usuwania wpisów po dacie aktywności -->
+        <createIndex indexName="idx_act_emp_actid_um" tableName="activity_employee">
+            <column name="activity_id"/>
+        </createIndex>
+    </changeSet>
+
 
 </databaseChangeLog>
 

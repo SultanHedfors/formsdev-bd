@@ -153,7 +153,8 @@ public class ActivityService {
     }
 
     private void saveOldProcedureAssignment(ActivityEntity activityEntity) {
-        List<ActivityEmployeeEntity> existingAssignments = activityEmployeeRepository.findByActivityActivityId(activityEntity.getActivityId());
+        List<ActivityEmployeeEntity> existingAssignments =
+                activityEmployeeRepository.findByActivityActivityId(activityEntity.getActivityId());
 
         if (existingAssignments.isEmpty()) {
             log.info("No existing assignments to log for activity {}", activityEntity.getActivityId());
@@ -162,17 +163,31 @@ public class ActivityService {
 
         List<UserEntity> employees = existingAssignments.stream()
                 .map(ActivityEmployeeEntity::getEmployee)
+                .filter(Objects::nonNull)
+                .distinct()
                 .toList();
 
-        ActivityAssignmentLogEntity logEntity = ActivityAssignmentLogEntity.builder()
-                .activity(activityEntity)
-                .employees(employees)
-                .assignedAt(LocalDateTime.now())
-                .build();
+        if (employees.isEmpty()) {
+            log.warn("No valid employee entities found for logging in activity {}", activityEntity.getActivityId());
+            return;
+        }
 
-        activityAssignmentLogRepository.save(logEntity);
-        log.info("Saved assignment log for activity {} with {} employees", activityEntity.getActivityId(), employees.size());
+        for (UserEntity employee : employees) {
+            ActivityAssignmentLogEntity logEntity = ActivityAssignmentLogEntity.builder()
+                    .activity(activityEntity)
+                    .employee(employee)
+                    .assignedAt(LocalDateTime.now())
+                    .build();
+
+            activityAssignmentLogRepository.save(logEntity);
+
+            log.info("Saved assignment log: ACTIVITY ID={} -> EMPLOYEE ID={}",
+                    activityEntity.getActivityId(), employee.getId());
+        }
+
+        log.info("Finished saving {} assignment log entries for activity {}", employees.size(), activityEntity.getActivityId());
     }
+
 
     @Transactional
     public ActivityDto returnToOldAssignment(ActivityDto activityDto, String username) {
@@ -181,25 +196,33 @@ public class ActivityService {
 
         UserEntity user = getUserByEmployeeCode(username);
 
-        Optional<ActivityAssignmentLogEntity> optionalLogEntity = activityAssignmentLogRepository
-                .findTopByActivity_ActivityIdOrderByAssignedAtDesc(activityDto.getActivityId());
+        List<ActivityAssignmentLogEntity> logs = activityAssignmentLogRepository
+                .findByActivity_ActivityIdOrderByAssignedAtDesc(activityDto.getActivityId());
 
         activityEmployeeRepository.deleteByActivityActivityId(activityEntity.getActivityId());
 
         ActivityDto dto = activityMapper.activityEntityToDto(activityEntity);
 
-        if (optionalLogEntity.isEmpty()) {
+        if (logs.isEmpty()) {
             log.info("No assignment history found for activity {}. Current assignments removed.", activityEntity.getActivityId());
             dto.setHasHistory(false);
             dto.setEmployeesAssigned(Collections.emptyList());
             dto.setEmployeeIdsAssigned(Collections.emptyList());
-            setWorkdayFlagForSingleActivity(dto,activityEntity,user.getId());
+            setWorkdayFlagForSingleActivity(dto, activityEntity, user.getId());
             return dto;
         }
 
-        ActivityAssignmentLogEntity logEntity = optionalLogEntity.get();
+        // 🟡 Unikalne przypisania – po employeeId, bierzemy pierwszy z najnowszych (bo logs są posortowane desc)
+        Map<Integer, UserEntity> uniqueLatestEmployees = logs.stream()
+                .map(ActivityAssignmentLogEntity::getEmployee)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toMap(
+                        UserEntity::getId,
+                        emp -> emp,
+                        (existing, duplicate) -> existing // pierwszy z listy zostaje
+                ));
 
-        List<ActivityEmployeeEntity> restoredAssignments = logEntity.getEmployees().stream()
+        List<ActivityEmployeeEntity> restoredAssignments = uniqueLatestEmployees.values().stream()
                 .map(employee -> {
                     ActivityEmployeeEntity assignment = new ActivityEmployeeEntity();
                     assignment.setActivity(activityEntity);
@@ -212,14 +235,17 @@ public class ActivityService {
         activityEmployeeRepository.saveAll(restoredAssignments);
 
         dto.setHasHistory(true);
-        dto.setEmployeesAssigned(logEntity.getEmployees().stream()
-                .map(UserEntity::getFullName)
-                .toList());
-        dto.setEmployeeIdsAssigned(logEntity.getEmployees().stream()
-                .map(UserEntity::getId)
-                .toList());
+        dto.setEmployeesAssigned(
+                restoredAssignments.stream()
+                        .map(a -> a.getEmployee().getFullName())
+                        .toList()
+        );
+        dto.setEmployeeIdsAssigned(
+                restoredAssignments.stream()
+                        .map(a -> a.getEmployee().getId())
+                        .toList()
+        );
 
-        // Używamy username (userId), tak jak w markActivityAsOwn
         setWorkdayFlagForSingleActivity(dto, activityEntity, user.getId());
 
         return dto;

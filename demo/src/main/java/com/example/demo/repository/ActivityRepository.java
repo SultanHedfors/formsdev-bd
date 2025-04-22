@@ -14,6 +14,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Repository
 public interface ActivityRepository extends JpaRepository<ActivityEntity, Integer> {
@@ -34,6 +35,31 @@ LEFT JOIN FETCH a.room r
 WHERE a.activityDate BETWEEN :start AND :end
 """)
     List<ActivityEntity> findActivitiesInDateRange(@Param("start") Timestamp start, @Param("end") Timestamp end);
+
+
+
+    @Query("""
+    SELECT a FROM ActivityEntity a
+    WHERE a.activityDate BETWEEN :startOfDay AND :endOfDay
+      AND a.activityTime BETWEEN :startTime AND :endTime
+      AND a.procedure IS NOT NULL
+""")
+    List<ActivityEntity> findActivitiesInFullRange(
+            @Param("startOfDay") Timestamp startOfDay,
+            @Param("endOfDay") Timestamp endOfDay,
+            @Param("startTime") Timestamp startTime,
+            @Param("endTime") Timestamp endTime
+    );
+    @Query("""
+SELECT a FROM ActivityEntity a
+WHERE a.activityDate BETWEEN :start AND :end
+AND a.procedure IS NOT NULL
+""")
+    List<ActivityEntity> findActivitiesInDateRangeWithProcedure(
+            @Param("start") Timestamp start,
+            @Param("end") Timestamp end
+    );
+    // Zwraca ID aktywności, które mają przypisanych pracowników z flagą user_modified = true
 
 
 
