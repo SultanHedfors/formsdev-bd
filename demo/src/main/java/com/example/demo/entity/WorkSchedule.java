@@ -1,5 +1,6 @@
 package com.example.demo.entity;
 
+import com.example.demo.util.BooleanToSmallIntConverter;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -7,6 +8,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @Entity
@@ -34,7 +37,7 @@ public class WorkSchedule {
     @JoinColumn(name = "substitute_employee_id")
     private UserEntity substituteEmployee; // Reference to Substitute Employee
 
-    @Column(length = 50)
+    @Column(length = 250)
     private String roomSymbol;
 
     @Column(nullable = false, length = 3)
@@ -48,6 +51,11 @@ public class WorkSchedule {
 
     @Column
     private Integer workDurationMinutes;
+
+    @Convert(converter = BooleanToSmallIntConverter.class)
+    @Column(name = "processed")
+    private Boolean processed;
+
 
     @ManyToOne
     @JoinColumn(name = "activity_id")
@@ -70,4 +78,5 @@ public class WorkSchedule {
     public java.time.LocalTime getWorkEndTimeAsLocalTime() {
         return workEndTime != null ? java.time.LocalTime.parse(workEndTime, TIME_FORMATTER) : null;
     }
+
 }

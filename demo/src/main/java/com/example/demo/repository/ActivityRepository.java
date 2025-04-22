@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.sql.Timestamp;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -18,25 +20,24 @@ public interface ActivityRepository extends JpaRepository<ActivityEntity, Intege
 
     Page<ActivityEntity> findByActivityDateBetween(LocalDateTime start, LocalDateTime end, Pageable pageable);
 
+    @Query(value = """
+    SELECT a FROM ActivityEntity a
+    JOIN FETCH a.procedure
+    WHERE CAST(a.activityDate AS date) = :date
+    """)
+    List<ActivityEntity> findByActivityDateWithProcedure(@Param("date") java.sql.Date date);
 
-    @Query("SELECT a FROM ActivityEntity a WHERE a.employee IS NULL " +
-            "AND EXTRACT(YEAR FROM a.activityDate) = :year " +
-            "AND EXTRACT(MONTH FROM a.activityDate) = :month " +
-            "AND EXTRACT(DAY FROM a.activityDate) = :day " +
-            "AND EXTRACT(HOUR FROM a.activityTime) = :hour " +
-            "AND EXTRACT(MINUTE FROM a.activityTime) = :minute " +
-            "AND EXTRACT(SECOND FROM a.activityTime) = :second " +
-            "AND NOT EXISTS (" +
-            "   SELECT ws FROM WorkSchedule ws WHERE ws.activity = a" +
-            ") " +
-            "ORDER BY a.activityDate ASC")
-    Optional<ActivityEntity> findFirstActivityWithoutScheduleByDateTime(
-            @Param("year") int year,
-            @Param("month") int month,
-            @Param("day") int day,
-            @Param("hour") int hour,
-            @Param("minute") int minute,
-            @Param("second") int second);
+    @Query("""
+SELECT a FROM ActivityEntity a
+LEFT JOIN FETCH a.procedure p
+LEFT JOIN FETCH a.room r
+WHERE a.activityDate BETWEEN :start AND :end
+""")
+    List<ActivityEntity> findActivitiesInDateRange(@Param("start") Timestamp start, @Param("end") Timestamp end);
+
+
+
+
 
 
 

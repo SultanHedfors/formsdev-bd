@@ -31,9 +31,10 @@ public class ActivityService {
     private final ActivityEmployeeRepository activityEmployeeRepository;
 
     @Transactional
-    public Page<ActivityDto> findAll(int page, int size, String username, LocalDate startDate, LocalDate endDate) {
+    public Page<ActivityDto> findAll(int page, int size, String username, LocalDate startDate, LocalDate endDate, String sortDirection) {
         UserEntity user = getUserByEmployeeCode(username);
-        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "activityDate", "activityTime"));
+        Sort.Direction direction = sortDirection.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
+        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, "activityDate", "activityTime"));
 
         Page<ActivityEntity> activityPage = fetchActivityEntities(startDate, endDate, pageable);
         Page<ActivityDto> dtoPage = activityPage.map(activityMapper::activityEntityToDto);

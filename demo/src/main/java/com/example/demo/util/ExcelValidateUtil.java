@@ -26,7 +26,6 @@ public class ExcelValidateUtil {
      * @param validationErrors List to store validation errors
      */
     protected static void validateFirstColumnEntries(Sheet sheet, List<String> employeesCodes, List<String> roomNames, List<String> validationErrors) {
-//        log.info("validation start");
         DataFormatter dataFormatter = new DataFormatter();
         boolean headerFound = false;
 
@@ -42,9 +41,8 @@ public class ExcelValidateUtil {
 
             if (!headerFound) continue;
 
-            // Check if the value is valid
-//            log.info("cellValue {} is a room name: {}",cellValue,roomNames.contains(cellValue.toUpperCase()));
-            if (!cellValue.isBlank() && !employeesCodes.contains(cellValue.toUpperCase()) &&
+            if (!cellValue.isBlank() &&
+                    !employeesCodes.contains(cellValue.toUpperCase()) &&
                     !cellValue.equalsIgnoreCase("OK") &&
                     !roomNames.contains(cellValue.toUpperCase())) {
                 String errorMsg = String.format("❌ Invalid entry in first column at row %d: '%s' is not an employee code or a room name.",
@@ -52,6 +50,11 @@ public class ExcelValidateUtil {
                 log.error(errorMsg);
                 validationErrors.add(errorMsg);
             }
+        }
+
+        // ❗ Rzuć wyjątek, jeśli nagłówek nie został znaleziony
+        if (!headerFound) {
+            throw new IllegalStateException("❌ Header 'Kod pracownika' not found in the first column.");
         }
     }
 

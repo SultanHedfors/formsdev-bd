@@ -283,5 +283,135 @@
         </createIndex>
 
     </changeSet>
+    <changeSet id="create-zmiany-zaj-structure" author="twojeImie">
+        <sql>
+            EXECUTE BLOCK AS
+            BEGIN
+          IF (NOT EXISTS (
+            SELECT 1 FROM RDB$GENERATORS WHERE RDB$GENERATOR_NAME = 'GEN_ZMIANY_ZAJ_ID'
+          )) THEN
+            EXECUTE STATEMENT 'CREATE GENERATOR GEN_ZMIANY_ZAJ_ID';
+            END
+        </sql>
+
+        <createTable tableName="ZMIANY_ZAJ">
+            <column name="ZMIANY_ZAB_ID" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="DATA_CZAS" type="TIMESTAMP"/>
+            <column name="ZMIANY_TABELA" type="VARCHAR(40)"/>
+            <column name="ZMIANY_TYP" type="CHAR(30)"/>
+            <column name="ZMIENIONO_ID" type="INTEGER"/>
+            <column name="ZMIANY_STATUS" type="INTEGER"/>
+            <column name="ZMIANY_TYP_ID" type="INTEGER"/>
+            <column name="ATTACHMENT" type="VARCHAR(100)"/>
+        </createTable>
+
+        <sql>
+            CREATE OR ALTER TRIGGER ZMIANY_ZAJ_BI FOR ZMIANY_ZAJ
+        ACTIVE BEFORE INSERT POSITION 0
+        AS
+            BEGIN
+          IF (NEW.ZMIANY_ZAB_ID IS NULL) THEN
+            NEW.ZMIANY_ZAB_ID = GEN_ID(GEN_ZMIANY_ZAJ_ID, 1);
+            END
+        </sql>
+
+        <sql>
+            CREATE OR ALTER TRIGGER ZAJ_DELETE FOR ZAJECIE
+        ACTIVE AFTER DELETE POSITION 2
+        AS
+            BEGIN
+            INSERT INTO ZMIANY_ZAJ (
+                DATA_CZAS, ZMIANY_TABELA, ZMIANY_TYP, ZMIENIONO_ID,
+                ZMIANY_STATUS, ZMIANY_TYP_ID, ATTACHMENT
+            )
+            VALUES (
+                       CURRENT_TIMESTAMP,
+                       'osoba', 'DELETE', OLD.ZAJECIE_ID, 1, 0,
+                       (SELECT MON$REMOTE_ADDRESS || ':' || MON$REMOTE_PROCESS
+                        FROM MON$ATTACHMENTS WHERE MON$ATTACHMENT_ID = CURRENT_CONNECTION)
+                   );
+            END
+        </sql>
+
+        <sql>
+            CREATE OR ALTER TRIGGER ZAJ_INSERT FOR ZAJECIE
+        ACTIVE AFTER INSERT POSITION 2
+        AS
+            BEGIN
+            INSERT INTO ZMIANY_ZAJ (
+                DATA_CZAS, ZMIANY_TABELA, ZMIANY_TYP, ZMIENIONO_ID,
+                ZMIANY_STATUS, ZMIANY_TYP_ID, ATTACHMENT
+            )
+            VALUES (
+                       CURRENT_TIMESTAMP,
+                       'osoba', 'INSERT', NEW.ZAJECIE_ID, 1, 2,
+                       (SELECT MON$REMOTE_ADDRESS || ':' || MON$REMOTE_PROCESS
+                        FROM MON$ATTACHMENTS WHERE MON$ATTACHMENT_ID = CURRENT_CONNECTION)
+                   );
+            END
+        </sql>
+
+        <sql>
+            CREATE OR ALTER TRIGGER ZAJ_UPDATE FOR ZAJECIE
+        ACTIVE AFTER UPDATE POSITION 2
+                                                     AS
+            BEGIN
+            INSERT INTO ZMIANY_ZAJ (
+                DATA_CZAS, ZMIANY_TABELA, ZMIANY_TYP, ZMIENIONO_ID,
+                ZMIANY_STATUS, ZMIANY_TYP_ID, ATTACHMENT
+            )
+            VALUES (
+                       CURRENT_TIMESTAMP,
+                       'osoba', 'UPDATE', NEW.ZAJECIE_ID, 1, 1,
+                       (SELECT MON$REMOTE_ADDRESS || ':' || MON$REMOTE_PROCESS
+                        FROM MON$ATTACHMENTS WHERE MON$ATTACHMENT_ID = CURRENT_CONNECTION)
+                   );
+            END
+        </sql>
+    </changeSet>
+    <changeSet id="adjust-room-symbol-length" author="twoje-imie">
+        <modifyDataType
+                tableName="work_schedule"
+                columnName="room_symbol"
+                newDataType="VARCHAR(250)"/>
+    </changeSet>
+
+
+    <changeSet id="add-processed-column-to-work_schedule" author="ai">
+        <addColumn tableName="work_schedule">
+            <column name="processed" type="BOOLEAN" defaultValueBoolean="false">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="add-cascade-deletes-to-activity-employee" author="yourname">
+
+        <!-- 1. Drop and recreate FK from ACTIVITY_EMPLOYEE.ACTIVITY_ID to ZAJECIE.ZAJECIE_ID with ON DELETE CASCADE -->
+        <dropForeignKeyConstraint
+                baseTableName="ACTIVITY_EMPLOYEE"
+                constraintName="FK_ACTIVITY_EMPLOYEE_ACTIVITY" />
+
+        <addForeignKeyConstraint
+                baseTableName="ACTIVITY_EMPLOYEE"
+                baseColumnNames="ACTIVITY_ID"
+                constraintName="FK_ACTIVITY_EMPLOYEE_ACTIVITY"
+                referencedTableName="ZAJECIE"
+                referencedColumnNames="ZAJECIE_ID"
+                onDelete="CASCADE"/>
+
+        <!-- 2. Add new FK from ACTIVITY_EMPLOYEE.EMPLOYEE_ID to USER_ENTITY.EMPLOYEE_ID with ON DELETE CASCADE -->
+        <addForeignKeyConstraint
+                baseTableName="ACTIVITY_EMPLOYEE"
+                baseColumnNames="EMPLOYEE_ID"
+                constraintName="FK_ACTIVITY_EMPLOYEE_EMPLOYEE"
+                referencedTableName="EMPLOYEE"
+                referencedColumnNames="EMPLOYEE_ID"
+                onDelete="CASCADE"/>
+
+    </changeSet>
 
 </databaseChangeLog>
+

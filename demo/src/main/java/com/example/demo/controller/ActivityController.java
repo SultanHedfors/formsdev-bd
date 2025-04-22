@@ -16,6 +16,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.List;
 
 @RestController
@@ -27,19 +28,32 @@ public class ActivityController {
     private final ActivityService activityService;
 
     @GetMapping
-    public ResponseEntity<Page<ActivityDto>> getAllActivities(@RequestParam(defaultValue = "0") int page,
-                                                              @RequestParam(defaultValue = "20") int size,
-                                                              @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
-                                                              @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+    public ResponseEntity<Page<ActivityDto>> getAllActivities(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
+            @RequestParam(required = false) String month,
+            @RequestParam(defaultValue = "asc") String sortDirection) {
+
+        if (month != null) {
+            YearMonth yearMonth = YearMonth.parse(month);
+            startDate = yearMonth.atDay(1);
+            endDate = yearMonth.atEndOfMonth();
+        }
+
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Object principal = authentication.getPrincipal();
 
         if (!(principal instanceof UserDetails userDetails)) {
             throw new CurrentUserNotFoundException();
         }
+
         String username = userDetails.getUsername();
-        return ResponseEntity.ok(activityService.findAll(page, size, username, startDate, endDate));
+        return ResponseEntity.ok(activityService.findAll(page, size, username, startDate, endDate, sortDirection));
     }
+
+
 
 
 //    @GetMapping("/{id}")

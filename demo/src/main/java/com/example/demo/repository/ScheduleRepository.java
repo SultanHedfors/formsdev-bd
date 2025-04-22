@@ -19,25 +19,13 @@ public interface ScheduleRepository extends JpaRepository<WorkSchedule, Integer>
     void deleteByYearMonth(String yearMonth);
     boolean existsByEmployee_IdAndYearMonthAndDayOfMonth(Integer employeeId, String yearMonth, Integer dayOfMonth);
 
-    @Query(value = "SELECT * FROM work_schedule ws " +
-            "WHERE (ws.year_month || '-' || " +
-            "CASE WHEN ws.day_of_month < 10 THEN '0' || CAST(ws.day_of_month AS varchar(2)) " +
-            "ELSE CAST(ws.day_of_month AS varchar(2)) END) IN (:dates)",
-            nativeQuery = true)
-    List<WorkSchedule> findByDateIn(@Param("dates") Set<String> dates);
+    @Query("SELECT ws.id FROM WorkSchedule ws WHERE ws.processed IS NULL OR ws.processed = false")
+    List<Integer> findIdsOfUnprocessedSchedules();
 
 
-    @Query(value = "SELECT MIN(ws.YEAR_MONTH || '-' || LPAD(ws.DAY_OF_MONTH, 2, '0')) FROM WORK_SCHEDULE ws", nativeQuery = true)
-    String findEarliestScheduleDate();
 
-    @Query("SELECT ws FROM WorkSchedule ws JOIN FETCH ws.employee WHERE ws.activity = :activity")
-    List<WorkSchedule> findByActivityWithEmployee(@Param("activity") ActivityEntity activity);
 
-//    @Query("SELECT ws FROM WorkSchedule ws " +
-//            "WHERE ws.activity IS NULL " +
-//            "AND (CAST(:startDate AS date) <= CAST(ws. AS date))")
-//    List<WorkSchedule> findSchedulesWithNoActivityAfterDate(@Param("startDate") LocalDate startDate);
 
-    @Query("SELECT ws FROM WorkSchedule ws WHERE ws.activity IS NULL")
-    List<WorkSchedule> findByActivityIsNull();
+
+
 }
