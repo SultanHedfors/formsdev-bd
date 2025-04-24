@@ -151,6 +151,7 @@ public class ScheduledActivityToWSService {
                     ae.setActivity(act);
                     ae.setEmployee(emp);
                     ae.setUserModified(false);
+                    ae.setWorkSchedule(ws);
 
                     toSave.add(ae);
                 }
@@ -187,15 +188,6 @@ public class ScheduledActivityToWSService {
             return null;
         }
     }
-
-    private boolean isWithinRange(Timestamp activityTime, LocalTime start, LocalTime end) {
-        if (activityTime == null) return false;
-        LocalTime activityLocalTime = activityTime.toLocalDateTime().toLocalTime();
-        return (activityLocalTime.equals(start) || activityLocalTime.isAfter(start)) &&
-                (activityLocalTime.equals(end) || activityLocalTime.isBefore(end));
-    }
-
-
 
 
 }

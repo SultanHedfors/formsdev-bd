@@ -26,4 +26,8 @@ public class ActivityEmployeeEntity {
 
     @Column(name = "user_modified", nullable = false)
     private boolean userModified;
+
+    @ManyToOne
+    @JoinColumn(name = "work_schedule_id")
+    private WorkSchedule workSchedule;
 }

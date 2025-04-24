@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class StatisticsService {
 
-    public StatisticsDto getStatistics(String fromDate, String toDate) {
+    public StatisticsDto getStatistics() {
         // TODO: Implement service logic to compute statistics based on the provided dates
         return new StatisticsDto(0);
     }

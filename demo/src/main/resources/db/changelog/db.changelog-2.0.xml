@@ -433,6 +433,64 @@
         </createIndex>
     </changeSet>
 
+    <changeSet id="add-work-schedule-fk-with-index-v2" author="gr1nd">
+        <addColumn tableName="activity_employee">
+            <column name="work_schedule_id" type="INT"/>
+        </addColumn>
+
+        <addForeignKeyConstraint
+                baseTableName="activity_employee"
+                baseColumnNames="work_schedule_id"
+                constraintName="fk_actemp_ws"
+                referencedTableName="work_schedule"
+                referencedColumnNames="id"
+                onDelete="CASCADE"/>
+
+        <createIndex indexName="idx_ws_id" tableName="activity_employee">
+            <column name="work_schedule_id"/>
+        </createIndex>
+    </changeSet>
+<!--    <changeSet id="drop-work-schedule-column" author="gr1nd">-->
+
+<!--        <dropColumn tableName="activity_employee" columnName="work_schedule_id"/>-->
+<!--    </changeSet>-->
+    <changeSet id="trigger-reset-ws-processed-on-activity-employee-delete" author="gr1nd">
+        <sql>
+            CREATE TRIGGER trg_reset_ws_processed_aedel
+                FOR activity_employee
+        ACTIVE AFTER DELETE POSITION 0
+        AS
+            BEGIN
+          IF (OLD.work_schedule_id IS NOT NULL) THEN
+            BEGIN
+            UPDATE work_schedule
+            SET processed = 0
+            WHERE id = OLD.work_schedule_id;
+            END
+            END
+        </sql>
+    </changeSet>
+
+    <changeSet id="trigger-cleanup-activity-employee-on-ws-delete" author="gr1nd">
+        <sql>
+            CREATE TRIGGER trg_cleanup_ae_before_ws_delete
+                FOR work_schedule
+        ACTIVE BEFORE DELETE POSITION 0
+        AS
+            BEGIN
+            DELETE FROM activity_employee
+            WHERE work_schedule_id = OLD.id
+              AND user_modified = 0;
+
+            UPDATE activity_employee
+            SET work_schedule_id = NULL
+            WHERE work_schedule_id = OLD.id
+              AND user_modified = 1;
+            END
+        </sql>
+    </changeSet>
+
+
 
 </databaseChangeLog>
 

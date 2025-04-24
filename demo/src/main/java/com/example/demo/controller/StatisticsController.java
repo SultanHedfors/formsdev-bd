@@ -20,9 +20,8 @@ public class StatisticsController {
     private final StatisticsService statisticsService;
 
     @GetMapping
-    public ResponseEntity<StatisticsDto> getStatistics(@RequestParam(required = false) String fromDate,
-                                                       @RequestParam(required = false) String toDate) {
-        StatisticsDto statistics = statisticsService.getStatistics(fromDate, toDate);
+    public ResponseEntity<StatisticsDto> getStatistics() {
+        StatisticsDto statistics = statisticsService.getStatistics();
         return ResponseEntity.ok(statistics);
     }
 }
