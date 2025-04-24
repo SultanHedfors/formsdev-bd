@@ -490,6 +490,121 @@
         </sql>
     </changeSet>
 
+    <changeSet id="create-emp-daily" author="gr1nd">
+        <createTable tableName="emp_day_stats">
+            <column name="emp_id" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="stat_day" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="score" type="DOUBLE PRECISION">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addPrimaryKey tableName="emp_day_stats"
+                       columnNames="emp_id, stat_day"
+                       constraintName="pk_emp_day"/>
+
+        <addForeignKeyConstraint baseTableName="emp_day_stats"
+                                 baseColumnNames="emp_id"
+                                 referencedTableName="employee"
+                                 referencedColumnNames="employee_id"
+                                 constraintName="fk_day_emp"/>
+    </changeSet>
+
+    <changeSet id="create-emp-weekly" author="gr1nd">
+        <createTable tableName="emp_week_stats">
+            <column name="emp_id" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="week_start" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="score" type="DOUBLE PRECISION">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addPrimaryKey tableName="emp_week_stats"
+                       columnNames="emp_id, week_start"
+                       constraintName="pk_emp_week"/>
+
+        <addForeignKeyConstraint baseTableName="emp_week_stats"
+                                 baseColumnNames="emp_id"
+                                 referencedTableName="employee"
+                                 referencedColumnNames="employee_id"
+                                 constraintName="fk_week_emp"/>
+    </changeSet>
+
+    <changeSet id="create-emp-monthly-v2" author="gr1nd">
+        <createTable tableName="emp_month_stats">
+            <column name="emp_id" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="month_val" type="VARCHAR(7)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="score" type="DOUBLE PRECISION">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addPrimaryKey tableName="emp_month_stats"
+                       columnNames="emp_id, month_val"
+                       constraintName="pk_emp_month"/>
+
+        <addForeignKeyConstraint baseTableName="emp_month_stats"
+                                 baseColumnNames="emp_id"
+                                 referencedTableName="employee"
+                                 referencedColumnNames="employee_id"
+                                 constraintName="fk_month_emp"/>
+    </changeSet>
+
+
+    <changeSet id="create-emp-yearly-v2" author="gr1nd">
+        <createTable tableName="emp_year_stats">
+            <column name="emp_id" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="year_val" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="score" type="DOUBLE PRECISION">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addPrimaryKey tableName="emp_year_stats"
+                       columnNames="emp_id, year_val"
+                       constraintName="pk_emp_year"/>
+
+        <addForeignKeyConstraint baseTableName="emp_year_stats"
+                                 baseColumnNames="emp_id"
+                                 referencedTableName="employee"
+                                 referencedColumnNames="employee_id"
+                                 constraintName="fk_year_emp"/>
+    </changeSet>
+
+
+
+
+
+
+
 
 
 </databaseChangeLog>
