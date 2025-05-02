@@ -119,7 +119,7 @@ public class ScheduledActivityToWSService {
                     if (act.getActivityTime() == null) continue;
 
                     LocalTime time = act.getActivityTime().toLocalDateTime().toLocalTime();
-                    if (time.isBefore(startTimeRaw) || time.isAfter(endTimeRaw)) continue;
+                    if (time.isBefore(startTimeRaw) || time.isAfter(endTimeRaw) ) continue;
 
                     if (!ws.getWorkMode().equals(act.getProcedure().getWorkMode())) continue;
 

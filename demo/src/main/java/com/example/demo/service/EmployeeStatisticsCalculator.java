@@ -3,130 +3,139 @@ package com.example.demo.service;
 import com.example.demo.entity.ActivityEmployeeEntity;
 import com.example.demo.entity.ProcedureEntity;
 import com.example.demo.entity.WorkSchedule;
-import com.example.demo.entity.stats.EmployeeDailyStatsEntity;
+import com.example.demo.entity.stats.*;
 import com.example.demo.repository.ActivityEmployeeRepository;
-import com.example.demo.repository.stats.DailyEmployeeStatisticRepository;
+import com.example.demo.repository.stats.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.*;
 import java.util.*;
+import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class EmployeeStatisticsCalculator {
-
-    private final ActivityEmployeeRepository activityEmployeeRepository;
-    private final DailyEmployeeStatisticRepository employeeDailyStatsRepository;
+    private final ActivityEmployeeRepository activityRepo;
+    private final DailyEmployeeStatisticRepository dailyRepo;
+    private final WeeklyEmployeeStatisticRepository weeklyRepo;
+    private final MonthlyEmployeeStatisticRepository monthlyRepo;
+    private final YearlyEmployeeStatisticRepository yearlyRepo;
 
     public Map<Integer, Double> calculateDailyScores(LocalDate date) {
-        LocalDateTime startOfDay = date.atStartOfDay();
-        LocalDateTime endOfDay = date.plusDays(1).atStartOfDay();
+        return calculateAndSave(
+                date.atStartOfDay(),
+                date.plusDays(1).atStartOfDay(),
+                date,
+                (empId, score) -> new EmployeeDailyStatsEntity(empId, date, score, LocalDateTime.now()),
+                dailyRepo::save
+        );
+    }
 
-        log.info("Calculating scores for date: {}", date);
+    public void calculateWeeklyScores(LocalDate anyDate) {
+        LocalDate monday = anyDate.with(DayOfWeek.MONDAY);
+        LocalDateTime start = monday.atStartOfDay();
+        LocalDateTime end = start.plusWeeks(1);
+        calculateAndSave(
+                start, end, monday,
+                (empId, score) -> new EmployeeWeeklyStatsEntity(empId, monday, score, LocalDateTime.now()),
+                weeklyRepo::save
+        );
+    }
 
-        List<ActivityEmployeeEntity> allEntriesRaw = activityEmployeeRepository.findWithGraphByActivityDate(startOfDay, endOfDay);
+    public void calculateMonthlyScores(YearMonth month) {
+        LocalDateTime start = month.atDay(1).atStartOfDay();
+        LocalDateTime end = month.plusMonths(1).atDay(1).atStartOfDay();
+        calculateAndSave(
+                start, end, month.toString(),
+                (empId, score) -> new EmployeeMonthlyStatsEntity(empId, month.toString(), score, LocalDateTime.now()),
+                monthlyRepo::save
+        );
+    }
 
-        List<ActivityEmployeeEntity> allEntries = allEntriesRaw.stream()
+    public void calculateYearlyScores(Year year) {
+        LocalDateTime start = year.atDay(1).atStartOfDay();
+        LocalDateTime end = start.plusYears(1);
+        calculateAndSave(
+                start, end, year.getValue(),
+                (empId, score) -> new EmployeeYearlyStatsEntity(empId, year.getValue(), score, LocalDateTime.now()),
+                yearlyRepo::save
+        );
+    }
+
+    /**
+     * Wspólna logika: zbiera wszystkie wpisy, filtruje, grupuje, liczy score i zapisuje.
+     */
+    private <T> Map<Integer, Double> calculateAndSave(
+            LocalDateTime start,
+            LocalDateTime end,
+            Object periodKey,
+            BiFunction<Integer, Double, T> entityFactory,
+            java.util.function.Consumer<T> saver
+    ) {
+        log.info("Calculating stats for period starting {} to {} (key={})", start, end, periodKey);
+
+        // pobierz i odfiltruj
+        List<ActivityEmployeeEntity> raw = activityRepo.findWithGraphByActivityDate(start, end);
+        List<ActivityEmployeeEntity> entries = raw.stream()
                 .filter(ae -> {
                     WorkSchedule ws = ae.getWorkSchedule();
-                    return ws == null || !"UW".equalsIgnoreCase(ws.getWorkMode()) && !"ZL".equalsIgnoreCase(ws.getWorkMode()) || ws.getSubstituteEmployee() != null;
+                    return ws == null || ws.getSubstituteEmployee() != null
+                            || !("UW".equalsIgnoreCase(ws.getWorkMode()) || "ZL".equalsIgnoreCase(ws.getWorkMode()));
                 })
-                .toList();
+                .collect(Collectors.toList());
 
-        log.info("Found {} relevant activity_employee entries", allEntries.size());
-
-        Map<Integer, List<ActivityEmployeeEntity>> groupedByEmployee = allEntries.stream()
+        // grupuj po pracowniku
+        Map<Integer, List<ActivityEmployeeEntity>> byEmp = entries.stream()
                 .collect(Collectors.groupingBy(ae -> ae.getEmployee().getId()));
 
+        // oblicz i zapisz
         Map<Integer, Double> result = new HashMap<>();
-
-        for (Map.Entry<Integer, List<ActivityEmployeeEntity>> entry : groupedByEmployee.entrySet()) {
-            Integer employeeId = entry.getKey();
-            List<ActivityEmployeeEntity> entries = entry.getValue();
-
-            double numerator = 0;
-            double denominator = 0;
-
-            log.info("Processing employeeId: {}", employeeId);
-
-            Set<Integer> countedWorkScheduleIds = new HashSet<>();
-
-            for (ActivityEmployeeEntity ae : entries) {
-                ProcedureEntity procedure = ae.getActivity().getProcedure();
-                String uwagi = procedure.getWorkMode();
-                Integer punkty = procedure.getProcedureActualTime();
-                int totalAssignments = (int) allEntries.stream()
-                        .filter(e -> e.getActivity().getActivityId().equals(ae.getActivity().getActivityId()))
-                        .count();
-
-                WorkSchedule ws = ae.getWorkSchedule();
-                Integer duration = ws != null ? ws.getWorkDurationMinutes() : null;
-                Integer wsId = ws != null ? ws.getId() : null;
-
-                boolean isDebugTarget = wsId != null && (Objects.equals(wsId, 32599) || Objects.equals(wsId, 32110));
-
-                if (isDebugTarget) {
-                    log.info("\n[DEBUG TARGET] AE id: {}, activityId: {}, ws.id: {}, uwagi: {}, punkty: {}, totalAssignments: {}, duration: {}",
-                            ae.getId(),
-                            ae.getActivity().getActivityId(),
-                            wsId,
-                            uwagi,
-                            punkty,
-                            totalAssignments,
-                            duration
-                    );
-                }
-
-                if ("F".equalsIgnoreCase(uwagi) || "B".equalsIgnoreCase(uwagi)) {
-                    if (punkty != null && totalAssignments > 0) {
-                        double value = (double) punkty / totalAssignments;
-                        numerator += value;
-                        if (isDebugTarget) {
-                            log.info("[DEBUG TARGET] Add to numerator (F/B): {} / {} = {}", punkty, totalAssignments, value);
-                        }
-                    }
-                } else if ("S".equalsIgnoreCase(uwagi)) {
-                    if (punkty != null) {
-                        numerator += punkty;
-                        if (isDebugTarget) {
-                            log.info("[DEBUG TARGET] Add to numerator (S): {}", punkty);
-                        }
-                    }
-                } else if ("U".equalsIgnoreCase(uwagi)) {
-                    numerator += 1.0;
-                    if (isDebugTarget) {
-                        log.info("[DEBUG TARGET] Add to numerator (U): 1.0");
-                    }
-                }
-
-                if (duration != null && wsId != null && !countedWorkScheduleIds.contains(wsId)) {
-                    denominator += duration;
-                    countedWorkScheduleIds.add(wsId);
-                    if (isDebugTarget) {
-                        log.info("[DEBUG TARGET] Add to denominator: {} (ws.id: {})", duration, wsId);
-                    }
-                }
-            }
-
-            double score = denominator > 0 ? numerator / denominator : 0.0;
-            result.put(employeeId, score);
-            log.info("Calculated score for employeeId {}: {} / {} = {}", employeeId, numerator, denominator, score);
-
-            EmployeeDailyStatsEntity stats = new EmployeeDailyStatsEntity(
-                    employeeId,
-                    date,
-                    score,
-                    LocalDateTime.now()
-            );
-            employeeDailyStatsRepository.save(stats);
-            log.info("Saved EmployeeDailyStatsEntity: {}", stats);
-        }
+        byEmp.forEach((empId, list) -> {
+            double score = computeScore(list, entries);
+            log.info("Period key={} empId={} → score {}", periodKey, empId, score);
+            result.put(empId, score);
+            saver.accept(entityFactory.apply(empId, score));
+        });
 
         return result;
+    }
+
+    /**
+     * Numerator/denominator według zasad F/B, S, U oraz jednorazowe zliczanie work_schedule.
+     */
+    private double computeScore(List<ActivityEmployeeEntity> mine, List<ActivityEmployeeEntity> all) {
+        double num = 0, den = 0;
+        Set<Integer> seenWS = new HashSet<>();
+
+        for (ActivityEmployeeEntity ae : mine) {
+            ProcedureEntity proc = ae.getActivity().getProcedure();
+            String uwagi = proc.getWorkMode();
+            Integer pts = proc.getProcedureActualTime();
+            long total = all.stream()
+                    .filter(x -> x.getActivity().getActivityId().equals(ae.getActivity().getActivityId()))
+                    .count();
+
+            // numerator
+            if ("F".equalsIgnoreCase(uwagi) || "B".equalsIgnoreCase(uwagi)) {
+                if (pts != null && total > 0) num += (double) pts / total;
+            } else if ("S".equalsIgnoreCase(uwagi)) {
+                if (pts != null) num += pts;
+            } else if ("U".equalsIgnoreCase(uwagi)) {
+                num += 1;
+            }
+
+            // denominator — raz na każdy WS
+            WorkSchedule ws = ae.getWorkSchedule();
+            if (ws != null && ws.getId() != null && seenWS.add(ws.getId())) {
+                Integer dur = ws.getWorkDurationMinutes();
+                if (dur != null) den += dur;
+            }
+        }
+
+        return den>0 ? num/den : 0.0;
     }
 }

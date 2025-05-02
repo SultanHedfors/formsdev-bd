@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDate;
+import java.time.*;
 import java.util.Map;
 
 @Component
@@ -15,35 +15,58 @@ public class EmployeeStatsScheduler {
 
     private final EmployeeStatisticsCalculator calculator;
 
-    @Scheduled(fixedDelay = 60000) // co 10 sekund dla testów
+    /**
+     * Co 5 minut: aktualizacja statystyk dziennych dla dzisiejszej daty.
+     * Save() z JPA zrobi update istniejącego wiersza jeśli taki PK już jest,
+     * inaczej wstawi nowy.
+     */
+    @Scheduled(fixedDelay = 1000)
     public void updateDailyStats() {
-        LocalDate date = LocalDate.of(2025, 1, 1);
+//        #TODO dla testow wartosc ze stycznia bo taki jest wczytany grafik
+        LocalDate today = returnDate();
 
-        log.info("[SCHEDULER] Start daily stats calculation for date: {}", date);
+        log.info("[SCHEDULER] Start daily stats calculation for date: {}", today);
 
-        Map<Integer, Double> stats = calculator.calculateDailyScores(date);
+        Map<Integer, Double> stats = calculator.calculateDailyScores(today);
 
-        for (Map.Entry<Integer, Double> entry : stats.entrySet()) {
-            Integer employeeId = entry.getKey();
-            Double score = entry.getValue();
-            log.info("[SCHEDULER] Daily score for employee {}: {}", employeeId, score);
-        }
+        stats.forEach((empId, score) ->
+                log.info("[SCHEDULER] Daily score for employee {}: {}", empId, score)
+        );
 
-        log.info("[SCHEDULER] Finished daily stats calculation for date: {}", date);
+        log.info("[SCHEDULER] Finished daily stats calculation for date: {}", today);
     }
 
-//    @Scheduled(cron = "0 0 * * * *") // co godzinę
-//    public void updateWeeklyStats() {
-//        log.info("Starting weekly stats calculation");
-////        calculator.calculateWeeklyStats();
-//        log.info("Finished weekly stats calculation");
-//    }
-//
-//    @Scheduled(cron = "0 0 3 * * *") // codziennie o 3:00
-//    public void updateMonthlyAndYearlyStats() {
-//        log.info("Starting monthly and yearly stats calculation");
-////        calculator.calculateMonthlyStats();
-////        calculator.calculateYearlyStats();
-//        log.info("Finished monthly and yearly stats calculation");
-//    }
+    /**
+     * Co godzinę: aktualizacja statystyk tygodniowych.
+     * Jako okres wybieramy tydzień zaczynający się od poniedziałku bieżącego tygodnia.
+     */
+//    @Scheduled(cron = "0 0 * * * *")
+    @Scheduled(fixedDelay = 1000)
+    public void updateWeeklyStats() {
+        LocalDate today = returnDate();
+        log.info("[SCHEDULER] Start weekly stats calculation for week of: {}", today);
+        calculator.calculateWeeklyScores(today);
+        log.info("[SCHEDULER] Finished weekly stats calculation for week of: {}", today);
+    }
+
+    /**
+     * Codziennie o 3:00: aktualizacja statystyk miesięcznych i rocznych.
+     */
+//    @Scheduled(cron = "0 0 3 * * *")
+//    @Scheduled(fixedDelay = 5 * 60 * 1000)
+    public void updateMonthlyAndYearlyStats() {
+        YearMonth thisMonth = YearMonth.of(2025,1);
+        log.info("[SCHEDULER] Start monthly stats calculation for month: {}", thisMonth);
+        calculator.calculateMonthlyScores(thisMonth);
+        log.info("[SCHEDULER] Finished monthly stats calculation for month: {}", thisMonth);
+
+        Year thisYear = Year.now();
+        log.info("[SCHEDULER] Start yearly stats calculation for year: {}", thisYear);
+        calculator.calculateYearlyScores(thisYear);
+        log.info("[SCHEDULER] Finished yearly stats calculation for year: {}", thisYear);
+    }
+
+    private LocalDate returnDate(){
+        return LocalDate.of(2025,1,7);
+    }
 }
