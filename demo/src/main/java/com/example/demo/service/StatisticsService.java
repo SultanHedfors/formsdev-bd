@@ -1,23 +1,22 @@
 package com.example.demo.service;
 
 
-import com.example.demo.dto.bsn_logic_dto.*;
+import com.example.demo.dto.bsn_logic_dto.StatisticsDto;
 import com.example.demo.dto.stats_dtos.*;
 import com.example.demo.entity.UserEntity;
-import com.example.demo.entity.stats.*;
 import com.example.demo.exception.CurrentUserNotFoundException;
 import com.example.demo.mapper.EmployeeStatisticsMapper;
 import com.example.demo.repository.UserRepository;
-import com.example.demo.repository.stats.*;
+import com.example.demo.repository.stats.DailyEmployeeStatisticRepository;
+import com.example.demo.repository.stats.MonthlyEmployeeStatisticRepository;
+import com.example.demo.repository.stats.WeeklyEmployeeStatisticRepository;
+import com.example.demo.repository.stats.YearlyEmployeeStatisticRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
-import java.time.Year;
-import java.time.YearMonth;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -50,8 +49,8 @@ public class StatisticsService {
         List<EmployeeStatsDto> stats = all.stream()
                 .map(u -> {
                     Integer empId = u.getId();
-                    String  code  = u.getEmployeeCode();
-                    boolean isCurrent =code.equals(username);
+                    String  code  = u.getFullName();
+                    boolean isCurrent =u.getEmployeeCode().equals(username);
 
                     // 4) pobranie zestawów
                     List<DailyStatsDto>   daily   = mapper.toDailyDtoList(

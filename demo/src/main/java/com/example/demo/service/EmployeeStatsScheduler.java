@@ -2,10 +2,11 @@ package com.example.demo.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import java.time.*;
+import java.time.LocalDate;
+import java.time.Year;
+import java.time.YearMonth;
 import java.util.Map;
 
 @Component
@@ -20,7 +21,7 @@ public class EmployeeStatsScheduler {
      * Save() z JPA zrobi update istniejącego wiersza jeśli taki PK już jest,
      * inaczej wstawi nowy.
      */
-    @Scheduled(fixedDelay = 1000)
+//    @Scheduled(fixedDelay = 1000)
     public void updateDailyStats() {
 //        #TODO dla testow wartosc ze stycznia bo taki jest wczytany grafik
         LocalDate today = returnDate();
@@ -41,7 +42,7 @@ public class EmployeeStatsScheduler {
      * Jako okres wybieramy tydzień zaczynający się od poniedziałku bieżącego tygodnia.
      */
 //    @Scheduled(cron = "0 0 * * * *")
-    @Scheduled(fixedDelay = 1000)
+//    @Scheduled(fixedDelay = 1000)
     public void updateWeeklyStats() {
         LocalDate today = returnDate();
         log.info("[SCHEDULER] Start weekly stats calculation for week of: {}", today);

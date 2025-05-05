@@ -9,6 +9,6 @@ import java.util.Optional;
 
 public interface DailyEmployeeStatisticRepository extends JpaRepository<EmployeeDailyStatsEntity, Integer> {
     Optional<EmployeeDailyStatsEntity> findByEmployeeIdAndStartDay(Integer employeeId, LocalDate startDay);
-
+    List<EmployeeDailyStatsEntity> findAllByStartDayBetween(LocalDate from, LocalDate to);
     List<EmployeeDailyStatsEntity> findTop100ByEmployeeIdOrderByStartDayDesc(Integer employeeId);
 }

@@ -1,0 +1,662 @@
+Processing Report
+=============================================================
+File Processed: grafik do raportu poprawiony 01-2025.xlsx
+
+✅ Processing completed successfully!
+Total schedule entries processed: 651
+
+✅ WorkSchedule summary entries:
+  ➡️ YearMonth: 2025-01, Day: 2, Employee: 197, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 4, Employee: 197, Start: 08:00, End: 19:30, Room: None
+  ➡️ YearMonth: 2025-01, Day: 5, Employee: 197, Start: 08:00, End: 19:30, Room: None
+  ➡️ YearMonth: 2025-01, Day: 7, Employee: 197, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 9, Employee: 197, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 10, Employee: 197, Start: 08:00, End: 18:15, Room: None
+  ➡️ YearMonth: 2025-01, Day: 13, Employee: 197, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 15, Employee: 197, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 18, Employee: 197, Start: 08:00, End: 19:30, Room: None
+  ➡️ YearMonth: 2025-01, Day: 19, Employee: 197, Start: 08:00, End: 19:30, Room: None
+  ➡️ YearMonth: 2025-01, Day: 21, Employee: 197, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 24, Employee: 197, Start: 08:00, End: 19:30, Room: None
+  ➡️ YearMonth: 2025-01, Day: 28, Employee: 197, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 29, Employee: 197, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 31, Employee: 197, Start: 08:00, End: 19:30, Room: None
+  ➡️ YearMonth: 2025-01, Day: 2, Employee: AB, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 4, Employee: AB, Start: 08:00, End: 19:30, Room: None
+  ➡️ YearMonth: 2025-01, Day: 5, Employee: AB, Start: 08:00, End: 19:30, Room: None
+  ➡️ YearMonth: 2025-01, Day: 9, Employee: AB, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 11, Employee: AB, Start: 08:00, End: 19:30, Room: None
+  ➡️ YearMonth: 2025-01, Day: 12, Employee: AB, Start: 08:00, End: 19:30, Room: None
+  ➡️ YearMonth: 2025-01, Day: 14, Employee: AB, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 16, Employee: AB, Start: 08:00, End: 13:20, Room: None
+  ➡️ YearMonth: 2025-01, Day: 17, Employee: AB, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 20, Employee: AB, Start: 08:00, End: 15:35, Room: None
+  ➡️ YearMonth: 2025-01, Day: 21, Employee: AB, Start: 08:00, End: 15:35, Room: None
+  ➡️ YearMonth: 2025-01, Day: 22, Employee: AB, Start: 08:00, End: 15:35, Room: None
+  ➡️ YearMonth: 2025-01, Day: 23, Employee: AB, Start: 08:00, End: 15:35, Room: None
+  ➡️ YearMonth: 2025-01, Day: 24, Employee: AB, Start: 08:00, End: 15:35, Room: None
+  ➡️ YearMonth: 2025-01, Day: 27, Employee: AB, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 28, Employee: AB, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 30, Employee: AB, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 2, Employee: 201, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 3, Employee: 201, Start: 08:00, End: 19:30, Room: None
+  ➡️ YearMonth: 2025-01, Day: 5, Employee: 201, Start: 08:00, End: 19:30, Room: None
+  ➡️ YearMonth: 2025-01, Day: 6, Employee: 201, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 8, Employee: 201, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 10, Employee: 201, Start: 08:00, End: 19:30, Room: None
+  ➡️ YearMonth: 2025-01, Day: 13, Employee: 201, Start: 08:00, End: 17:55, Room: None
+  ➡️ YearMonth: 2025-01, Day: 20, Employee: 201, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 22, Employee: 201, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 24, Employee: 201, Start: 08:00, End: 19:30, Room: None
+  ➡️ YearMonth: 2025-01, Day: 25, Employee: 201, Start: 08:00, End: 19:30, Room: None
+  ➡️ YearMonth: 2025-01, Day: 27, Employee: 201, Start: 08:00, End: 15:35, Room: None
+  ➡️ YearMonth: 2025-01, Day: 28, Employee: 201, Start: 08:00, End: 15:35, Room: None
+  ➡️ YearMonth: 2025-01, Day: 29, Employee: 201, Start: 08:00, End: 15:35, Room: None
+  ➡️ YearMonth: 2025-01, Day: 30, Employee: 201, Start: 08:00, End: 15:35, Room: None
+  ➡️ YearMonth: 2025-01, Day: 31, Employee: 201, Start: 08:00, End: 19:30, Room: None
+  ➡️ YearMonth: 2025-01, Day: 1, Employee: 219, Start: 09:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 3, Employee: 219, Start: 08:00, End: 19:30, Room: None
+  ➡️ YearMonth: 2025-01, Day: 4, Employee: 219, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 7, Employee: 219, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 8, Employee: 219, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 10, Employee: 219, Start: 08:00, End: 19:30, Room: None
+  ➡️ YearMonth: 2025-01, Day: 14, Employee: 219, Start: 08:00, End: 13:45, Room: None
+  ➡️ YearMonth: 2025-01, Day: 16, Employee: 219, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 18, Employee: 219, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 19, Employee: 219, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 21, Employee: 219, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 22, Employee: 219, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 24, Employee: 219, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 25, Employee: 219, Start: 08:00, End: 19:30, Room: None
+  ➡️ YearMonth: 2025-01, Day: 27, Employee: 219, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 29, Employee: 219, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 1, Employee: 221, Start: 09:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 3, Employee: 221, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 5, Employee: 221, Start: 08:00, End: 19:30, Room: None
+  ➡️ YearMonth: 2025-01, Day: 7, Employee: 221, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 9, Employee: 221, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 11, Employee: 221, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 13, Employee: 221, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 17, Employee: 221, Start: 08:00, End: 19:30, Room: None
+  ➡️ YearMonth: 2025-01, Day: 18, Employee: 221, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 19, Employee: 221, Start: 08:00, End: 19:30, Room: None
+  ➡️ YearMonth: 2025-01, Day: 21, Employee: 221, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 24, Employee: 221, Start: 08:00, End: 15:50, Room: None
+  ➡️ YearMonth: 2025-01, Day: 27, Employee: 221, Start: 08:00, End: 15:35, Room: None
+  ➡️ YearMonth: 2025-01, Day: 28, Employee: 221, Start: 08:00, End: 15:35, Room: None
+  ➡️ YearMonth: 2025-01, Day: 29, Employee: 221, Start: 08:00, End: 15:35, Room: None
+  ➡️ YearMonth: 2025-01, Day: 30, Employee: 221, Start: 08:00, End: 15:35, Room: None
+  ➡️ YearMonth: 2025-01, Day: 31, Employee: 221, Start: 08:00, End: 15:35, Room: None
+  ➡️ YearMonth: 2025-01, Day: 1, Employee: 202, Start: 09:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 3, Employee: 202, Start: 08:00, End: 19:30, Room: None
+  ➡️ YearMonth: 2025-01, Day: 8, Employee: 202, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 11, Employee: 202, Start: 08:00, End: 19:30, Room: None
+  ➡️ YearMonth: 2025-01, Day: 12, Employee: 202, Start: 08:00, End: 19:30, Room: None
+  ➡️ YearMonth: 2025-01, Day: 14, Employee: 202, Start: 08:00, End: 12:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 17, Employee: 202, Start: 08:00, End: 19:15, Room: None
+  ➡️ YearMonth: 2025-01, Day: 18, Employee: 202, Start: 08:00, End: 19:30, Room: None
+  ➡️ YearMonth: 2025-01, Day: 20, Employee: 202, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 22, Employee: 202, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 23, Employee: 202, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 25, Employee: 202, Start: 08:00, End: 19:30, Room: None
+  ➡️ YearMonth: 2025-01, Day: 26, Employee: 202, Start: 08:00, End: 19:30, Room: None
+  ➡️ YearMonth: 2025-01, Day: 28, Employee: 202, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 30, Employee: 202, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 4, Employee: 191, Start: 08:00, End: 19:30, Room: None
+  ➡️ YearMonth: 2025-01, Day: 5, Employee: 191, Start: 08:00, End: 19:30, Room: None
+  ➡️ YearMonth: 2025-01, Day: 7, Employee: 191, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 9, Employee: 191, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 10, Employee: 191, Start: 08:00, End: 19:30, Room: None
+  ➡️ YearMonth: 2025-01, Day: 13, Employee: 191, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 15, Employee: 191, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 17, Employee: 191, Start: 08:00, End: 19:30, Room: None
+  ➡️ YearMonth: 2025-01, Day: 20, Employee: 191, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 22, Employee: 191, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 24, Employee: 191, Start: 08:00, End: 19:30, Room: None
+  ➡️ YearMonth: 2025-01, Day: 25, Employee: 191, Start: 08:00, End: 19:45, Room: None
+  ➡️ YearMonth: 2025-01, Day: 27, Employee: 191, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 29, Employee: 191, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 31, Employee: 191, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 2, Employee: 195, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 3, Employee: 195, Start: 08:00, End: 15:35, Room: None
+  ➡️ YearMonth: 2025-01, Day: 6, Employee: 195, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 9, Employee: 195, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 10, Employee: 195, Start: 08:00, End: 19:30, Room: None
+  ➡️ YearMonth: 2025-01, Day: 12, Employee: 195, Start: 08:00, End: 19:30, Room: None
+  ➡️ YearMonth: 2025-01, Day: 15, Employee: 195, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 16, Employee: 195, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 18, Employee: 195, Start: 08:00, End: 19:30, Room: None
+  ➡️ YearMonth: 2025-01, Day: 19, Employee: 195, Start: 08:00, End: 19:30, Room: None
+  ➡️ YearMonth: 2025-01, Day: 22, Employee: 195, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 23, Employee: 195, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 24, Employee: 195, Start: 08:00, End: 13:40, Room: None
+  ➡️ YearMonth: 2025-01, Day: 27, Employee: 195, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 29, Employee: 195, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 31, Employee: 195, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 3, Employee: 203, Start: 08:00, End: 19:30, Room: None
+  ➡️ YearMonth: 2025-01, Day: 4, Employee: 203, Start: 08:00, End: 15:35, Room: None
+  ➡️ YearMonth: 2025-01, Day: 6, Employee: 203, Start: 15:35, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 8, Employee: 203, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 10, Employee: 203, Start: 08:00, End: 19:30, Room: None
+  ➡️ YearMonth: 2025-01, Day: 13, Employee: 203, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 14, Employee: 203, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 16, Employee: 203, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 18, Employee: 203, Start: 15:35, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 20, Employee: 203, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 29, Employee: 203, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 31, Employee: 203, Start: 08:00, End: 18:45, Room: None
+  ➡️ YearMonth: 2025-01, Day: 3, Employee: 214, Start: 08:00, End: 19:30, Room: None
+  ➡️ YearMonth: 2025-01, Day: 6, Employee: 214, Start: 15:35, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 7, Employee: 214, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 9, Employee: 214, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 11, Employee: 214, Start: 08:00, End: 19:30, Room: None
+  ➡️ YearMonth: 2025-01, Day: 12, Employee: 214, Start: 15:35, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 18, Employee: 214, Start: 15:35, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 19, Employee: 214, Start: 08:00, End: 19:30, Room: None
+  ➡️ YearMonth: 2025-01, Day: 21, Employee: 214, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 24, Employee: 214, Start: 08:00, End: 19:30, Room: None
+  ➡️ YearMonth: 2025-01, Day: 26, Employee: 214, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 27, Employee: 214, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 30, Employee: 214, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 2, Employee: 223, Start: 08:00, End: 15:35, Room: None
+  ➡️ YearMonth: 2025-01, Day: 3, Employee: 223, Start: 08:00, End: 15:35, Room: None
+  ➡️ YearMonth: 2025-01, Day: 6, Employee: 223, Start: 08:00, End: 13:35, Room: None
+  ➡️ YearMonth: 2025-01, Day: 9, Employee: 223, Start: 08:00, End: 15:35, Room: None
+  ➡️ YearMonth: 2025-01, Day: 12, Employee: 223, Start: 08:00, End: 19:30, Room: None
+  ➡️ YearMonth: 2025-01, Day: 14, Employee: 223, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 17, Employee: 223, Start: 08:00, End: 19:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 18, Employee: 223, Start: 08:00, End: 19:30, Room: None
+  ➡️ YearMonth: 2025-01, Day: 21, Employee: 223, Start: 15:35, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 23, Employee: 223, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 28, Employee: 223, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 30, Employee: 223, Start: 08:00, End: 17:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 31, Employee: 223, Start: 08:00, End: 19:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 2, Employee: 220, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 6, Employee: 220, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 7, Employee: 220, Start: 08:00, End: 17:35, Room: None
+  ➡️ YearMonth: 2025-01, Day: 10, Employee: 220, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 11, Employee: 220, Start: 08:00, End: 19:30, Room: None
+  ➡️ YearMonth: 2025-01, Day: 13, Employee: 220, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 15, Employee: 220, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 17, Employee: 220, Start: 08:00, End: 19:30, Room: None
+  ➡️ YearMonth: 2025-01, Day: 20, Employee: 220, Start: 08:00, End: 15:35, Room: None
+  ➡️ YearMonth: 2025-01, Day: 21, Employee: 220, Start: 08:00, End: 15:35, Room: None
+  ➡️ YearMonth: 2025-01, Day: 22, Employee: 220, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 24, Employee: 220, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 25, Employee: 220, Start: 08:00, End: 19:30, Room: None
+  ➡️ YearMonth: 2025-01, Day: 26, Employee: 220, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 28, Employee: 220, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 30, Employee: 220, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 1, Employee: EWR, Start: 09:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 7, Employee: EWR, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 8, Employee: EWR, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 11, Employee: EWR, Start: 08:00, End: 19:30, Room: None
+  ➡️ YearMonth: 2025-01, Day: 12, Employee: EWR, Start: 08:00, End: 19:30, Room: None
+  ➡️ YearMonth: 2025-01, Day: 14, Employee: EWR, Start: 15:35, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 16, Employee: EWR, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 17, Employee: EWR, Start: 08:00, End: 19:30, Room: None
+  ➡️ YearMonth: 2025-01, Day: 20, Employee: EWR, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 23, Employee: EWR, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 25, Employee: EWR, Start: 08:00, End: 19:30, Room: None
+  ➡️ YearMonth: 2025-01, Day: 26, Employee: EWR, Start: 08:00, End: 19:30, Room: None
+  ➡️ YearMonth: 2025-01, Day: 28, Employee: EWR, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 1, Employee: 227, Start: 09:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 4, Employee: 227, Start: 08:00, End: 19:30, Room: None
+  ➡️ YearMonth: 2025-01, Day: 6, Employee: 227, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 8, Employee: 227, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 10, Employee: 227, Start: 08:00, End: 19:30, Room: None
+  ➡️ YearMonth: 2025-01, Day: 13, Employee: 227, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 14, Employee: 227, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 16, Employee: 227, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 18, Employee: 227, Start: 08:00, End: 19:30, Room: None
+  ➡️ YearMonth: 2025-01, Day: 19, Employee: 227, Start: 08:00, End: 19:30, Room: None
+  ➡️ YearMonth: 2025-01, Day: 21, Employee: 227, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 23, Employee: 227, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 27, Employee: 227, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 29, Employee: 227, Start: 08:00, End: 17:05, Room: None
+  ➡️ YearMonth: 2025-01, Day: 30, Employee: 227, Start: 08:00, End: 15:35, Room: None
+  ➡️ YearMonth: 2025-01, Day: 31, Employee: 227, Start: 08:00, End: 15:35, Room: None
+  ➡️ YearMonth: 2025-01, Day: 1, Employee: 222, Start: 09:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 2, Employee: 222, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 4, Employee: 222, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 6, Employee: 222, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 8, Employee: 222, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 11, Employee: 222, Start: 08:00, End: 19:30, Room: None
+  ➡️ YearMonth: 2025-01, Day: 12, Employee: 222, Start: 08:00, End: 19:30, Room: None
+  ➡️ YearMonth: 2025-01, Day: 14, Employee: 222, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 15, Employee: 222, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 20, Employee: 222, Start: 08:00, End: 15:35, Room: None
+  ➡️ YearMonth: 2025-01, Day: 21, Employee: 222, Start: 08:00, End: 15:35, Room: None
+  ➡️ YearMonth: 2025-01, Day: 22, Employee: 222, Start: 08:00, End: 15:35, Room: None
+  ➡️ YearMonth: 2025-01, Day: 23, Employee: 222, Start: 08:00, End: 15:35, Room: None
+  ➡️ YearMonth: 2025-01, Day: 24, Employee: 222, Start: 08:00, End: 14:25, Room: None
+  ➡️ YearMonth: 2025-01, Day: 26, Employee: 222, Start: 08:00, End: 19:30, Room: None
+  ➡️ YearMonth: 2025-01, Day: 27, Employee: 222, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 30, Employee: 222, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 2, Employee: 231, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 4, Employee: 231, Start: 08:00, End: 19:30, Room: None
+  ➡️ YearMonth: 2025-01, Day: 5, Employee: 231, Start: 08:00, End: 12:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 6, Employee: 231, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 7, Employee: 231, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 9, Employee: 231, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 15, Employee: 231, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 16, Employee: 231, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 20, Employee: 231, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 21, Employee: 231, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 22, Employee: 231, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 23, Employee: 231, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 27, Employee: 231, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 28, Employee: 231, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 29, Employee: 231, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 30, Employee: 231, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 1, Employee: 171, Start: 09:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 5, Employee: 171, Start: 08:00, End: 19:30, Room: None
+  ➡️ YearMonth: 2025-01, Day: 6, Employee: 171, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 9, Employee: 171, Start: 08:00, End: 15:35, Room: None
+  ➡️ YearMonth: 2025-01, Day: 10, Employee: 171, Start: 08:00, End: 15:35, Room: None
+  ➡️ YearMonth: 2025-01, Day: 13, Employee: 171, Start: 08:00, End: 15:35, Room: None
+  ➡️ YearMonth: 2025-01, Day: 14, Employee: 171, Start: 08:00, End: 14:55, Room: None
+  ➡️ YearMonth: 2025-01, Day: 15, Employee: 171, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 16, Employee: 171, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 20, Employee: 171, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 21, Employee: 171, Start: 08:00, End: 15:35, Room: None
+  ➡️ YearMonth: 2025-01, Day: 23, Employee: 171, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 25, Employee: 171, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 26, Employee: 171, Start: 08:00, End: 19:30, Room: None
+  ➡️ YearMonth: 2025-01, Day: 28, Employee: 171, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 29, Employee: 171, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 31, Employee: 171, Start: 08:00, End: 18:00, Room: None
+  ➡️ YearMonth: 2025-01, Day: 2, Employee: 192, Start: 08:00, End: 15:35, Room: GAB1
+  ➡️ YearMonth: 2025-01, Day: 3, Employee: 192, Start: 08:00, End: 15:35, Room: GAB1
+  ➡️ YearMonth: 2025-01, Day: 4, Employee: 192, Start: 08:00, End: 15:35, Room: GAB1
+  ➡️ YearMonth: 2025-01, Day: 6, Employee: 192, Start: 08:00, End: 15:35, Room: GAB1
+  ➡️ YearMonth: 2025-01, Day: 7, Employee: 192, Start: 10:25, End: 18:00, Room: GAB1
+  ➡️ YearMonth: 2025-01, Day: 8, Employee: 192, Start: 08:00, End: 15:35, Room: GAB1
+  ➡️ YearMonth: 2025-01, Day: 9, Employee: 192, Start: 08:00, End: 15:35, Room: GAB1
+  ➡️ YearMonth: 2025-01, Day: 10, Employee: 192, Start: 08:00, End: 15:35, Room: GAB1
+  ➡️ YearMonth: 2025-01, Day: 13, Employee: 192, Start: 08:00, End: 15:35, Room: GAB1
+  ➡️ YearMonth: 2025-01, Day: 14, Employee: 192, Start: 08:00, End: 15:35, Room: GAB1
+  ➡️ YearMonth: 2025-01, Day: 15, Employee: 192, Start: 08:00, End: 15:35, Room: GAB1
+  ➡️ YearMonth: 2025-01, Day: 16, Employee: 192, Start: 08:00, End: 15:35, Room: GAB1
+  ➡️ YearMonth: 2025-01, Day: 17, Employee: 192, Start: 08:00, End: 15:35, Room: GAB1
+  ➡️ YearMonth: 2025-01, Day: 20, Employee: 192, Start: 10:25, End: 18:00, Room: GAB1
+  ➡️ YearMonth: 2025-01, Day: 21, Employee: 192, Start: 10:25, End: 18:00, Room: GAB1
+  ➡️ YearMonth: 2025-01, Day: 22, Employee: 192, Start: 08:00, End: 15:35, Room: GAB1
+  ➡️ YearMonth: 2025-01, Day: 24, Employee: 192, Start: 08:00, End: 15:35, Room: GAB1
+  ➡️ YearMonth: 2025-01, Day: 25, Employee: 192, Start: 08:00, End: 15:35, Room: GAB1
+  ➡️ YearMonth: 2025-01, Day: 26, Employee: 192, Start: 08:00, End: 15:35, Room: GAB1
+  ➡️ YearMonth: 2025-01, Day: 28, Employee: 192, Start: 08:00, End: 15:35, Room: GAB1
+  ➡️ YearMonth: 2025-01, Day: 30, Employee: 192, Start: 08:00, End: 15:35, Room: GAB1
+  ➡️ YearMonth: 2025-01, Day: 1, Employee: DPI, Start: 09:00, End: 16:35, Room: GAB2
+  ➡️ YearMonth: 2025-01, Day: 4, Employee: DPI, Start: 08:00, End: 15:35, Room: GAB2
+  ➡️ YearMonth: 2025-01, Day: 7, Employee: DPI, Start: 08:00, End: 15:35, Room: GAB2
+  ➡️ YearMonth: 2025-01, Day: 8, Employee: DPI, Start: 08:00, End: 15:35, Room: GAB2
+  ➡️ YearMonth: 2025-01, Day: 9, Employee: DPI, Start: 08:00, End: 14:04, Room: GAB2
+  ➡️ YearMonth: 2025-01, Day: 10, Employee: DPI, Start: 08:00, End: 15:35, Room: GAB2
+  ➡️ YearMonth: 2025-01, Day: 13, Employee: DPI, Start: 08:00, End: 15:35, Room: GAB2
+  ➡️ YearMonth: 2025-01, Day: 14, Employee: DPI, Start: 10:25, End: 18:00, Room: GAB2
+  ➡️ YearMonth: 2025-01, Day: 17, Employee: DPI, Start: 12:25, End: 20:00, Room: GAB2
+  ➡️ YearMonth: 2025-01, Day: 21, Employee: DPI, Start: 08:00, End: 15:35, Room: GAB2
+  ➡️ YearMonth: 2025-01, Day: 22, Employee: DPI, Start: 08:00, End: 15:35, Room: GAB2
+  ➡️ YearMonth: 2025-01, Day: 23, Employee: DPI, Start: 08:00, End: 15:35, Room: GAB2
+  ➡️ YearMonth: 2025-01, Day: 24, Employee: DPI, Start: 08:00, End: 15:35, Room: GAB2
+  ➡️ YearMonth: 2025-01, Day: 25, Employee: DPI, Start: 08:00, End: 15:35, Room: GAB2
+  ➡️ YearMonth: 2025-01, Day: 28, Employee: DPI, Start: 10:25, End: 18:00, Room: GAB2
+  ➡️ YearMonth: 2025-01, Day: 30, Employee: DPI, Start: 10:25, End: 18:00, Room: GAB2
+  ➡️ YearMonth: 2025-01, Day: 31, Employee: DPI, Start: 08:00, End: 15:35, Room: GAB2
+  ➡️ YearMonth: 2025-01, Day: 6, Employee: 187, Start: 08:00, End: 15:35, Room: GAB3
+  ➡️ YearMonth: 2025-01, Day: 7, Employee: 187, Start: 08:00, End: 15:35, Room: GAB3
+  ➡️ YearMonth: 2025-01, Day: 9, Employee: 187, Start: 08:00, End: 15:35, Room: GAB3
+  ➡️ YearMonth: 2025-01, Day: 10, Employee: 187, Start: 08:00, End: 15:35, Room: GAB3
+  ➡️ YearMonth: 2025-01, Day: 11, Employee: 187, Start: 08:00, End: 15:35, Room: GAB3
+  ➡️ YearMonth: 2025-01, Day: 12, Employee: 187, Start: 08:00, End: 15:35, Room: GAB3
+  ➡️ YearMonth: 2025-01, Day: 14, Employee: 187, Start: 08:00, End: 15:35, Room: GAB3
+  ➡️ YearMonth: 2025-01, Day: 15, Employee: 187, Start: 08:00, End: 15:35, Room: GAB3
+  ➡️ YearMonth: 2025-01, Day: 16, Employee: 187, Start: 08:00, End: 15:35, Room: GAB3
+  ➡️ YearMonth: 2025-01, Day: 17, Employee: 187, Start: 08:00, End: 15:35, Room: GAB3
+  ➡️ YearMonth: 2025-01, Day: 18, Employee: 187, Start: 08:00, End: 15:35, Room: GAB3
+  ➡️ YearMonth: 2025-01, Day: 20, Employee: 187, Start: 08:00, End: 15:35, Room: GAB3
+  ➡️ YearMonth: 2025-01, Day: 21, Employee: 187, Start: 08:00, End: 15:35, Room: GAB3
+  ➡️ YearMonth: 2025-01, Day: 22, Employee: 187, Start: 08:00, End: 15:35, Room: GAB3
+  ➡️ YearMonth: 2025-01, Day: 23, Employee: 187, Start: 08:00, End: 15:35, Room: GAB3
+  ➡️ YearMonth: 2025-01, Day: 24, Employee: 187, Start: 08:00, End: 15:35, Room: GAB3
+  ➡️ YearMonth: 2025-01, Day: 27, Employee: 187, Start: 08:00, End: 15:35, Room: GAB3
+  ➡️ YearMonth: 2025-01, Day: 28, Employee: 187, Start: 08:00, End: 15:35, Room: GAB3
+  ➡️ YearMonth: 2025-01, Day: 29, Employee: 187, Start: 08:00, End: 15:35, Room: GAB3
+  ➡️ YearMonth: 2025-01, Day: 30, Employee: 187, Start: 08:00, End: 15:35, Room: GAB3
+  ➡️ YearMonth: 2025-01, Day: 31, Employee: 187, Start: 08:00, End: 15:35, Room: GAB3
+  ➡️ YearMonth: 2025-01, Day: 2, Employee: 188, Start: 08:00, End: 15:35, Room: GAB4
+  ➡️ YearMonth: 2025-01, Day: 3, Employee: 188, Start: 08:00, End: 15:35, Room: GAB4
+  ➡️ YearMonth: 2025-01, Day: 6, Employee: 188, Start: 08:00, End: 15:35, Room: GAB4
+  ➡️ YearMonth: 2025-01, Day: 7, Employee: 188, Start: 08:00, End: 15:35, Room: GAB4
+  ➡️ YearMonth: 2025-01, Day: 8, Employee: 188, Start: 08:00, End: 15:35, Room: GAB4
+  ➡️ YearMonth: 2025-01, Day: 9, Employee: 188, Start: 08:00, End: 15:35, Room: GAB4
+  ➡️ YearMonth: 2025-01, Day: 10, Employee: 188, Start: 08:00, End: 15:35, Room: GAB4
+  ➡️ YearMonth: 2025-01, Day: 13, Employee: 188, Start: 08:00, End: 15:35, Room: GAB4
+  ➡️ YearMonth: 2025-01, Day: 15, Employee: 188, Start: 08:00, End: 15:35, Room: GAB4
+  ➡️ YearMonth: 2025-01, Day: 16, Employee: 188, Start: 08:00, End: 15:35, Room: GAB4
+  ➡️ YearMonth: 2025-01, Day: 18, Employee: 188, Start: 08:00, End: 15:35, Room: GAB4
+  ➡️ YearMonth: 2025-01, Day: 19, Employee: 188, Start: 08:00, End: 15:35, Room: GAB4
+  ➡️ YearMonth: 2025-01, Day: 20, Employee: 188, Start: 08:00, End: 15:35, Room: GAB4
+  ➡️ YearMonth: 2025-01, Day: 23, Employee: 188, Start: 08:00, End: 15:35, Room: GAB4
+  ➡️ YearMonth: 2025-01, Day: 24, Employee: 188, Start: 08:00, End: 15:35, Room: GAB4
+  ➡️ YearMonth: 2025-01, Day: 25, Employee: 188, Start: 08:00, End: 15:35, Room: GAB4
+  ➡️ YearMonth: 2025-01, Day: 27, Employee: 188, Start: 08:00, End: 15:35, Room: GAB4
+  ➡️ YearMonth: 2025-01, Day: 28, Employee: 188, Start: 08:00, End: 15:35, Room: GAB4
+  ➡️ YearMonth: 2025-01, Day: 29, Employee: 188, Start: 08:00, End: 15:35, Room: GAB4
+  ➡️ YearMonth: 2025-01, Day: 30, Employee: 188, Start: 08:00, End: 15:35, Room: GAB4
+  ➡️ YearMonth: 2025-01, Day: 31, Employee: 188, Start: 08:00, End: 15:35, Room: GAB4
+  ➡️ YearMonth: 2025-01, Day: 1, Employee: 212, Start: 09:00, End: 16:35, Room: GAB5
+  ➡️ YearMonth: 2025-01, Day: 3, Employee: 212, Start: 08:00, End: 15:35, Room: GAB5
+  ➡️ YearMonth: 2025-01, Day: 7, Employee: 212, Start: 08:00, End: 15:35, Room: GAB5
+  ➡️ YearMonth: 2025-01, Day: 8, Employee: 212, Start: 10:25, End: 18:00, Room: GAB5
+  ➡️ YearMonth: 2025-01, Day: 9, Employee: 212, Start: 10:25, End: 18:00, Room: GAB5
+  ➡️ YearMonth: 2025-01, Day: 10, Employee: 212, Start: 12:25, End: 20:00, Room: GAB5
+  ➡️ YearMonth: 2025-01, Day: 11, Employee: 212, Start: 08:00, End: 15:35, Room: GAB5
+  ➡️ YearMonth: 2025-01, Day: 13, Employee: 212, Start: 08:00, End: 15:35, Room: GAB5
+  ➡️ YearMonth: 2025-01, Day: 15, Employee: 212, Start: 08:00, End: 15:35, Room: GAB5
+  ➡️ YearMonth: 2025-01, Day: 16, Employee: 212, Start: 08:00, End: 15:35, Room: GAB5
+  ➡️ YearMonth: 2025-01, Day: 17, Employee: 212, Start: 08:00, End: 15:35, Room: GAB5
+  ➡️ YearMonth: 2025-01, Day: 18, Employee: 212, Start: 08:00, End: 15:35, Room: GAB5
+  ➡️ YearMonth: 2025-01, Day: 20, Employee: 212, Start: 08:00, End: 15:35, Room: GAB5
+  ➡️ YearMonth: 2025-01, Day: 21, Employee: 212, Start: 08:00, End: 15:35, Room: GAB5
+  ➡️ YearMonth: 2025-01, Day: 22, Employee: 212, Start: 08:00, End: 15:35, Room: GAB5
+  ➡️ YearMonth: 2025-01, Day: 23, Employee: 212, Start: 08:00, End: 15:35, Room: GAB5
+  ➡️ YearMonth: 2025-01, Day: 24, Employee: 212, Start: 08:00, End: 15:35, Room: GAB5
+  ➡️ YearMonth: 2025-01, Day: 27, Employee: 212, Start: 08:00, End: 15:35, Room: GAB5
+  ➡️ YearMonth: 2025-01, Day: 28, Employee: 212, Start: 08:00, End: 15:35, Room: GAB5
+  ➡️ YearMonth: 2025-01, Day: 29, Employee: 212, Start: 10:25, End: 18:00, Room: GAB5
+  ➡️ YearMonth: 2025-01, Day: 31, Employee: 212, Start: 08:00, End: 15:35, Room: GAB5
+  ➡️ YearMonth: 2025-01, Day: 2, Employee: KRA, Start: 08:00, End: 15:35, Room: GAB6
+  ➡️ YearMonth: 2025-01, Day: 3, Employee: KRA, Start: 08:00, End: 15:35, Room: GAB6
+  ➡️ YearMonth: 2025-01, Day: 6, Employee: KRA, Start: 08:00, End: 15:35, Room: GAB6
+  ➡️ YearMonth: 2025-01, Day: 7, Employee: KRA, Start: 08:00, End: 15:35, Room: GAB6
+  ➡️ YearMonth: 2025-01, Day: 8, Employee: KRA, Start: 08:00, End: 15:35, Room: GAB6
+  ➡️ YearMonth: 2025-01, Day: 9, Employee: KRA, Start: 08:00, End: 15:35, Room: GAB6
+  ➡️ YearMonth: 2025-01, Day: 10, Employee: KRA, Start: 08:00, End: 15:35, Room: GAB6
+  ➡️ YearMonth: 2025-01, Day: 11, Employee: KRA, Start: 08:00, End: 15:35, Room: GAB6
+  ➡️ YearMonth: 2025-01, Day: 13, Employee: KRA, Start: 08:00, End: 15:35, Room: GAB6
+  ➡️ YearMonth: 2025-01, Day: 14, Employee: KRA, Start: 08:00, End: 15:35, Room: GAB6
+  ➡️ YearMonth: 2025-01, Day: 15, Employee: KRA, Start: 08:00, End: 15:35, Room: GAB6
+  ➡️ YearMonth: 2025-01, Day: 17, Employee: KRA, Start: 08:00, End: 15:35, Room: GAB6
+  ➡️ YearMonth: 2025-01, Day: 18, Employee: KRA, Start: 08:00, End: 15:35, Room: GAB6
+  ➡️ YearMonth: 2025-01, Day: 20, Employee: KRA, Start: 08:00, End: 15:35, Room: GAB6
+  ➡️ YearMonth: 2025-01, Day: 21, Employee: KRA, Start: 08:00, End: 15:35, Room: GAB6
+  ➡️ YearMonth: 2025-01, Day: 22, Employee: KRA, Start: 08:00, End: 15:35, Room: GAB6
+  ➡️ YearMonth: 2025-01, Day: 23, Employee: KRA, Start: 08:00, End: 15:35, Room: GAB6
+  ➡️ YearMonth: 2025-01, Day: 24, Employee: KRA, Start: 08:00, End: 15:35, Room: GAB6
+  ➡️ YearMonth: 2025-01, Day: 27, Employee: KRA, Start: 08:00, End: 15:35, Room: GAB6
+  ➡️ YearMonth: 2025-01, Day: 29, Employee: KRA, Start: 08:00, End: 15:35, Room: GAB6
+  ➡️ YearMonth: 2025-01, Day: 31, Employee: KRA, Start: 08:00, End: 15:35, Room: GAB6
+  ➡️ YearMonth: 2025-01, Day: 2, Employee: 190, Start: 08:00, End: 15:35, Room: GAB7
+  ➡️ YearMonth: 2025-01, Day: 4, Employee: 190, Start: 08:00, End: 15:35, Room: GAB7
+  ➡️ YearMonth: 2025-01, Day: 6, Employee: 190, Start: 08:00, End: 15:35, Room: GAB7
+  ➡️ YearMonth: 2025-01, Day: 7, Employee: 190, Start: 08:00, End: 15:35, Room: GAB7
+  ➡️ YearMonth: 2025-01, Day: 9, Employee: 190, Start: 08:00, End: 15:35, Room: GAB7
+  ➡️ YearMonth: 2025-01, Day: 14, Employee: 190, Start: 08:00, End: 15:35, Room: GAB7
+  ➡️ YearMonth: 2025-01, Day: 15, Employee: 190, Start: 10:25, End: 18:00, Room: GAB7
+  ➡️ YearMonth: 2025-01, Day: 16, Employee: 190, Start: 10:25, End: 18:00, Room: GAB7
+  ➡️ YearMonth: 2025-01, Day: 21, Employee: 190, Start: 08:00, End: 15:35, Room: GAB7
+  ➡️ YearMonth: 2025-01, Day: 23, Employee: 190, Start: 10:25, End: 18:00, Room: GAB7
+  ➡️ YearMonth: 2025-01, Day: 25, Employee: 190, Start: 08:00, End: 15:35, Room: GAB7
+  ➡️ YearMonth: 2025-01, Day: 27, Employee: 190, Start: 08:00, End: 15:35, Room: GAB7
+  ➡️ YearMonth: 2025-01, Day: 28, Employee: 190, Start: 08:00, End: 15:35, Room: GAB7
+  ➡️ YearMonth: 2025-01, Day: 29, Employee: 190, Start: 08:00, End: 15:35, Room: GAB7
+  ➡️ YearMonth: 2025-01, Day: 30, Employee: 190, Start: 08:00, End: 15:35, Room: GAB7
+  ➡️ YearMonth: 2025-01, Day: 31, Employee: 190, Start: 08:00, End: 13:41, Room: GAB7
+  ➡️ YearMonth: 2025-01, Day: 2, Employee: 206, Start: 08:00, End: 15:35, Room: GAB8
+  ➡️ YearMonth: 2025-01, Day: 3, Employee: 206, Start: 08:00, End: 15:35, Room: GAB8
+  ➡️ YearMonth: 2025-01, Day: 4, Employee: 206, Start: 08:00, End: 15:35, Room: GAB8
+  ➡️ YearMonth: 2025-01, Day: 6, Employee: 206, Start: 08:00, End: 15:35, Room: GAB8
+  ➡️ YearMonth: 2025-01, Day: 7, Employee: 206, Start: 08:00, End: 15:35, Room: GAB8
+  ➡️ YearMonth: 2025-01, Day: 8, Employee: 206, Start: 08:00, End: 15:35, Room: GAB8
+  ➡️ YearMonth: 2025-01, Day: 9, Employee: 206, Start: 08:00, End: 15:35, Room: GAB8
+  ➡️ YearMonth: 2025-01, Day: 10, Employee: 206, Start: 08:00, End: 15:35, Room: GAB8
+  ➡️ YearMonth: 2025-01, Day: 13, Employee: 206, Start: 08:00, End: 15:35, Room: GAB8
+  ➡️ YearMonth: 2025-01, Day: 14, Employee: 206, Start: 08:00, End: 15:35, Room: GAB8
+  ➡️ YearMonth: 2025-01, Day: 16, Employee: 206, Start: 08:00, End: 15:35, Room: GAB8
+  ➡️ YearMonth: 2025-01, Day: 17, Employee: 206, Start: 08:00, End: 15:35, Room: GAB8
+  ➡️ YearMonth: 2025-01, Day: 18, Employee: 206, Start: 08:00, End: 15:35, Room: GAB8
+  ➡️ YearMonth: 2025-01, Day: 20, Employee: 206, Start: 08:00, End: 15:35, Room: GAB8
+  ➡️ YearMonth: 2025-01, Day: 21, Employee: 206, Start: 08:00, End: 15:35, Room: GAB8
+  ➡️ YearMonth: 2025-01, Day: 22, Employee: 206, Start: 08:00, End: 15:35, Room: GAB8
+  ➡️ YearMonth: 2025-01, Day: 23, Employee: 206, Start: 08:00, End: 15:35, Room: GAB8
+  ➡️ YearMonth: 2025-01, Day: 27, Employee: 206, Start: 08:00, End: 15:35, Room: GAB8
+  ➡️ YearMonth: 2025-01, Day: 29, Employee: 206, Start: 08:00, End: 15:35, Room: GAB8
+  ➡️ YearMonth: 2025-01, Day: 30, Employee: 206, Start: 08:00, End: 15:35, Room: GAB8
+  ➡️ YearMonth: 2025-01, Day: 31, Employee: 206, Start: 08:00, End: 15:35, Room: GAB8
+  ➡️ YearMonth: 2025-01, Day: 1, Employee: RKO, Start: 09:00, End: 16:35, Room: GAB9
+  ➡️ YearMonth: 2025-01, Day: 4, Employee: RKO, Start: 08:00, End: 15:35, Room: GAB9
+  ➡️ YearMonth: 2025-01, Day: 5, Employee: RKO, Start: 08:00, End: 15:35, Room: GAB9
+  ➡️ YearMonth: 2025-01, Day: 8, Employee: RKO, Start: 08:00, End: 15:35, Room: GAB9
+  ➡️ YearMonth: 2025-01, Day: 11, Employee: RKO, Start: 08:00, End: 15:35, Room: GAB9
+  ➡️ YearMonth: 2025-01, Day: 13, Employee: RKO, Start: 08:00, End: 15:35, Room: GAB9
+  ➡️ YearMonth: 2025-01, Day: 14, Employee: RKO, Start: 08:00, End: 15:35, Room: GAB9
+  ➡️ YearMonth: 2025-01, Day: 15, Employee: RKO, Start: 08:00, End: 15:35, Room: GAB9
+  ➡️ YearMonth: 2025-01, Day: 16, Employee: RKO, Start: 08:00, End: 15:35, Room: GAB9
+  ➡️ YearMonth: 2025-01, Day: 17, Employee: RKO, Start: 08:00, End: 15:35, Room: GAB9
+  ➡️ YearMonth: 2025-01, Day: 20, Employee: RKO, Start: 08:00, End: 15:35, Room: GAB9
+  ➡️ YearMonth: 2025-01, Day: 21, Employee: RKO, Start: 08:00, End: 15:35, Room: GAB9
+  ➡️ YearMonth: 2025-01, Day: 22, Employee: RKO, Start: 08:00, End: 15:35, Room: GAB9
+  ➡️ YearMonth: 2025-01, Day: 23, Employee: RKO, Start: 08:00, End: 13:41, Room: GAB9
+  ➡️ YearMonth: 2025-01, Day: 29, Employee: RKO, Start: 08:00, End: 15:35, Room: GAB9
+  ➡️ YearMonth: 2025-01, Day: 30, Employee: RKO, Start: 08:00, End: 15:35, Room: GAB9
+  ➡️ YearMonth: 2025-01, Day: 1, Employee: 205, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 7
+  ➡️ YearMonth: 2025-01, Day: 2, Employee: 205, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 7
+  ➡️ YearMonth: 2025-01, Day: 3, Employee: 205, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 7
+  ➡️ YearMonth: 2025-01, Day: 4, Employee: 205, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 7
+  ➡️ YearMonth: 2025-01, Day: 5, Employee: 205, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 7
+  ➡️ YearMonth: 2025-01, Day: 6, Employee: 205, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 7
+  ➡️ YearMonth: 2025-01, Day: 7, Employee: 205, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 7
+  ➡️ YearMonth: 2025-01, Day: 8, Employee: 205, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 7
+  ➡️ YearMonth: 2025-01, Day: 9, Employee: 205, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 7
+  ➡️ YearMonth: 2025-01, Day: 10, Employee: 205, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 7
+  ➡️ YearMonth: 2025-01, Day: 11, Employee: 205, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 7
+  ➡️ YearMonth: 2025-01, Day: 12, Employee: 205, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 7
+  ➡️ YearMonth: 2025-01, Day: 13, Employee: 205, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 7
+  ➡️ YearMonth: 2025-01, Day: 14, Employee: 205, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 7
+  ➡️ YearMonth: 2025-01, Day: 15, Employee: 205, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 7
+  ➡️ YearMonth: 2025-01, Day: 16, Employee: 205, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 7
+  ➡️ YearMonth: 2025-01, Day: 17, Employee: 205, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 7
+  ➡️ YearMonth: 2025-01, Day: 18, Employee: 205, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 7
+  ➡️ YearMonth: 2025-01, Day: 19, Employee: 205, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 7
+  ➡️ YearMonth: 2025-01, Day: 20, Employee: 205, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 7
+  ➡️ YearMonth: 2025-01, Day: 21, Employee: 205, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 7
+  ➡️ YearMonth: 2025-01, Day: 22, Employee: 205, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 7
+  ➡️ YearMonth: 2025-01, Day: 23, Employee: 205, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 7
+  ➡️ YearMonth: 2025-01, Day: 24, Employee: 205, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 7
+  ➡️ YearMonth: 2025-01, Day: 25, Employee: 205, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 7
+  ➡️ YearMonth: 2025-01, Day: 26, Employee: 205, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 7
+  ➡️ YearMonth: 2025-01, Day: 27, Employee: 205, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 7
+  ➡️ YearMonth: 2025-01, Day: 28, Employee: 205, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 7
+  ➡️ YearMonth: 2025-01, Day: 29, Employee: 205, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 7
+  ➡️ YearMonth: 2025-01, Day: 30, Employee: 205, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 7
+  ➡️ YearMonth: 2025-01, Day: 31, Employee: 205, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 7
+  ➡️ YearMonth: 2025-01, Day: 1, Employee: 204, Start: 09:00, End: 16:35, Room: GABINET MASAŻU 8
+  ➡️ YearMonth: 2025-01, Day: 2, Employee: 204, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 8
+  ➡️ YearMonth: 2025-01, Day: 3, Employee: 204, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 8
+  ➡️ YearMonth: 2025-01, Day: 4, Employee: 204, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 8
+  ➡️ YearMonth: 2025-01, Day: 5, Employee: 204, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 8
+  ➡️ YearMonth: 2025-01, Day: 6, Employee: 204, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 8
+  ➡️ YearMonth: 2025-01, Day: 7, Employee: 204, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 8
+  ➡️ YearMonth: 2025-01, Day: 8, Employee: 204, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 8
+  ➡️ YearMonth: 2025-01, Day: 10, Employee: 204, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 8
+  ➡️ YearMonth: 2025-01, Day: 11, Employee: 204, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 8
+  ➡️ YearMonth: 2025-01, Day: 12, Employee: 204, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 8
+  ➡️ YearMonth: 2025-01, Day: 13, Employee: 204, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 8
+  ➡️ YearMonth: 2025-01, Day: 14, Employee: 204, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 8
+  ➡️ YearMonth: 2025-01, Day: 15, Employee: 204, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 8
+  ➡️ YearMonth: 2025-01, Day: 16, Employee: 204, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 8
+  ➡️ YearMonth: 2025-01, Day: 17, Employee: 204, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 8
+  ➡️ YearMonth: 2025-01, Day: 18, Employee: 204, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 8
+  ➡️ YearMonth: 2025-01, Day: 19, Employee: 204, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 8
+  ➡️ YearMonth: 2025-01, Day: 20, Employee: 204, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 8
+  ➡️ YearMonth: 2025-01, Day: 21, Employee: 204, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 8
+  ➡️ YearMonth: 2025-01, Day: 22, Employee: 204, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 8
+  ➡️ YearMonth: 2025-01, Day: 23, Employee: 204, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 8
+  ➡️ YearMonth: 2025-01, Day: 24, Employee: 204, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 8
+  ➡️ YearMonth: 2025-01, Day: 25, Employee: 204, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 8
+  ➡️ YearMonth: 2025-01, Day: 26, Employee: 204, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 8
+  ➡️ YearMonth: 2025-01, Day: 27, Employee: 204, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 8
+  ➡️ YearMonth: 2025-01, Day: 28, Employee: 204, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 8
+  ➡️ YearMonth: 2025-01, Day: 29, Employee: 204, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 8
+  ➡️ YearMonth: 2025-01, Day: 30, Employee: 204, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 8
+  ➡️ YearMonth: 2025-01, Day: 31, Employee: 204, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 8
+  ➡️ YearMonth: 2025-01, Day: 1, Employee: 203, Start: 09:00, End: 16:35, Room: GABINET MASAŻU 9
+  ➡️ YearMonth: 2025-01, Day: 2, Employee: 203, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 9
+  ➡️ YearMonth: 2025-01, Day: 3, Employee: 203, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 9
+  ➡️ YearMonth: 2025-01, Day: 4, Employee: 203, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 9
+  ➡️ YearMonth: 2025-01, Day: 5, Employee: 203, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 9
+  ➡️ YearMonth: 2025-01, Day: 6, Employee: 203, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 9
+  ➡️ YearMonth: 2025-01, Day: 7, Employee: 203, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 9
+  ➡️ YearMonth: 2025-01, Day: 8, Employee: 203, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 9
+  ➡️ YearMonth: 2025-01, Day: 9, Employee: 203, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 9
+  ➡️ YearMonth: 2025-01, Day: 10, Employee: 203, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 9
+  ➡️ YearMonth: 2025-01, Day: 11, Employee: 203, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 9
+  ➡️ YearMonth: 2025-01, Day: 12, Employee: 203, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 9
+  ➡️ YearMonth: 2025-01, Day: 13, Employee: 203, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 9
+  ➡️ YearMonth: 2025-01, Day: 14, Employee: 203, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 9
+  ➡️ YearMonth: 2025-01, Day: 15, Employee: 203, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 9
+  ➡️ YearMonth: 2025-01, Day: 16, Employee: 203, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 9
+  ➡️ YearMonth: 2025-01, Day: 17, Employee: 203, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 9
+  ➡️ YearMonth: 2025-01, Day: 18, Employee: 203, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 9
+  ➡️ YearMonth: 2025-01, Day: 19, Employee: 203, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 9
+  ➡️ YearMonth: 2025-01, Day: 20, Employee: 203, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 9
+  ➡️ YearMonth: 2025-01, Day: 21, Employee: 203, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 9
+  ➡️ YearMonth: 2025-01, Day: 22, Employee: 203, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 9
+  ➡️ YearMonth: 2025-01, Day: 23, Employee: 203, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 9
+  ➡️ YearMonth: 2025-01, Day: 24, Employee: 203, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 9
+  ➡️ YearMonth: 2025-01, Day: 25, Employee: 203, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 9
+  ➡️ YearMonth: 2025-01, Day: 26, Employee: 203, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 9
+  ➡️ YearMonth: 2025-01, Day: 27, Employee: 203, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 9
+  ➡️ YearMonth: 2025-01, Day: 28, Employee: 203, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 9
+  ➡️ YearMonth: 2025-01, Day: 29, Employee: 203, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 9
+  ➡️ YearMonth: 2025-01, Day: 30, Employee: 203, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 9
+  ➡️ YearMonth: 2025-01, Day: 31, Employee: 203, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 9
+  ➡️ YearMonth: 2025-01, Day: 1, Employee: WMO, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 10
+  ➡️ YearMonth: 2025-01, Day: 2, Employee: WMO, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 10
+  ➡️ YearMonth: 2025-01, Day: 3, Employee: WMO, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 10
+  ➡️ YearMonth: 2025-01, Day: 4, Employee: WMO, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 10
+  ➡️ YearMonth: 2025-01, Day: 5, Employee: WMO, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 10
+  ➡️ YearMonth: 2025-01, Day: 6, Employee: WMO, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 10
+  ➡️ YearMonth: 2025-01, Day: 7, Employee: WMO, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 10
+  ➡️ YearMonth: 2025-01, Day: 8, Employee: WMO, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 10
+  ➡️ YearMonth: 2025-01, Day: 9, Employee: WMO, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 10
+  ➡️ YearMonth: 2025-01, Day: 10, Employee: WMO, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 10
+  ➡️ YearMonth: 2025-01, Day: 11, Employee: WMO, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 10
+  ➡️ YearMonth: 2025-01, Day: 12, Employee: WMO, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 10
+  ➡️ YearMonth: 2025-01, Day: 13, Employee: WMO, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 10
+  ➡️ YearMonth: 2025-01, Day: 14, Employee: WMO, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 10
+  ➡️ YearMonth: 2025-01, Day: 15, Employee: WMO, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 10
+  ➡️ YearMonth: 2025-01, Day: 16, Employee: WMO, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 10
+  ➡️ YearMonth: 2025-01, Day: 17, Employee: WMO, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 10
+  ➡️ YearMonth: 2025-01, Day: 18, Employee: WMO, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 10
+  ➡️ YearMonth: 2025-01, Day: 19, Employee: WMO, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 10
+  ➡️ YearMonth: 2025-01, Day: 20, Employee: WMO, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 10
+  ➡️ YearMonth: 2025-01, Day: 21, Employee: WMO, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 10
+  ➡️ YearMonth: 2025-01, Day: 22, Employee: WMO, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 10
+  ➡️ YearMonth: 2025-01, Day: 23, Employee: WMO, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 10
+  ➡️ YearMonth: 2025-01, Day: 24, Employee: WMO, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 10
+  ➡️ YearMonth: 2025-01, Day: 25, Employee: WMO, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 10
+  ➡️ YearMonth: 2025-01, Day: 26, Employee: WMO, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 10
+  ➡️ YearMonth: 2025-01, Day: 27, Employee: WMO, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 10
+  ➡️ YearMonth: 2025-01, Day: 28, Employee: WMO, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 10
+  ➡️ YearMonth: 2025-01, Day: 29, Employee: WMO, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 10
+  ➡️ YearMonth: 2025-01, Day: 30, Employee: WMO, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 10
+  ➡️ YearMonth: 2025-01, Day: 31, Employee: WMO, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 10
+  ➡️ YearMonth: 2025-01, Day: 1, Employee: 209, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 1
+  ➡️ YearMonth: 2025-01, Day: 2, Employee: 209, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 1
+  ➡️ YearMonth: 2025-01, Day: 3, Employee: 209, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 1
+  ➡️ YearMonth: 2025-01, Day: 4, Employee: 209, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 1
+  ➡️ YearMonth: 2025-01, Day: 5, Employee: 209, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 1
+  ➡️ YearMonth: 2025-01, Day: 6, Employee: 209, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 1
+  ➡️ YearMonth: 2025-01, Day: 7, Employee: 209, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 1
+  ➡️ YearMonth: 2025-01, Day: 8, Employee: 209, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 1
+  ➡️ YearMonth: 2025-01, Day: 9, Employee: 209, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 1
+  ➡️ YearMonth: 2025-01, Day: 10, Employee: 209, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 1
+  ➡️ YearMonth: 2025-01, Day: 11, Employee: 209, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 1
+  ➡️ YearMonth: 2025-01, Day: 12, Employee: 209, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 1
+  ➡️ YearMonth: 2025-01, Day: 13, Employee: 209, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 1
+  ➡️ YearMonth: 2025-01, Day: 14, Employee: 209, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 1
+  ➡️ YearMonth: 2025-01, Day: 15, Employee: 209, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 1
+  ➡️ YearMonth: 2025-01, Day: 16, Employee: 209, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 1
+  ➡️ YearMonth: 2025-01, Day: 17, Employee: 209, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 1
+  ➡️ YearMonth: 2025-01, Day: 18, Employee: 209, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 1
+  ➡️ YearMonth: 2025-01, Day: 19, Employee: 209, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 1
+  ➡️ YearMonth: 2025-01, Day: 20, Employee: 209, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 1
+  ➡️ YearMonth: 2025-01, Day: 21, Employee: 209, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 1
+  ➡️ YearMonth: 2025-01, Day: 22, Employee: 209, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 1
+  ➡️ YearMonth: 2025-01, Day: 23, Employee: 209, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 1
+  ➡️ YearMonth: 2025-01, Day: 24, Employee: 209, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 1
+  ➡️ YearMonth: 2025-01, Day: 25, Employee: 209, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 1
+  ➡️ YearMonth: 2025-01, Day: 26, Employee: 209, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 1
+  ➡️ YearMonth: 2025-01, Day: 27, Employee: 209, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 1
+  ➡️ YearMonth: 2025-01, Day: 28, Employee: 209, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 1
+  ➡️ YearMonth: 2025-01, Day: 29, Employee: 209, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 1
+  ➡️ YearMonth: 2025-01, Day: 30, Employee: 209, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 1
+  ➡️ YearMonth: 2025-01, Day: 31, Employee: 209, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 1
+  ➡️ YearMonth: 2025-01, Day: 1, Employee: 229, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 6
+  ➡️ YearMonth: 2025-01, Day: 2, Employee: 229, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 6
+  ➡️ YearMonth: 2025-01, Day: 3, Employee: 229, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 6
+  ➡️ YearMonth: 2025-01, Day: 4, Employee: 229, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 6
+  ➡️ YearMonth: 2025-01, Day: 5, Employee: 229, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 6
+  ➡️ YearMonth: 2025-01, Day: 6, Employee: 229, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 6
+  ➡️ YearMonth: 2025-01, Day: 7, Employee: 229, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 6
+  ➡️ YearMonth: 2025-01, Day: 8, Employee: 229, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 6
+  ➡️ YearMonth: 2025-01, Day: 9, Employee: 229, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 6
+  ➡️ YearMonth: 2025-01, Day: 10, Employee: 229, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 6
+  ➡️ YearMonth: 2025-01, Day: 11, Employee: 229, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 6
+  ➡️ YearMonth: 2025-01, Day: 12, Employee: 229, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 6
+  ➡️ YearMonth: 2025-01, Day: 13, Employee: 229, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 6
+  ➡️ YearMonth: 2025-01, Day: 14, Employee: 229, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 6
+  ➡️ YearMonth: 2025-01, Day: 15, Employee: 229, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 6
+  ➡️ YearMonth: 2025-01, Day: 16, Employee: 229, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 6
+  ➡️ YearMonth: 2025-01, Day: 17, Employee: 229, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 6
+  ➡️ YearMonth: 2025-01, Day: 18, Employee: 229, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 6
+  ➡️ YearMonth: 2025-01, Day: 19, Employee: 229, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 6
+  ➡️ YearMonth: 2025-01, Day: 20, Employee: 229, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 6
+  ➡️ YearMonth: 2025-01, Day: 21, Employee: 229, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 6
+  ➡️ YearMonth: 2025-01, Day: 22, Employee: 229, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 6
+  ➡️ YearMonth: 2025-01, Day: 23, Employee: 229, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 6
+  ➡️ YearMonth: 2025-01, Day: 24, Employee: 229, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 6
+  ➡️ YearMonth: 2025-01, Day: 25, Employee: 229, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 6
+  ➡️ YearMonth: 2025-01, Day: 26, Employee: 229, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 6
+  ➡️ YearMonth: 2025-01, Day: 27, Employee: 229, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 6
+  ➡️ YearMonth: 2025-01, Day: 28, Employee: 229, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 6
+  ➡️ YearMonth: 2025-01, Day: 29, Employee: 229, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 6
+  ➡️ YearMonth: 2025-01, Day: 30, Employee: 229, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 6
+  ➡️ YearMonth: 2025-01, Day: 31, Employee: 229, Start: 08:00, End: 15:35, Room: GABINET MASAŻU 6
+  ➡️ YearMonth: 2025-01, Day: 1, Employee: 228, Start: 09:00, End: 16:35, Room: MASAŻ KLASYCZNY E
+  ➡️ YearMonth: 2025-01, Day: 2, Employee: 228, Start: 08:00, End: 15:35, Room: MASAŻ KLASYCZNY E
+  ➡️ YearMonth: 2025-01, Day: 3, Employee: 228, Start: 08:00, End: 15:35, Room: MASAŻ KLASYCZNY E
+  ➡️ YearMonth: 2025-01, Day: 4, Employee: 228, Start: 08:00, End: 15:35, Room: MASAŻ KLASYCZNY E
+  ➡️ YearMonth: 2025-01, Day: 5, Employee: 228, Start: 08:00, End: 15:35, Room: MASAŻ KLASYCZNY E
+  ➡️ YearMonth: 2025-01, Day: 6, Employee: 228, Start: 08:00, End: 15:35, Room: MASAŻ KLASYCZNY E
+  ➡️ YearMonth: 2025-01, Day: 7, Employee: 228, Start: 08:00, End: 15:35, Room: MASAŻ KLASYCZNY E
+  ➡️ YearMonth: 2025-01, Day: 8, Employee: 228, Start: 08:00, End: 15:35, Room: MASAŻ KLASYCZNY E
+  ➡️ YearMonth: 2025-01, Day: 9, Employee: 228, Start: 08:00, End: 15:35, Room: MASAŻ KLASYCZNY E
+  ➡️ YearMonth: 2025-01, Day: 10, Employee: 228, Start: 08:00, End: 15:35, Room: MASAŻ KLASYCZNY E
+  ➡️ YearMonth: 2025-01, Day: 11, Employee: 228, Start: 08:00, End: 15:35, Room: MASAŻ KLASYCZNY E
+  ➡️ YearMonth: 2025-01, Day: 12, Employee: 228, Start: 08:00, End: 15:35, Room: MASAŻ KLASYCZNY E
+  ➡️ YearMonth: 2025-01, Day: 13, Employee: 228, Start: 08:00, End: 15:35, Room: MASAŻ KLASYCZNY E
+  ➡️ YearMonth: 2025-01, Day: 14, Employee: 228, Start: 08:00, End: 15:35, Room: MASAŻ KLASYCZNY E
+  ➡️ YearMonth: 2025-01, Day: 15, Employee: 228, Start: 08:00, End: 15:35, Room: MASAŻ KLASYCZNY E
+  ➡️ YearMonth: 2025-01, Day: 16, Employee: 228, Start: 08:00, End: 15:35, Room: MASAŻ KLASYCZNY E
+  ➡️ YearMonth: 2025-01, Day: 17, Employee: 228, Start: 08:00, End: 15:35, Room: MASAŻ KLASYCZNY E
+  ➡️ YearMonth: 2025-01, Day: 18, Employee: 228, Start: 08:00, End: 15:35, Room: MASAŻ KLASYCZNY E
+  ➡️ YearMonth: 2025-01, Day: 19, Employee: 228, Start: 08:00, End: 15:35, Room: MASAŻ KLASYCZNY E
+  ➡️ YearMonth: 2025-01, Day: 20, Employee: 228, Start: 08:00, End: 15:35, Room: MASAŻ KLASYCZNY E
+  ➡️ YearMonth: 2025-01, Day: 21, Employee: 228, Start: 08:00, End: 15:35, Room: MASAŻ KLASYCZNY E
+  ➡️ YearMonth: 2025-01, Day: 22, Employee: 228, Start: 08:00, End: 15:35, Room: MASAŻ KLASYCZNY E
+  ➡️ YearMonth: 2025-01, Day: 23, Employee: 228, Start: 08:00, End: 15:35, Room: MASAŻ KLASYCZNY E
+  ➡️ YearMonth: 2025-01, Day: 24, Employee: 228, Start: 08:00, End: 15:35, Room: MASAŻ KLASYCZNY E
+  ➡️ YearMonth: 2025-01, Day: 25, Employee: 228, Start: 08:00, End: 15:35, Room: MASAŻ KLASYCZNY E
+  ➡️ YearMonth: 2025-01, Day: 26, Employee: 228, Start: 08:00, End: 15:35, Room: MASAŻ KLASYCZNY E
+  ➡️ YearMonth: 2025-01, Day: 27, Employee: 228, Start: 08:00, End: 15:35, Room: MASAŻ KLASYCZNY E
+  ➡️ YearMonth: 2025-01, Day: 28, Employee: 228, Start: 08:00, End: 15:35, Room: MASAŻ KLASYCZNY E
+  ➡️ YearMonth: 2025-01, Day: 29, Employee: 228, Start: 08:00, End: 15:35, Room: MASAŻ KLASYCZNY E
+  ➡️ YearMonth: 2025-01, Day: 30, Employee: 228, Start: 08:00, End: 15:35, Room: MASAŻ KLASYCZNY E
+  ➡️ YearMonth: 2025-01, Day: 31, Employee: 228, Start: 08:00, End: 16:05, Room: MASAŻ KLASYCZNY E
+
+=============================================================
+End of Report
