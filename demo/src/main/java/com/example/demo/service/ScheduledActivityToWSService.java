@@ -18,6 +18,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -30,6 +31,7 @@ public class ScheduledActivityToWSService {
     private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm:ss");
 
     private volatile boolean processLock = false;
+    private volatile boolean cancelled = false;  // Flaga do anulowania procesu
 
     @Scheduled(fixedDelayString = "${scheduler.assign-activities.delay:10000}")
     public void scheduledAssignActivitiesToSchedules() {
@@ -51,135 +53,161 @@ public class ScheduledActivityToWSService {
     public void assignActivitiesToSchedules(boolean fromScheduleImport, String yearMonth) {
         log.info(">>> Assigning activities to unprocessed schedules");
 
-        if (fromScheduleImport) {
-            processLock=true;
-            YearMonth ym = YearMonth.parse(yearMonth);
-            Timestamp from = Timestamp.valueOf(ym.atDay(1).atStartOfDay());
-            Timestamp to = Timestamp.valueOf(ym.atEndOfMonth().atTime(23, 59, 59));
-
-            int deleted = activityEmployeeRepository.deleteAllByActivityDateRangeAndUserModifiedFalse(from, to);
-            log.info("Deleted {} non-user-modified activity_employee entries from {}", deleted, yearMonth);
+        if (processLock) {
+            log.warn(">>> Process already running, skipping execution.");
+            return;  // Wstrzymanie procesu, jeśli już jest aktywny
         }
 
-        List<Integer> scheduleIds = scheduleRepository.findIdsOfUnprocessedSchedules();
-        log.info("Found {} unprocessed schedules", scheduleIds.size());
-        if (scheduleIds.isEmpty()) {
-            log.info("No unprocessed schedules found.");
-            return;
-        }
+        processLock = true;  // Lock the process to prevent concurrent execution
 
-        List<WorkSchedule> schedules = scheduleRepository.findAllById(scheduleIds);
-        log.info("Loaded {} work schedules by ID", schedules.size());
-        if (schedules.isEmpty()) {
-            log.info("No schedules loaded.");
-            return;
-        }
+        try {
+            if (fromScheduleImport) {
+                YearMonth ym = YearMonth.parse(yearMonth);
+                Timestamp from = Timestamp.valueOf(ym.atDay(1).atStartOfDay());
+                Timestamp to = Timestamp.valueOf(ym.atEndOfMonth().atTime(23, 59, 59));
 
-        int totalAssigned = 0;
-        for (WorkSchedule ws : schedules) {
-            try {
-                log.debug("Processing schedule ID={} | yearMonth={} | day={}", ws.getId(), ws.getYearMonth(), ws.getDayOfMonth());
+                int deleted = activityEmployeeRepository.deleteAllByActivityDateRangeAndUserModifiedFalse(from, to);
+                log.info("Deleted {} non-user-modified activity_employee entries from {}", deleted, yearMonth);
+            }
 
-                LocalDate date = LocalDate.of(
-                        Integer.parseInt(ws.getYearMonth().substring(0, 4)),
-                        Integer.parseInt(ws.getYearMonth().substring(5, 7)),
-                        ws.getDayOfMonth()
-                );
+            List<Integer> scheduleIds = scheduleRepository.findIdsOfUnprocessedSchedules();
+            log.info("Found {} unprocessed schedules", scheduleIds.size());
+            if (scheduleIds.isEmpty()) {
+                log.info("No unprocessed schedules found.");
+                return;
+            }
 
-                LocalTime startTimeRaw = parseTime(ws.getWorkStartTime());
-                LocalTime endTimeRaw = parseTime(ws.getWorkEndTime());
-                if (startTimeRaw == null || endTimeRaw == null) {
-                    log.warn("Invalid time for schedule ID={}: {} - {}", ws.getId(), ws.getWorkStartTime(), ws.getWorkEndTime());
-                    continue;
+            List<WorkSchedule> schedules = scheduleRepository.findAllById(scheduleIds);
+            log.info("Loaded {} work schedules by ID", schedules.size());
+            if (schedules.isEmpty()) {
+                log.info("No schedules loaded.");
+                return;
+            }
+
+            int totalAssigned = 0;
+            for (WorkSchedule ws : schedules) {
+                // Sprawdzanie flagi cancelled na początku pętli, aby przerwać przetwarzanie
+                if (cancelled) {
+                    log.warn(">>> Processing cancelled during activity assignment.");
+                    throw new RuntimeException("Przetwarzanie zostało anulowane.");
                 }
 
-                Timestamp startOfDay = Timestamp.valueOf(date.atStartOfDay());
-                Timestamp endOfDay = Timestamp.valueOf(date.plusDays(1).atStartOfDay().minusSeconds(1));
+                try {
+                    log.debug("Processing schedule ID={} | yearMonth={} | day={}", ws.getId(), ws.getYearMonth(), ws.getDayOfMonth());
 
-                log.debug("Querying activities for WS ID={} between {} and {}", ws.getId(), startOfDay, endOfDay);
-                List<ActivityEntity> activities = activityRepository.findActivitiesInDateRangeWithProcedure(startOfDay, endOfDay);
-                log.debug("Retrieved {} activities for WS ID={}", activities.size(), ws.getId());
-                if (activities.isEmpty()) continue;
+                    LocalDate date = LocalDate.of(
+                            Integer.parseInt(ws.getYearMonth().substring(0, 4)),
+                            Integer.parseInt(ws.getYearMonth().substring(5, 7)),
+                            ws.getDayOfMonth()
+                    );
 
-                List<Integer> activityIds = activities.stream()
-                        .map(ActivityEntity::getActivityId)
-                        .toList();
+                    LocalTime startTimeRaw = parseTime(ws.getWorkStartTime());
+                    LocalTime endTimeRaw = parseTime(ws.getWorkEndTime());
+                    if (startTimeRaw == null || endTimeRaw == null) {
+                        log.warn("Invalid time for schedule ID={}: {} - {}", ws.getId(), ws.getWorkStartTime(), ws.getWorkEndTime());
+                        continue;
+                    }
 
-                Map<Integer, Boolean> manualModifiedMap = activityEmployeeRepository
-                        .findManualModifiedActivityIds(activityIds)
-                        .stream().collect(Collectors.toMap(id -> id, id -> true));
-                log.debug("Manual-modified activities map created for WS ID={}", ws.getId());
+                    Timestamp startOfDay = Timestamp.valueOf(date.atStartOfDay());
+                    Timestamp endOfDay = Timestamp.valueOf(date.plusDays(1).atStartOfDay().minusSeconds(1));
 
-                Set<String> existingAssignments = activityEmployeeRepository.findAllExistingActivityEmployeePairs();
-                log.debug("Existing activity-employee pairs fetched");
+                    log.debug("Querying activities for WS ID={} between {} and {}", ws.getId(), startOfDay, endOfDay);
+                    List<ActivityEntity> activities = activityRepository.findActivitiesInDateRangeWithProcedure(startOfDay, endOfDay);
+                    log.debug("Retrieved {} activities for WS ID={}", activities.size(), ws.getId());
+                    if (activities.isEmpty()) continue;
 
-                List<ActivityEmployeeEntity> toSave = new ArrayList<>();
+                    List<Integer> activityIds = activities.stream()
+                            .map(ActivityEntity::getActivityId)
+                            .toList();
 
-                for (ActivityEntity act : activities) {
-                    if (act.getActivityTime() == null) continue;
+                    Map<Integer, Boolean> manualModifiedMap = activityEmployeeRepository
+                            .findManualModifiedActivityIds(activityIds)
+                            .stream().collect(Collectors.toMap(id -> id, id -> true));
+                    log.debug("Manual-modified activities map created for WS ID={}", ws.getId());
 
-                    LocalTime time = act.getActivityTime().toLocalDateTime().toLocalTime();
-                    if (time.isBefore(startTimeRaw) || time.isAfter(endTimeRaw) ) continue;
+                    Set<String> existingAssignments = activityEmployeeRepository.findAllExistingActivityEmployeePairs();
+                    log.debug("Existing activity-employee pairs fetched");
 
-                    if (!ws.getWorkMode().equals(act.getProcedure().getWorkMode())) continue;
+                    List<ActivityEmployeeEntity> toSave = new ArrayList<>();
 
-                    if (!"F".equals(ws.getWorkMode()) && !"B".equals(ws.getWorkMode())) {
-                        if (act.getRoom() == null || ws.getRoomSymbol() == null ||
-                                !ws.getRoomSymbol().equalsIgnoreCase(act.getRoom().getRoomCode())) {
+                    for (ActivityEntity act : activities) {
+                        // Sprawdzanie flagi cancelled w pętli, aby przerwać działanie na każdym etapie
+                        if (cancelled) {
+                            log.warn(">>> Processing cancelled during activity assignment.");
+                            throw new RuntimeException("Przetwarzanie zostało anulowane przez użytkownika.");
+                        }
+
+                        if (act.getActivityTime() == null) continue;
+
+                        LocalTime time = act.getActivityTime().toLocalDateTime().toLocalTime();
+                        if (time.isBefore(startTimeRaw) || time.isAfter(endTimeRaw)) continue;
+
+                        if (!ws.getWorkMode().equals(act.getProcedure().getWorkMode())) continue;
+
+                        if (!"F".equals(ws.getWorkMode()) && !"B".equals(ws.getWorkMode())) {
+                            if (act.getRoom() == null || ws.getRoomSymbol() == null ||
+                                    !ws.getRoomSymbol().equalsIgnoreCase(act.getRoom().getRoomCode())) {
+                                continue;
+                            }
+                        }
+
+                        if (manualModifiedMap.getOrDefault(act.getActivityId(), false)) {
+                            log.debug("Skipping activity {} due to user_modified=true", act.getActivityId());
                             continue;
                         }
+
+                        UserEntity emp = ws.getSubstituteEmployee() != null ? ws.getSubstituteEmployee() : ws.getEmployee();
+                        if (emp == null) {
+                            log.warn("No employee found for WS ID={}", ws.getId());
+                            continue;
+                        }
+
+                        String key = act.getActivityId() + ":" + emp.getId();
+                        if (existingAssignments.contains(key)) {
+                            log.debug("Duplicate assignment skipped: {} -> {}", act.getActivityId(), emp.getId());
+                            continue;
+                        }
+
+                        ActivityEmployeeEntity ae = new ActivityEmployeeEntity();
+                        ae.setActivity(act);
+                        ae.setEmployee(emp);
+                        ae.setUserModified(false);
+                        ae.setWorkSchedule(ws);
+
+                        toSave.add(ae);
                     }
 
-                    if (manualModifiedMap.getOrDefault(act.getActivityId(), false)) {
-                        log.debug("Skipping activity {} due to user_modified=true", act.getActivityId());
-                        continue;
+                    if (!toSave.isEmpty()) {
+                        activityEmployeeRepository.saveAll(toSave);
+                        log.info("Saved {} new activity-employee assignments for WS ID={}", toSave.size(), ws.getId());
+                        totalAssigned += toSave.size();
+                        ws.setProcessed(true);
+                        scheduleRepository.save(ws);
+
+                    } else {
+                        log.debug("No new assignments to save for WS ID={}", ws.getId());
                     }
 
-                    UserEntity emp = ws.getSubstituteEmployee() != null ? ws.getSubstituteEmployee() : ws.getEmployee();
-                    if (emp == null) {
-                        log.warn("No employee found for WS ID={}", ws.getId());
-                        continue;
-                    }
-
-                    String key = act.getActivityId() + ":" + emp.getId();
-                    if (existingAssignments.contains(key)) {
-                        log.debug("Duplicate assignment skipped: {} -> {}", act.getActivityId(), emp.getId());
-                        continue;
-                    }
-
-                    ActivityEmployeeEntity ae = new ActivityEmployeeEntity();
-                    ae.setActivity(act);
-                    ae.setEmployee(emp);
-                    ae.setUserModified(false);
-                    ae.setWorkSchedule(ws);
-
-                    toSave.add(ae);
-                }
-
-                if (!toSave.isEmpty()) {
-                    activityEmployeeRepository.saveAll(toSave);
-                    log.info("Saved {} new activity-employee assignments for WS ID={}", toSave.size(), ws.getId());
-                    totalAssigned += toSave.size();
                     ws.setProcessed(true);
                     scheduleRepository.save(ws);
+                    log.debug("Marked WS ID={} as processed", ws.getId());
 
-                } else {
-                    log.debug("No new assignments to save for WS ID={}", ws.getId());
+                } catch (Exception ex) {
+                    log.error("Failed to assign WS ID={} due to: {}", ws.getId(), ex.getMessage(), ex);
                 }
-
-                ws.setProcessed(true);
-                scheduleRepository.save(ws);
-                log.debug("Marked WS ID={} as processed", ws.getId());
-
-            } catch (Exception ex) {
-                log.error("Failed to assign WS ID={} due to: {}", ws.getId(), ex.getMessage(), ex);
             }
+            log.info("Finished processing schedules. Total assignments created: {}", totalAssigned);
+        } finally {
+            processLock = false;  // Unlock the process once completed or cancelled
+            cancelled = false;
         }
-        processLock=false;
-        log.info("Finished processing schedules. Total assignments created: {}", totalAssigned);
     }
 
-
+    // Method to cancel the process by setting the flag to true
+    public void cancelProcessing() {
+        cancelled = true;
+        log.warn(">>> Processing has been cancelled by the user.");
+    }
 
     private LocalTime parseTime(String timeStr) {
         try {
@@ -188,6 +216,5 @@ public class ScheduledActivityToWSService {
             return null;
         }
     }
-
-
 }
+

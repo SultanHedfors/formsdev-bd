@@ -41,6 +41,9 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     private Role retrieveRole(UserEntity user){
         Integer loyaltyPin = user.getLoyaltyPin();
+        if (loyaltyPin==null) {
+            loyaltyPin=0;
+        }
         System.out.println("loyalty pin: "+ loyaltyPin) ;
         return switch (loyaltyPin) {
             case 1 -> REASSIGN_ALLOWED;
