@@ -6,6 +6,7 @@ import com.example.demo.repository.UserRepository;
 import com.example.demo.repository.stats.DailyEmployeeStatisticRepository;
 import lombok.RequiredArgsConstructor;
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 
@@ -45,7 +46,6 @@ public class StatsExportService {
         Workbook workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet("Statystyki " + from + " do " + to);
 
-
         CellStyle percentStyle = workbook.createCellStyle();
         DataFormat format = workbook.createDataFormat();
         percentStyle.setDataFormat(format.getFormat("0.00%"));
@@ -60,15 +60,10 @@ public class StatsExportService {
         header.createCell(days.size() + 1).setCellValue("Średnia dzienna pracownika");
         header.createCell(days.size() + 2).setCellValue("Średnia dla okresu");
 
-        double overallTotal = 0;
-        int totalRows = 0;
-
         for (Map.Entry<Integer, Map<LocalDate, Double>> entry : grouped.entrySet()) {
-            Row row = sheet.createRow(rowIdx++);
+            Row row = sheet.createRow(rowIdx);
             String employeeName = employeeNames.getOrDefault(entry.getKey(), "Nieznany");
-            Cell employeeCell = row.createCell(0);
-            employeeCell.setCellValue(employeeName);
-
+            row.createCell(0).setCellValue(employeeName);
 
             double employeeTotal = 0;
             int employeeCount = 0;
@@ -77,47 +72,53 @@ public class StatsExportService {
                 Double score = entry.getValue().get(days.get(i));
                 Cell cell = row.createCell(i + 1);
                 if (score != null) {
-                    // Zamiana wartości na odpowiednią liczbę dziesiętną, np. 35% = 0.35
-                    double percentageValue = score; // Wartość już jest dziesiętną (np. 0.35)
-                    cell.setCellValue(percentageValue);
-                    cell.setCellStyle(percentStyle); // Styl procentowy
-                    employeeTotal += percentageValue;
+                    cell.setCellValue(score); // score to już np. 0.35
+                    cell.setCellStyle(percentStyle);
+                    employeeTotal += score;
                     employeeCount++;
                 } else {
-                    cell.setCellValue(""); // Puste komórki
+                    cell.setCellValue("");
                 }
             }
 
-            // Średnia dzienna dla pracownika (użycie formuły Excel)
+            // Średnia dzienna (formuła Excel)
             if (employeeCount > 0) {
-                String averageFormula = String.format("AVERAGEIF(B%d:%s%d, \"<>\" )", rowIdx, (char) ('B' + days.size() - 1), rowIdx);
+                String startCol = CellReference.convertNumToColString(1);
+                String endCol = CellReference.convertNumToColString(days.size());
+                String averageFormula = String.format("AVERAGEIF(%s%d:%s%d,\"<>\")", startCol, rowIdx + 1, endCol, rowIdx + 1);
+
                 Cell avgCell = row.createCell(days.size() + 1);
-                avgCell.setCellFormula(averageFormula); // Formuła Excel
-                avgCell.setCellStyle(percentStyle); // Styl procentowy
+                avgCell.setCellFormula(averageFormula);
+                avgCell.setCellStyle(percentStyle);
             }
 
-            overallTotal += employeeTotal;
-            totalRows += employeeCount;
+            rowIdx++;
         }
 
-        // Obliczanie średniej z całej tabeli (użycie formuły Excel)
+        // Średnia globalna (dla wszystkich)
         Row totalRow = sheet.createRow(rowIdx);
+        String startCol = CellReference.convertNumToColString(1);
+        String endCol = CellReference.convertNumToColString(days.size());
+        String overallAverageFormula = String.format("AVERAGEIF(%s2:%s%d,\"<>\")", startCol, endCol, rowIdx);
 
+        Cell avgAll1 = totalRow.createCell(days.size() + 1);
+        avgAll1.setCellFormula(overallAverageFormula);
+        avgAll1.setCellStyle(percentStyle);
 
-        String overallAverageFormula = String.format("AVERAGEIF(B%d:%s%d, \"<>\" )", 2, (char) ('B' + days.size() - 1), rowIdx);
-        totalRow.createCell(days.size() + 1).setCellFormula(overallAverageFormula); // Formuła Excel
-        totalRow.createCell(days.size() + 2).setCellFormula(overallAverageFormula); // Formuła Excel
+        Cell avgAll2 = totalRow.createCell(days.size() + 2);
+        avgAll2.setCellFormula(overallAverageFormula);
+        avgAll2.setCellStyle(percentStyle);
 
-        // Formatowanie komórek (procenty)
+        // Auto szerokość kolumn
         for (int i = 0; i < days.size() + 3; i++) {
-            sheet.autoSizeColumn(i); // Automatyczne dopasowanie szerokości kolumn
+            sheet.autoSizeColumn(i);
         }
 
-        // Zapisanie do pliku
+        // Zapis do pliku
         File file = Files.createTempFile("stats_", ".xlsx").toFile();
         try (FileOutputStream out = new FileOutputStream(file)) {
             workbook.write(out);
-            out.flush();  // zalecane
+            out.flush();
         }
         workbook.close();
 
