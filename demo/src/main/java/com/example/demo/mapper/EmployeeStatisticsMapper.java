@@ -1,6 +1,5 @@
 package com.example.demo.mapper;
 
-import com.example.demo.dto.bsn_logic_dto.*;
 import com.example.demo.dto.stats_dtos.DailyStatsDto;
 import com.example.demo.dto.stats_dtos.MonthlyStatsDto;
 import com.example.demo.dto.stats_dtos.WeeklyStatsDto;

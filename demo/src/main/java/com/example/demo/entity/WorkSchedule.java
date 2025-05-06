@@ -8,8 +8,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
 
 @Data
 @Entity
@@ -63,20 +61,5 @@ public class WorkSchedule {
 
     private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm:ss");
 
-    public void setWorkStartTimeFromLocalTime(java.time.LocalTime time) {
-        this.workStartTime = time != null ? time.format(TIME_FORMATTER) : null;
-    }
-
-    public java.time.LocalTime getWorkStartTimeAsLocalTime() {
-        return workStartTime != null ? java.time.LocalTime.parse(workStartTime, TIME_FORMATTER) : null;
-    }
-
-    public void setWorkEndTimeFromLocalTime(java.time.LocalTime time) {
-        this.workEndTime = time != null ? time.format(TIME_FORMATTER) : null;
-    }
-
-    public java.time.LocalTime getWorkEndTimeAsLocalTime() {
-        return workEndTime != null ? java.time.LocalTime.parse(workEndTime, TIME_FORMATTER) : null;
-    }
 
 }

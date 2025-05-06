@@ -113,8 +113,6 @@ public class ActivityService {
 
     private void setWorkdayFlag(Page<ActivityEntity> activityPage, List<ActivityDto> dtoList, Integer employeeId) {
         List<ActivityEntity> entities = activityPage.getContent();
-        DateTimeFormatter ymFormatter = DateTimeFormatter.ofPattern("yyyy-MM");
-
         IntStream.range(0, entities.size())
                 .filter(i -> entities.get(i).getActivityDate() != null)
                 .forEach(i -> {

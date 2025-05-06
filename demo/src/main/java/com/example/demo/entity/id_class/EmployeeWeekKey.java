@@ -19,8 +19,7 @@ public class EmployeeWeekKey implements Serializable {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof EmployeeWeekKey)) return false;
-        EmployeeWeekKey that = (EmployeeWeekKey) o;
+        if (!(o instanceof EmployeeWeekKey that)) return false;
         return Objects.equals(employeeId, that.employeeId) &&
                 Objects.equals(weekStart, that.weekStart);
     }

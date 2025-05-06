@@ -18,8 +18,7 @@ public class EmployeeYearKey implements Serializable {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof EmployeeYearKey)) return false;
-        EmployeeYearKey that = (EmployeeYearKey) o;
+        if (!(o instanceof EmployeeYearKey that)) return false;
         return Objects.equals(employeeId, that.employeeId) &&
                 Objects.equals(year, that.year);
     }

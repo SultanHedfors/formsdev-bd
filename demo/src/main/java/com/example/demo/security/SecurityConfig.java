@@ -16,9 +16,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import static com.example.demo.service.CustomUserDetailsService.Role.ADMIN;
-import static com.example.demo.service.CustomUserDetailsService.Role.REASSIGN_ALLOWED;
-
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {

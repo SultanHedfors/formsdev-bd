@@ -18,8 +18,7 @@ public class EmployeeMonthKey implements Serializable {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof EmployeeMonthKey)) return false;
-        EmployeeMonthKey that = (EmployeeMonthKey) o;
+        if (!(o instanceof EmployeeMonthKey that)) return false;
         return Objects.equals(employeeId, that.employeeId) &&
                 Objects.equals(month, that.month);
     }

@@ -1,7 +1,6 @@
 package com.example.demo.controller;
 
 import com.example.demo.dto.bsn_logic_dto.ActivityDto;
-import com.example.demo.dto.bsn_logic_dto.ProcedureDto;
 import com.example.demo.exception.CurrentUserNotFoundException;
 import com.example.demo.service.ActivityService;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.YearMonth;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/procedures")

@@ -20,8 +20,7 @@ public class EmployeeDateKey implements Serializable {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof EmployeeDateKey)) return false;
-        EmployeeDateKey that = (EmployeeDateKey) o;
+        if (!(o instanceof EmployeeDateKey that)) return false;
         return Objects.equals(employeeId, that.employeeId) &&
                 Objects.equals(startDay, that.startDay);
     }
