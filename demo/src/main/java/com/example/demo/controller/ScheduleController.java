@@ -92,18 +92,25 @@ public class ScheduleController {
     // Funkcja do usuwania wszystkich plików w folderze
     private void deleteAllFilesInDirectory(String directoryPath) throws IOException {
         Path dirPath = Paths.get(directoryPath);
-        try (Stream<Path> paths = Files.walk(dirPath)) {
-            paths.filter(Files::isRegularFile)  // Filtruj tylko pliki
-                    .forEach(path -> {
-                        try {
-                            Files.delete(path);  // Usuń plik
-                            log.info("Usunięto plik: {}", path);
-                        } catch (IOException e) {
-                            log.error("Błąd podczas usuwania pliku: {}", path, e);
-                        }
-                    });
+
+        // Sprawdź, czy katalog istnieje
+        if (Files.exists(dirPath) && Files.isDirectory(dirPath)) {
+            try (Stream<Path> paths = Files.walk(dirPath)) {
+                paths.filter(Files::isRegularFile)  // Filtruj tylko pliki
+                        .forEach(path -> {
+                            try {
+                                Files.delete(path);  // Usuń plik
+                                log.info("Usunięto plik: {}", path);
+                            } catch (IOException e) {
+                                log.error("Błąd podczas usuwania pliku: {}", path, e);
+                            }
+                        });
+            }
+        } else {
+            log.warn("Katalog {} nie istnieje lub nie jest katalogiem.", directoryPath);
         }
     }
+
 
     @GetMapping("/download-latest-report")
     public ResponseEntity<Resource> downloadLatestTxtFile() {

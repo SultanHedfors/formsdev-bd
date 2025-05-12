@@ -247,6 +247,12 @@ public class ScheduleReader {
                     dayBasedSubCode = aboveVal;
                 }
             }
+            if (!isValidDay(yearMonth, day)) {
+                String errorMessage = String.format("Niepoprawny dzień: %d dla miesiąca: %s", day, yearMonth);
+                log.warn(errorMessage); // Dodajemy komunikat do loga
+                validationErrors.add(errorMessage); // Dodajemy do listy błędów walidacji
+                throw new RuntimeException(errorMessage); // Rzucamy wyjątek z odpowiednim komunikatem
+            }
 
             Cell workInfoCell = workModeRow.getCell(day);
             Cell startCell = startTimeRow.getCell(day);
@@ -376,11 +382,6 @@ public class ScheduleReader {
     }
 
 
-
-
-
-
-
     private List<String> getAllRoomCodes() {
         return roomRepository.findAll().stream()
                 .map(RoomEntity::getRoomCode)
@@ -449,5 +450,16 @@ public class ScheduleReader {
 
         // Usuwamy rekordy tygodniowe z przedziału dat
         weeklyEmployeeStatisticRepository.deleteByWeekStartBetween(firstDayOfMonth, lastDayOfMonth);
+    }
+
+    private boolean isValidDay(YearMonth yearMonth, int day) {
+        // Sprawdzamy, czy dzień mieści się w danym miesiącu
+        try {
+            LocalDate date = LocalDate.of(yearMonth.getYear(), yearMonth.getMonth(), day);
+            return !date.isAfter(yearMonth.atEndOfMonth());  // Jeśli dzień jest po ostatnim dniu miesiąca, zwróci false
+        } catch (Exception e) {
+            // Jeśli nie udało się utworzyć LocalDate (np. 30 lutego), to oznacza, że data jest niepoprawna
+            return false;
+        }
     }
 }
