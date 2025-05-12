@@ -12,7 +12,7 @@
 
     <changeSet id="001-create-work_schedule-table" author="your_name">
         <createTable tableName="work_schedule">
-            <column name="id" type="INTEGER" autoIncrement="true">
+            <column name="id" type="INTEGER">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="year_month" type="VARCHAR(7)">
@@ -114,7 +114,7 @@
     <changeSet id="create-activity-assignment-log" author="your_name">
 
         <createTable tableName="activity_assignment_log">
-            <column name="id" type="INTEGER" autoIncrement="true">
+            <column name="id" type="INTEGER" >
                 <constraints primaryKey="true" nullable="false"/>
             </column>
 
@@ -240,7 +240,16 @@
                 referencedTableName="ZAJECIE"
                 referencedColumnNames="ZAJECIE_ID"
                 constraintName="fk_activity_employee_activity"/>
-
+    </changeSet>
+    <changeSet id="20250406-create-activity-employee11" author="twoja_nazwa">
+        <preConditions onFail="MARK_RAN">
+            <!-- Check if the constraint already exists -->
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*)
+                FROM RDB$RELATION_CONSTRAINTS
+                WHERE RDB$CONSTRAINT_NAME = 'FK_ACTIVITY_EMPLOYEE_EMPLOYEE';
+            </sqlCheck>
+        </preConditions>
         <addForeignKeyConstraint
                 baseTableName="activity_employee"
                 baseColumnNames="employee_id"
@@ -390,9 +399,9 @@
     <changeSet id="add-cascade-deletes-to-activity-employee" author="yourname">
 
         <!-- 1. Drop and recreate FK from ACTIVITY_EMPLOYEE.ACTIVITY_ID to ZAJECIE.ZAJECIE_ID with ON DELETE CASCADE -->
-        <dropForeignKeyConstraint
-                baseTableName="ACTIVITY_EMPLOYEE"
-                constraintName="FK_ACTIVITY_EMPLOYEE_ACTIVITY" />
+<!--        <dropForeignKeyConstraint-->
+<!--                baseTableName="ACTIVITY_EMPLOYEE"-->
+<!--                constraintName="FK_ACTIVITY_EMPLOYEE_ACTIVITY" />-->
 
         <addForeignKeyConstraint
                 baseTableName="ACTIVITY_EMPLOYEE"
@@ -450,10 +459,10 @@
             <column name="work_schedule_id"/>
         </createIndex>
     </changeSet>
-<!--    <changeSet id="drop-work-schedule-column" author="gr1nd">-->
+    <!--    <changeSet id="drop-work-schedule-column" author="gr1nd">-->
 
-<!--        <dropColumn tableName="activity_employee" columnName="work_schedule_id"/>-->
-<!--    </changeSet>-->
+    <!--        <dropColumn tableName="activity_employee" columnName="work_schedule_id"/>-->
+    <!--    </changeSet>-->
     <changeSet id="trigger-reset-ws-processed-on-activity-employee-delete" author="gr1nd">
         <sql>
             CREATE TRIGGER trg_reset_ws_processed_aedel
@@ -599,13 +608,4 @@
                                  constraintName="fk_year_emp"/>
     </changeSet>
 
-
-
-
-
-
-
-
-
 </databaseChangeLog>
-

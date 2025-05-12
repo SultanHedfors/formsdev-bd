@@ -6,6 +6,10 @@ import com.example.demo.entity.WorkSchedule;
 import com.example.demo.repository.RoomRepository;
 import com.example.demo.repository.ScheduleRepository;
 import com.example.demo.repository.UserRepository;
+import com.example.demo.repository.stats.DailyEmployeeStatisticRepository;
+import com.example.demo.repository.stats.MonthlyEmployeeStatisticRepository;
+import com.example.demo.repository.stats.WeeklyEmployeeStatisticRepository;
+import com.example.demo.repository.stats.YearlyEmployeeStatisticRepository;
 import com.example.demo.service.ScheduledActivityToWSService;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +20,7 @@ import org.springframework.stereotype.Component;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
@@ -43,18 +48,29 @@ public class ScheduleReader {
     private final UserRepository userRepository;
     private final ScheduleRepository scheduleRepository;
     private final RoomRepository roomRepository;
+
+    private final DailyEmployeeStatisticRepository dailyEmployeeStatisticRepository;
+
+    private final WeeklyEmployeeStatisticRepository weeklyEmployeeStatisticRepository;
+    private final MonthlyEmployeeStatisticRepository monthlyEmployeeStatisticRepository;
+
+    private final YearlyEmployeeStatisticRepository yearlyEmployeeStatisticRepository;
     private final ScheduledActivityToWSService scheduledActivityToWSService;
 
     public List<String> logMessages = new ArrayList<>();
-    public List<String> validationErrors = new ArrayList<>();
+    public List<String> validationErrors;
 
     public ScheduleReader(UserRepository userRepository,
                           ScheduleRepository scheduleRepository,
                           RoomRepository roomRepository,
-                          ScheduledActivityToWSService scheduledActivityToWSService) {
+                          DailyEmployeeStatisticRepository dailyEmployeeStatisticRepository, WeeklyEmployeeStatisticRepository weeklyEmployeeStatisticRepository, MonthlyEmployeeStatisticRepository monthlyEmployeeStatisticRepository, YearlyEmployeeStatisticRepository yearlyEmployeeStatisticRepository, ScheduledActivityToWSService scheduledActivityToWSService) {
         this.userRepository = userRepository;
         this.scheduleRepository = scheduleRepository;
         this.roomRepository = roomRepository;
+        this.dailyEmployeeStatisticRepository = dailyEmployeeStatisticRepository;
+        this.weeklyEmployeeStatisticRepository = weeklyEmployeeStatisticRepository;
+        this.monthlyEmployeeStatisticRepository = monthlyEmployeeStatisticRepository;
+        this.yearlyEmployeeStatisticRepository = yearlyEmployeeStatisticRepository;
         this.scheduledActivityToWSService = scheduledActivityToWSService;
     }
 
@@ -65,6 +81,7 @@ public class ScheduleReader {
         }
         processing = true;
         cancelled = false;
+        validationErrors = new ArrayList<>();
 
         log.info("Attempting load of Excel file at: {}", filePath);
 
@@ -166,9 +183,8 @@ public class ScheduleReader {
             // Always reset the processing flag to false, regardless of the outcome
             processing = false;
         }
+        cleanOverwrittenTables(yearMonth);
 
-        log.info("Deleting existing schedules for YearMonth: {}", yearMonth);
-        scheduleRepository.deleteByYearMonth(yearMonth.toString());
 
         log.info("Saving {} new work schedule entries", workSchedules.size());
         scheduleRepository.saveAll(workSchedules);
@@ -296,42 +312,6 @@ public class ScheduleReader {
     }
 
 
-
-//    private List<Integer> getRowsWithEmployees(Sheet sheet, List<String> employeesCodes) {
-//        return getPopulatedRowsInFirstColumn(sheet).stream()
-//                .filter(rowIndex -> {
-//                    Row row = sheet.getRow(rowIndex);
-//                    if (row != null) {
-//                        Cell cell = row.getCell(0);
-//                        if (cell != null) {
-//                            String cellValue = getCellValueAsString(cell).toUpperCase();
-//                            return employeesCodes.contains(cellValue);
-//                        }
-//                    }
-//                    return false;
-//                })
-//                .collect(Collectors.toList());
-//    }
-//private List<Integer> getPopulatedRowsInFirstColumn(Sheet sheet) {
-//    List<Integer> rowIndexes = new ArrayList<>();
-//    for (Row row : sheet) {
-//        Cell cell = row.getCell(0);
-//        if (cell != null && cell.getCellType() != CellType.BLANK) {
-//            rowIndexes.add(row.getRowNum());
-//        }
-//    }
-//    return rowIndexes;
-//}
-//private List<Integer> getAllRows(Sheet sheet) {
-//    List<Integer> rowIndexes = new ArrayList<>();
-//    int lastRowNum = sheet.getLastRowNum();  // Ostatni numer wiersza w arkuszu
-//
-//    for (int i = 0; i <= lastRowNum; i++) {  // Przechodzimy przez wszystkie wiersze
-//        rowIndexes.add(i);  // Dodajemy wszystkie numery wierszy, nawet te puste
-//    }
-//    return rowIndexes;
-//}
-
     private List<Integer> getRowsWithEmployees(Sheet sheet, List<String> employeesCodes) {
         List<Integer> resultRows = new ArrayList<>();
         String previousCode = null;  // Zmienna do przechowywania poprzedniego kodu
@@ -418,9 +398,7 @@ public class ScheduleReader {
         log.warn(">>> Przetwarzanie grafiku zostało anulowane na żądanie użytkownika.");
     }
 
-    public boolean isProcessing() {
-        return processing;
-    }
+
 
     private YearMonth parseYearMonthFromFileName(String fileName) {
         // Wyrażenie regularne do dopasowania formatu "grafik_pracy_YYYY-MM.xlsx"
@@ -437,4 +415,39 @@ public class ScheduleReader {
         }
     }
 
+    private void cleanOverwrittenTables(YearMonth yearMonth) {
+        log.info("Deleting existing schedules for YearMonth: {}", yearMonth);
+        scheduleRepository.deleteByYearMonth(String.valueOf(yearMonth));
+
+        // Usuwanie danych miesięcznych
+        monthlyEmployeeStatisticRepository.deleteByMonth(yearMonth.toString());
+        log.info("Deleted monthly records for YearMonth: {}", yearMonth);
+
+        deleteWeeklyStatsForMonth(yearMonth);  // Teraz jedno zapytanie
+        log.info("Deleted weekly records for YearMonth: {}", yearMonth);
+
+
+        deleteDailyStatsForMonth(yearMonth);  // Teraz jedno zapytanie
+        log.info("Deleted daily records for YearMonth: {}", yearMonth);
+
+        yearlyEmployeeStatisticRepository.deleteByYear(yearMonth.getYear()); // Usuwamy rekordy z danego roku
+    }
+
+    // Funkcja do usuwania rekordów dziennych w danym miesiącu jednym zapytaniem
+    private void deleteDailyStatsForMonth(YearMonth yearMonth) {
+        LocalDate firstDayOfMonth = yearMonth.atDay(1); // Pierwszy dzień miesiąca
+        LocalDate lastDayOfMonth = yearMonth.atEndOfMonth(); // Ostatni dzień miesiąca
+
+        // Usuwamy rekordy z przedziału dat (cały miesiąc)
+        dailyEmployeeStatisticRepository.deleteByStartDayBetween(firstDayOfMonth, lastDayOfMonth);
+    }
+
+    // Funkcja do usuwania rekordów tygodniowych w danym miesiącu jednym zapytaniem
+    private void deleteWeeklyStatsForMonth(YearMonth yearMonth) {
+        LocalDate firstDayOfMonth = yearMonth.atDay(1); // Pierwszy dzień miesiąca
+        LocalDate lastDayOfMonth = yearMonth.atEndOfMonth(); // Ostatni dzień miesiąca
+
+        // Usuwamy rekordy tygodniowe z przedziału dat
+        weeklyEmployeeStatisticRepository.deleteByWeekStartBetween(firstDayOfMonth, lastDayOfMonth);
+    }
 }

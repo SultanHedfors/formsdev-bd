@@ -17,13 +17,5 @@ public interface ScheduleRepository extends JpaRepository<WorkSchedule, Integer>
     @Query("SELECT ws.id FROM WorkSchedule ws WHERE ws.processed IS NULL OR ws.processed = false")
     List<Integer> findIdsOfUnprocessedSchedules();
 
-    // Zapytanie filtrujące po 'yearMonth'
-    List<WorkSchedule> findByYearMonthBetween(String startYearMonth, String endYearMonth);
-
-
-
-
-
-
 
 }

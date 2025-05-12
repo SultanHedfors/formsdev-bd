@@ -42,7 +42,8 @@ public class EmployeeStatsScheduler {
      * Ta metoda uruchamia się co godzinę i oblicza statystyki dla pracowników na podstawie
      * danych sprzed ostatnich 3 lat.
      */
-    @Scheduled(cron = "0 0 * * * *") // Co godzinę
+    @Scheduled(fixedDelay = 15 * 60 * 1000) // 5 minut
+//    @Scheduled(cron = "0 0 * * * *") // Co godzinę
     public void updateOldDataStats() {
         LocalDate today = LocalDate.now();
         LocalDate threeYearsAgo = today.minusYears(3);
