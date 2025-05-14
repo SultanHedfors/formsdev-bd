@@ -5,9 +5,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.Year;
 import java.time.YearMonth;
+import java.time.temporal.TemporalAdjusters;
 import java.util.Map;
 
 @Component
@@ -64,12 +66,18 @@ public class EmployeeStatsScheduler {
             }
         }
 
-        // Obliczanie statystyk tygodniowych dla danych sprzed 3 lat
         for (LocalDate date = threeYearsAgo; !date.isAfter(today); date = date.plusWeeks(1)) {
-            final LocalDate finalDate = date.with(java.time.DayOfWeek.MONDAY); // Początek tygodnia
-            log.info("[SCHEDULER] Start weekly stats calculation for week starting: {}", finalDate);
-            calculator.calculateWeeklyScores(finalDate);  // Obliczanie statystyk tygodniowych
+            LocalDate monday = date.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
+            LocalDate firstOfMonth = date.with(TemporalAdjusters.firstDayOfMonth());
+
+            if (monday.isBefore(firstOfMonth)) {
+                monday = firstOfMonth;
+            }
+
+            log.info("[SCHEDULER] Start weekly stats calculation for week starting: {}", monday);
+            calculator.calculateWeeklyScores(monday);
         }
+
 
         // Obliczanie statystyk miesięcznych dla danych sprzed 3 lat
         for (LocalDate date = threeYearsAgo; !date.isAfter(today); date = date.plusMonths(1)) {

@@ -144,7 +144,7 @@ public class ScheduledActivityToWSService {
 
                         if (!ws.getWorkMode().equals(act.getProcedure().getWorkMode())) continue;
 
-                        if (!"F".equals(ws.getWorkMode()) && !"B".equals(ws.getWorkMode())) {
+                        if (!"F".equals(ws.getWorkMode()) && !"B".equals(ws.getWorkMode()) && !"U".equals(ws.getWorkMode())) {
                             if (act.getRoom() == null || ws.getRoomSymbol() == null ||
                                     !ws.getRoomSymbol().equalsIgnoreCase(act.getRoom().getRoomCode())) {
                                 continue;

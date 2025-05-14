@@ -248,10 +248,8 @@ public class ScheduleReader {
                 }
             }
             if (!isValidDay(yearMonth, day)) {
-                String errorMessage = String.format("Niepoprawny dzień: %d dla miesiąca: %s", day, yearMonth);
-                log.warn(errorMessage); // Dodajemy komunikat do loga
-                validationErrors.add(errorMessage); // Dodajemy do listy błędów walidacji
-                throw new RuntimeException(errorMessage); // Rzucamy wyjątek z odpowiednim komunikatem
+                log.warn("Niepoprawny dzień: {} dla miesiąca: {}", day, yearMonth);
+                return; // Jeśli dzień jest niepoprawny, pomijamy ten wpis
             }
 
             Cell workInfoCell = workModeRow.getCell(day);

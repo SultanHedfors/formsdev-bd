@@ -49,7 +49,8 @@ public class StatisticsService {
         List<EmployeeStatsDto> stats = all.stream()
                 .map(u -> {
                     Integer empId = u.getId();
-                    String  code  = u.getFullName();
+                    String  name  = u.getFullName();
+                    String code = u.getEmployeeCode();
                     boolean isCurrent =u.getEmployeeCode().equals(username);
 
                     // 4) pobranie zestawów
@@ -67,6 +68,7 @@ public class StatisticsService {
                     );
 
                     return new EmployeeStatsDto(
+                            name,
                             code,
                             isCurrent,
                             daily,

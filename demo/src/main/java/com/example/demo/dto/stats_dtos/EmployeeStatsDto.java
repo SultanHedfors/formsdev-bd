@@ -10,6 +10,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class EmployeeStatsDto {
+    private String employeeName;
     private String employeeCode;
     private boolean currentUser;
     private List<DailyStatsDto>   dailyStats;

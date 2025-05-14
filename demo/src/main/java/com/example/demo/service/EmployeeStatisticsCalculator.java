@@ -35,8 +35,7 @@ public class EmployeeStatisticsCalculator {
         );
     }
 
-    public void calculateWeeklyScores(LocalDate anyDate) {
-        LocalDate monday = anyDate.with(DayOfWeek.MONDAY);
+    public void calculateWeeklyScores(LocalDate monday) {
         LocalDateTime start = monday.atStartOfDay();
         LocalDateTime end = start.plusWeeks(1);
         calculateAndSave(
@@ -45,6 +44,7 @@ public class EmployeeStatisticsCalculator {
                 weeklyRepo::save
         );
     }
+
 
     public void calculateMonthlyScores(YearMonth month) {
         LocalDateTime start = month.atDay(1).atStartOfDay();
