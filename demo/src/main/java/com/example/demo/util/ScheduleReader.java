@@ -22,9 +22,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.time.LocalDate;
 import java.time.YearMonth;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -32,8 +30,7 @@ import java.util.stream.IntStream;
 
 import static com.example.demo.util.ExcelUtil.getCellValueAsString;
 import static com.example.demo.util.ReportCreator.writeLogFile;
-import static com.example.demo.util.TimeUtil.calculateDuration;
-import static com.example.demo.util.TimeUtil.formatTime;
+import static com.example.demo.util.TimeUtil.*;
 
 @Slf4j
 @Component
@@ -185,7 +182,7 @@ public class ScheduleReader {
         }
         cleanOverwrittenTables(yearMonth);
 
-
+        addLateWorkSchedulesForLatestEndTime(workSchedules, yearMonth);
         log.info("Saving {} new work schedule entries", workSchedules.size());
         scheduleRepository.saveAll(workSchedules);
 
@@ -460,4 +457,83 @@ public class ScheduleReader {
             return false;
         }
     }
+
+    private void addLateWorkSchedulesForLatestEndTime(List<WorkSchedule> workSchedules, YearMonth currentYearMonth) {
+        List<WorkSchedule> extraLateWorkSchedules = new ArrayList<>();
+        Set<String> workModesToCheck = Set.of("F", "B");
+
+        for (String workMode : workModesToCheck) {
+            // Grupowanie tylko po bieżącym yearMonth i workMode
+            Map<LocalDate, List<WorkSchedule>> byDate = workSchedules.stream()
+                    .filter(ws -> workMode.equals(ws.getWorkMode()))
+                    .filter(ws -> {
+                        YearMonth ym = YearMonth.parse(ws.getYearMonth());
+                        return ym.equals(currentYearMonth);
+                    })
+                    .collect(Collectors.groupingBy(ws -> LocalDate.of(
+                            currentYearMonth.getYear(),
+                            currentYearMonth.getMonthValue(),
+                            ws.getDayOfMonth()
+                    )));
+
+            for (Map.Entry<LocalDate, List<WorkSchedule>> entry : byDate.entrySet()) {
+                LocalDate date = entry.getKey();
+                List<WorkSchedule> schedulesForDayAndMode = entry.getValue();
+
+                // Najpóźniejsze workEndTime
+                String latestEndTime = schedulesForDayAndMode.stream()
+                        .map(WorkSchedule::getWorkEndTime)
+                        .max(String::compareTo)
+                        .orElse(null);
+
+                if (latestEndTime == null) continue;
+
+                String lateStartTime = addOneSecondToTimeString(latestEndTime);
+
+                // Dla każdego pracownika/substituteEmployee, który już miał WS tego dnia i tego trybu!
+                Set<UserEntity> employeesWithSchedule = schedulesForDayAndMode.stream()
+                        .map(ws -> ws.getSubstituteEmployee() != null ? ws.getSubstituteEmployee() : ws.getEmployee())
+                        .filter(Objects::nonNull)
+                        .collect(Collectors.toSet());
+
+                for (UserEntity employee : employeesWithSchedule) {
+                    // Sprawdź, czy już istnieje taki late schedule dla tego pracownika, tego dnia, tego trybu
+                    boolean alreadyExists = workSchedules.stream().anyMatch(ws ->
+                            workMode.equals(ws.getWorkMode()) &&
+                                    (ws.getSubstituteEmployee() != null ? ws.getSubstituteEmployee() : ws.getEmployee()) == employee &&
+                                    YearMonth.parse(ws.getYearMonth()).equals(currentYearMonth) &&
+                                    LocalDate.of(
+                                            currentYearMonth.getYear(),
+                                            currentYearMonth.getMonthValue(),
+                                            ws.getDayOfMonth()
+                                    ).equals(date) &&
+                                    ws.getWorkStartTime().equals(lateStartTime) &&
+                                    ws.getWorkEndTime().equals("23:59:59")
+                    );
+                    if (alreadyExists) continue;
+
+                    WorkSchedule newLateSchedule = WorkSchedule.builder()
+                            .yearMonth(currentYearMonth.toString())
+                            .dayOfMonth(date.getDayOfMonth())
+                            .employee(employee)
+                            .workMode(workMode)
+                            .workStartTime(lateStartTime)
+                            .workEndTime("23:59:59")
+                            .workDurationMinutes(0)
+                            .roomSymbol(null)
+                            .processed(false)
+                            .build();
+                    extraLateWorkSchedules.add(newLateSchedule);
+                    log.info("Added extra late WorkSchedule: employeeCode={}, date={}, workMode={}, start={}, end={}",
+                            employee.getEmployeeCode(), date, workMode, lateStartTime, "23:59:59");
+                }
+            }
+        }
+        workSchedules.addAll(extraLateWorkSchedules);
+        log.info("Dodatkowo utworzono {} rekordów WorkSchedule dla pracy po godzinach (najpóźniejsze zakończenie + 1s -> 23:59:59) dla YearMonth={}", extraLateWorkSchedules.size(), currentYearMonth);
+    }
+
+
+
+
 }

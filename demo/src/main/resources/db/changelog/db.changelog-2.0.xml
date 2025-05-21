@@ -607,5 +607,28 @@
                                  referencedColumnNames="employee_id"
                                  constraintName="fk_year_emp"/>
     </changeSet>
+<changeSet id="trg-zajecie-update-ws-processed-no-declare" author="twoj-login">
+    <sql>
+CREATE OR ALTER TRIGGER trg_zajecie_update_ws_processed
+AFTER INSERT OR UPDATE ON ZAJECIE
+AS
+BEGIN
+  UPDATE WORK_SCHEDULE
+     SET PROCESSED = 0
+   WHERE YEAR_MONTH = CAST(EXTRACT(YEAR FROM NEW.ZAJECIE_DATA) AS VARCHAR(4))
+                        || '-' ||
+                        RIGHT('0' || CAST(EXTRACT(MONTH FROM NEW.ZAJECIE_DATA) AS VARCHAR(2)), 2)
+     AND DAY_OF_MONTH = EXTRACT(DAY FROM NEW.ZAJECIE_DATA);
+END
+    </sql>
+</changeSet>
+
+
+
+
+
+
+
+
 
 </databaseChangeLog>

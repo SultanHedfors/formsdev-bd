@@ -53,4 +53,31 @@ public class TimeUtil {
             return null;
         }
     }
+
+    // Dodaj metodę pomocniczą, jeśli jeszcze nie masz:
+    public static String addOneSecondToTimeString(String time) {
+        try {
+            String[] parts = time.split(":");
+            int h = Integer.parseInt(parts[0]);
+            int m = Integer.parseInt(parts[1]);
+            int s = 0;
+            if (parts.length >= 3) {
+                s = Integer.parseInt(parts[2]);
+            }
+            s++;
+            if (s >= 60) {
+                s = 0;
+                m++;
+                if (m >= 60) {
+                    m = 0;
+                    h = (h + 1) % 24;
+                }
+            }
+            return String.format("%02d:%02d:%02d", h, m, s);
+        } catch (Exception ex) {
+            log.error("Cannot parse time string: {}", time, ex);
+            return time;
+        }
+    }
+
 }
