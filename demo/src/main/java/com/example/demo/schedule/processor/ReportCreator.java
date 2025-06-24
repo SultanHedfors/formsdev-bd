@@ -1,9 +1,8 @@
-package com.example.demo.util;
+package com.example.demo.schedule.processor;
 
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -14,18 +13,7 @@ import java.util.stream.Stream;
 
 @Slf4j
 public class ReportCreator {
-
-    /**
-     * Główna metoda do tworzenia raportu z procesu przetwarzania pliku.
-     *
-     * @param excelFilePath   Ścieżka do pliku Excela (folder lub plik)
-     * @param logMessages     Lista komunikatów logów (błędy lub sukcesy)
-     * @param success         Flaga sukcesu przetwarzania
-     * @param scheduleSummary Lista tekstowa podsumowania przetworzonych grafików (bez encji!)
-     * @param excelName       Nazwa pliku Excela
-     */
     static void writeLogFile(String excelFilePath, List<String> logMessages, boolean success, List<String> scheduleSummary, String excelName) {
-        String baseFileName = new File(excelFilePath).getName().replace(".xlsx", "");
         String fileSuffix = success ? "_processing_successful_report.txt" : "_processing_failure_report.txt";
         String logFilePath = excelFilePath + fileSuffix;
 
@@ -62,11 +50,6 @@ public class ReportCreator {
         }
     }
 
-    /**
-     * Usuwa wszystkie stare raporty kończące się na "_report.txt" w podanym katalogu.
-     *
-     * @param directory Ścieżka katalogu, w którym mają zostać usunięte stare raporty
-     */
     private static void deleteOldReports(String directory) {
         try (Stream<Path> files = Files.list(Paths.get(directory))) {
             files.filter(path -> path.getFileName().toString().endsWith("_report.txt"))

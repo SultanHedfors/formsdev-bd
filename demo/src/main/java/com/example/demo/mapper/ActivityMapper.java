@@ -19,7 +19,7 @@ public interface ActivityMapper {
     @Mapping(target = "employeeFullName", ignore = true)
     @Mapping(source = "procedure", target = "procedureName", qualifiedByName = "procedureNameResolver")
     @Mapping(source = "procedure", target = "procedureType", qualifiedByName = "procedureTypeResolver")
-    @Mapping(source = "procedure", target = "workMode", qualifiedByName = "procedureWorkModeResolver") // 👈 nowy mapping
+    @Mapping(source = "procedure", target = "workMode", qualifiedByName = "procedureWorkModeResolver")
     ActivityDto activityEntityToDto(ActivityEntity activityEntity);
 
     @Named("procedureNameResolver")
@@ -38,7 +38,7 @@ public interface ActivityMapper {
         return procedureEntity.getProcedureType();
     }
 
-    @Named("procedureWorkModeResolver") // 👈 nowa metoda
+    @Named("procedureWorkModeResolver")
     default String resolveProcedureWorkMode(ProcedureEntity procedureEntity) {
         if (procedureEntity == null || !Hibernate.isInitialized(procedureEntity)) {
             return null;

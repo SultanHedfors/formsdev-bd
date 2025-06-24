@@ -2,7 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.dto.UploadResponseDto;
 import com.example.demo.service.ScheduledActivityToWSService;
-import com.example.demo.util.ScheduleReader;
+import com.example.demo.schedule.processor.ScheduleReader;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;

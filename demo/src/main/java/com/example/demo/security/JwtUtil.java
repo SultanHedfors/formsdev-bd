@@ -1,4 +1,4 @@
-package com.example.demo.util;
+package com.example.demo.security;
 import com.example.demo.service.CustomUserDetailsService;
 import org.springframework.security.core.GrantedAuthority;
 import io.jsonwebtoken.Jwts;

@@ -3,12 +3,14 @@ package com.example.demo.util;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalTime;
+import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
+import java.util.regex.Pattern;
 
 @Slf4j
 public class TimeUtil {
     private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm");
-    public static String formatTime(String time) {
+     public static String formatTime(String time) {
         if (time == null || time.trim().isEmpty()) return null;
 
         try {
@@ -33,7 +35,7 @@ public class TimeUtil {
         return "";
     }
 
-    public static Integer calculateDuration(String startTime, String endTime) {
+     public static Integer calculateDuration(String startTime, String endTime) {
         if (startTime == null || endTime == null) return null;
 
         startTime = formatTime(startTime);
@@ -55,7 +57,7 @@ public class TimeUtil {
     }
 
     // Dodaj metodę pomocniczą, jeśli jeszcze nie masz:
-    public static String addOneSecondToTimeString(String time) {
+     public static String addOneSecondToTimeString(String time) {
         try {
             String[] parts = time.split(":");
             int h = Integer.parseInt(parts[0]);
@@ -78,6 +80,17 @@ public class TimeUtil {
             log.error("Cannot parse time string: {}", time, ex);
             return time;
         }
+    }
+
+    public static YearMonth parseYearMonthFromFileName(String fileName) {
+        var pattern = Pattern.compile(".*grafik_pracy_(\\d{4})-(\\d{2})\\.xlsx", Pattern.CASE_INSENSITIVE);
+        var matcher = pattern.matcher(fileName);
+        if (matcher.matches()) {
+            int year = Integer.parseInt(matcher.group(1));
+            int month = Integer.parseInt(matcher.group(2));
+            return YearMonth.of(year, month);
+        }
+        throw new RuntimeException("Nazwa pliku ma niepoprawny format. Oczekiwany: grafik_pracy_YYYY-MM.xlsx");
     }
 
 }

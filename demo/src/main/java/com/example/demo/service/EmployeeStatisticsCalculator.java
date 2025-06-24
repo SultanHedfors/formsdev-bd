@@ -66,9 +66,7 @@ public class EmployeeStatisticsCalculator {
         );
     }
 
-    /**
-     * Wspólna logika: zbiera wszystkie wpisy, filtruje, grupuje, liczy score i zapisuje.
-     */
+
     private <T> Map<Integer, Double> calculateAndSave(
             LocalDateTime start,
             LocalDateTime end,
@@ -89,7 +87,7 @@ public class EmployeeStatisticsCalculator {
                 .collect(Collectors.toList());
 
         // grupuj po pracowniku
-        Map<Integer, List<ActivityEmployeeEntity>> byEmp = entries.stream()
+        var byEmp = entries.stream()
                 .collect(Collectors.groupingBy(ae -> ae.getEmployee().getId()));
 
         // oblicz i zapisz
@@ -113,18 +111,18 @@ public class EmployeeStatisticsCalculator {
 
         for (ActivityEmployeeEntity ae : mine) {
             ProcedureEntity proc = ae.getActivity().getProcedure();
-            String uwagi = proc.getWorkMode();
+            String workMode = proc.getWorkMode();
             Integer pts = proc.getProcedureActualTime();
             long total = all.stream()
                     .filter(x -> x.getActivity().getActivityId().equals(ae.getActivity().getActivityId()))
                     .count();
 
             // numerator
-            if ("F".equalsIgnoreCase(uwagi) || "B".equalsIgnoreCase(uwagi)) {
+            if ("F".equalsIgnoreCase(workMode) || "B".equalsIgnoreCase(workMode)) {
                 if (pts != null && total > 0) num += (double) pts / total;
-            } else if ("S".equalsIgnoreCase(uwagi)) {
+            } else if ("S".equalsIgnoreCase(workMode)) {
                 if (pts != null) num += pts;
-            } else if ("U".equalsIgnoreCase(uwagi)) {
+            } else if ("U".equalsIgnoreCase(workMode)) {
                 num += 1;
             }
 

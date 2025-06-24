@@ -1,31 +1,82 @@
-package com.example.demo.util;
+package com.example.demo.schedule.processor;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.springframework.stereotype.Component;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.time.LocalDate;
+import java.time.YearMonth;
+import java.util.ArrayList;
 import java.util.List;
 
+import static com.example.demo.schedule.processor.ReportCreator.writeLogFile;
+import static com.example.demo.schedule.processor.ScheduleReader.MODE_SET;
 import static com.example.demo.util.ExcelUtil.getCellValueAsString;
-import static com.example.demo.util.ScheduleReader.MODE_SET;
 
 @Slf4j
+@Component
 public class ExcelValidateUtil {
+    private final LogUtil logUtil;
 
 
+    public List<String> getValidationErrors() {
+        return validationErrors;
+    }
 
-    /**
-     * Validates the first column of the sheet to ensure each entry is a valid employee code, "OK", or a room name.
-     * Instead of throwing exceptions immediately, it collects validation errors and returns them for reporting.
-     *
-     * @param sheet         Excel sheet to validate
-     * @param employeesCodes List of valid employee codes
-     * @param roomNames     List of valid room names
-     * @param validationErrors List to store validation errors
-     */
-    protected static void validateFirstColumnEntries(Sheet sheet, List<String> employeesCodes, List<String> roomNames, List<String> validationErrors) {
+    private final List<String> validationErrors;
+
+    public void addValidationError(String error) {
+        this.validationErrors.add(error);
+    }
+    public ExcelValidateUtil(LogUtil logUtil) {
+        this.logUtil = logUtil;
+        validationErrors = new ArrayList<>();
+    }
+     void checkFileExists(File excelFile, String filePath) throws FileNotFoundException {
+        if (!excelFile.exists())
+            throw new FileNotFoundException("File not found: " + filePath);
+    }
+
+     void handleValidationErrors(String filePath, String fileName) {
+        if (!validationErrors.isEmpty()) {
+            logUtil.getLogMessages().addAll(validationErrors);
+            writeLogFile(filePath, logUtil.getLogMessages(), false, validationErrors, fileName);
+            throw new RuntimeException("Validation errors in uploaded file." + validationErrors);
+        }
+    }
+
+     void handleCriticalFailure(Exception e, String filePath, String fileName, String message) {
+        log.error(message + ": {}", e.getMessage(), e);
+        try {
+            logUtil.addLogMessage(message + ": " + e.getMessage());
+            writeLogFile(filePath, logUtil.getLogMessages(), false, List.of(message + ": " + e.getMessage()), fileName);
+        } catch (Exception logEx) {
+            log.error("Failed to write error log file: {}", logEx.getMessage(), logEx);
+        }
+        throw new RuntimeException(message + ": " + e.getMessage());
+    }
+
+     void validateFile(Sheet sheet, List<String> employeesCodes, List<String> roomCodes, List<Integer> employeesRowsIndexes) {
+        validateFirstColumnEntries(sheet, employeesCodes, roomCodes);
+        validateEmployeeRowEntries(sheet, employeesRowsIndexes, employeesCodes);
+        validateRoomRows(sheet, employeesCodes, roomCodes);
+    }
+
+     boolean isValidDay(YearMonth yearMonth, int day) {
+        try {
+            var date = LocalDate.of(yearMonth.getYear(), yearMonth.getMonth(), day);
+            return !date.isAfter(yearMonth.atEndOfMonth());
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    protected boolean validateFirstColumnEntries(Sheet sheet, List<String> employeesCodes, List<String> roomNames) {
         DataFormatter dataFormatter = new DataFormatter();
         boolean headerFound = false;
 
@@ -47,8 +98,8 @@ public class ExcelValidateUtil {
                     !roomNames.contains(cellValue.toUpperCase())) {
                 String errorMsg = String.format("❌ Invalid entry in first column at row %d: '%s' is not an employee code or a room name.",
                         row.getRowNum() + 1, cellValue);
-                log.error(errorMsg);
-                validationErrors.add(errorMsg);
+                addValidationError(errorMsg);
+                throw new IllegalStateException(errorMsg);
             }
         }
 
@@ -56,21 +107,13 @@ public class ExcelValidateUtil {
         if (!headerFound) {
             throw new IllegalStateException("❌ Header 'Kod pracownika' not found in the first column.");
         }
+        return true;
     }
 
-    /**
-     * Validates employee row entries to ensure only valid employee codes or work modes are used.
-     * Instead of throwing exceptions immediately, it collects validation errors and returns them for reporting.
-     *
-     * @param sheet               Excel sheet to validate
-     * @param employeesRowsIndexes List of employee row indexes
-     * @param employeesCodes      List of valid employee codes
-     * @param validationErrors    List to store validation errors
-     */
-    protected static void validateEmployeeRowEntries(Sheet sheet, List<Integer> employeesRowsIndexes, List<String> employeesCodes, List<String> validationErrors) {
+    protected void validateEmployeeRowEntries(Sheet sheet, List<Integer> employeesRowsIndexes, List<String> employeesCodes) {
         if(employeesRowsIndexes.isEmpty()) {
             String errorMsg= "No rows with employees codes were found. Schedule file is invalid.";
-            validationErrors.add(errorMsg);
+            addValidationError(errorMsg);
         }
         for (Integer rowIndex : employeesRowsIndexes) {
             Row row = sheet.getRow(rowIndex);
@@ -88,13 +131,12 @@ public class ExcelValidateUtil {
                     String errorMsg = String.format("❌ Invalid value at row %d, column %d: '%s'. It is neither a valid employee code nor a valid mode.",
                             rowIndex + 1, colIndex + 1, cellValue);
                     log.error(errorMsg);
-                    validationErrors.add(errorMsg);
+                    addValidationError(errorMsg);
                 }
             }
         }
     }
-    public static void validateRoomRows(Sheet sheet, List<String> employeesCodes, List<String> roomNames,
-                                        List<String> validationMessages) {
+    public void validateRoomRows(Sheet sheet, List<String> employeesCodes, List<String> roomNames) {
         for (Row row : sheet) {
             Cell firstCell = row.getCell(0);
             if (firstCell == null) continue;
@@ -109,11 +151,13 @@ public class ExcelValidateUtil {
                     if (!value.isEmpty() && !employeesCodes.contains(value)) {
                         String errorMessage = String.format("❌ Invalid value in room row %d, column %d: '%s'. " +
                                 "Only employee codes are allowed.", row.getRowNum() + 1, colIndex + 1, value);
-                        validationMessages.add(errorMessage);
+                        addValidationError(errorMessage);
                         log.error(errorMessage);
                     }
                 }
             }
         }
     }
+
+
 }
