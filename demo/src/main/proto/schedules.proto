@@ -1,0 +1,30 @@
+syntax = "proto3";
+package com.example.demo.grpc;
+
+service SendSchedulesService {
+  rpc SendSchedules (SchedulesRequest) returns (SchedulesResponse);
+}
+
+message SchedulesRequest {
+  repeated WorkSchedule scheduleRows = 1;
+}
+
+message WorkSchedule {
+  int32 id = 1;
+  string year_month = 2;
+  int32 day_of_month = 3;
+  string employee_name = 4;
+  string substitute_employee_name = 5;
+  string room_symbol = 6;
+  string work_mode = 7;
+  string work_start_time = 8;
+  string work_end_time = 9;
+  int32 work_duration_minutes = 10;
+  int32 activity_id = 11;
+  int32 processed = 12;
+}
+
+message SchedulesResponse {
+  bool success = 1;
+  string message = 2;
+}
