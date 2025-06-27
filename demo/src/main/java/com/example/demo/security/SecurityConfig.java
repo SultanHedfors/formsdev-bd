@@ -1,6 +1,7 @@
 package com.example.demo.security;
 
 import net.devh.boot.grpc.server.security.authentication.GrpcAuthenticationReader;
+import net.devh.boot.grpc.server.serverfactory.GrpcServerConfigurer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -70,6 +71,15 @@ public class SecurityConfig {
     public GrpcAuthenticationReader grpcAuthenticationReader() {
         return (a,b )-> SecurityContextHolder.getContext().getAuthentication(); // nie czyta nic, wyłącza security
     }
+
+    @Bean
+    public GrpcServerConfigurer grpcServerConfigurer() {
+        return serverBuilder -> {
+            // NIE ustawiaj TLS, tylko zostaw plain text (domyślne)
+        };
+    }
+
+
 
 }
 

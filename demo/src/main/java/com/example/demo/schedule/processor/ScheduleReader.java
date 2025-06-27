@@ -74,7 +74,7 @@ public class ScheduleReader {
 
         scheduleRepository.saveAll(workSchedules);
 
-        //async grpc service invocation
+//        async grpc service invocation
         helper.sendSchedulesToReportCreator(workSchedules);
 
         if (cancelled) throwCancelled();

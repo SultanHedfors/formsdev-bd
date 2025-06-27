@@ -1,8 +1,10 @@
 syntax = "proto3";
-package com.example.demo.grpc;
+package grpc;
+
+option java_package = "grpc";
 
 service SendSchedulesService {
-  rpc SendSchedules (SchedulesRequest) returns (SchedulesResponse);
+  rpc sendSchedules (SchedulesRequest) returns (SchedulesResponse);
 }
 
 message SchedulesRequest {

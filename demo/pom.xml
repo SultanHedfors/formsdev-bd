@@ -189,9 +189,6 @@
                     <pluginId>grpc-java</pluginId>
                     <!--suppress UnresolvedMavenProperty -->
                     <pluginArtifact>io.grpc:protoc-gen-grpc-java:1.73.0:exe:${os.detected.classifier}</pluginArtifact>
-                    <options>
-                        <option>@generated=omit</option>
-                    </options>
                 </configuration>
                 <executions>
                     <execution>

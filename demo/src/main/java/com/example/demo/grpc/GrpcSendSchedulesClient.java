@@ -1,6 +1,7 @@
 package com.example.demo.grpc;
 
-import com.example.demo.mapper.ProtoObjectsMapping;
+import grpc.Schedules;
+import grpc.SendSchedulesServiceGrpc;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import lombok.extern.slf4j.Slf4j;
@@ -14,7 +15,7 @@ import java.util.List;
 @Slf4j
 public class GrpcSendSchedulesClient {
 
-    private final SendSchedulesServiceGrpc.SendSchedulesServiceBlockingStub stub;
+    private final SendSchedulesServiceGrpc.SendSchedulesServiceBlockingStub  stub;
 
 
     public GrpcSendSchedulesClient(@Value("${microservice.report.creator.url.host}") String extServiceHost,
@@ -22,6 +23,7 @@ public class GrpcSendSchedulesClient {
 
         ManagedChannel channel = ManagedChannelBuilder
                 .forAddress(extServiceHost, extServicePort)
+                .usePlaintext()
                 .build();
         this.stub = SendSchedulesServiceGrpc.newBlockingStub(channel);
     }

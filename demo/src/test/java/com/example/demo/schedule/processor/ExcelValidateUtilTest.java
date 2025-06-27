@@ -93,12 +93,12 @@ public class ExcelValidateUtilTest {
 //        );
 
         enum TestData {
-            OK, NON_EXISTING_EMPLOYEE, MISSING_HEADER;
+            OK, NON_EXISTING_EMPLOYEE, MISSING_HEADER
         }
 
         @BeforeEach
         void prepareDataForExcelValidations() throws IOException {
-            okWorkbook = new XSSFWorkbook(new FileInputStream("src/test/excels/grafik poprawny 01-2025.xlsx"));
+            okWorkbook = new XSSFWorkbook(new FileInputStream("src/test/excels/grafik_pracy_2025-01.xlsx"));
             nonExistingEmployeeWorkbook = new XSSFWorkbook(new FileInputStream("src/test/excels/grafik nieistniejacy employee  01-2025.xlsx"));
             missingHeaderWorkbook = new XSSFWorkbook(new FileInputStream("src/test/excels/grafik nie istniejacy header  01-2025.xlsx"));
         }
@@ -136,7 +136,7 @@ public class ExcelValidateUtilTest {
         static Stream<Arguments> argumentsForValidateFirstColumnEntries() {
             return Stream.of(
                     Arguments.of(
-                            getSheetFromWorkbook("src/test/excels/grafik poprawny 01-2025.xlsx"),
+                            getSheetFromWorkbook("src/test/excels/grafik_pracy_2025-01.xlsx"),
                             employeesCodes1, roomCodes1, OK, "no error expected"),
                     Arguments.of(
                             getSheetFromWorkbook("src/test/excels/grafik nieistniejacy employee  01-2025.xlsx"),
