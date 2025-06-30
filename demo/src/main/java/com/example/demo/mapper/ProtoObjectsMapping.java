@@ -10,11 +10,7 @@ import java.util.List;
 public class ProtoObjectsMapping {
 
     public List<Schedules.WorkSchedule> scheduleEntityToProtoObjMapper(List<WorkSchedule> workSchedules) {
-
-
         return workSchedules.stream().map(r -> {
-            // Możesz dodać coś tutaj, np. logowanie:
-            // System.out.println("Przetwarzam grafik dla: " + r.getEmployee().getFullName());
             var subEmployee = r.getSubstituteEmployee();
             var roomSymbol = r.getRoomSymbol();
             var builder = Schedules.WorkSchedule.newBuilder();

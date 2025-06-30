@@ -79,7 +79,7 @@ public class ScheduleReader {
 
         if (cancelled) throwCancelled();
 
-        scheduledActivityToWSService.assignActivitiesToSchedules(true, yearMonth.toString());
+        scheduledActivityToWSService.assignActivitiesToSchedulesAsync(true, yearMonth.toString());
         logUtil.logSuccess(workSchedules);
         logUtil.writeSummaryLog(filePath, workSchedules, excelFile.getName());
     }

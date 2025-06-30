@@ -75,7 +75,6 @@ public class SecurityConfig {
     @Bean
     public GrpcServerConfigurer grpcServerConfigurer() {
         return serverBuilder -> {
-            // NIE ustawiaj TLS, tylko zostaw plain text (domyślne)
         };
     }
 

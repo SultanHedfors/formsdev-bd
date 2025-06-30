@@ -1,6 +1,7 @@
 package com.example.demo.schedule.processor;
 
 import com.example.demo.entity.WorkSchedule;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -9,6 +10,7 @@ import java.util.List;
 
 import static com.example.demo.schedule.processor.ReportCreator.writeLogFile;
 import static com.example.demo.util.ExcelUtil.getActualExcelIndexes;
+@Getter
 @Slf4j
 @Component
 public class LogUtil {
@@ -44,8 +46,5 @@ public class LogUtil {
         } catch (Exception e) {
             log.error("Failed to write log file: {}", e.getMessage(), e);
         }
-    }
-    public List<String> getLogMessages() {
-        return logMessages;
     }
 }

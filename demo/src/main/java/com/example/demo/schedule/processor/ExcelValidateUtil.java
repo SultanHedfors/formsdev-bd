@@ -1,5 +1,6 @@
 package com.example.demo.schedule.processor;
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DataFormatter;
@@ -24,10 +25,7 @@ public class ExcelValidateUtil {
     private final LogUtil logUtil;
 
 
-    public List<String> getValidationErrors() {
-        return validationErrors;
-    }
-
+    @Getter
     private final List<String> validationErrors;
 
     public void addValidationError(String error) {
@@ -51,7 +49,7 @@ public class ExcelValidateUtil {
     }
 
      void handleCriticalFailure(Exception e, String filePath, String fileName, String message) {
-        log.error(message + ": {}", e.getMessage(), e);
+         log.error("{}: {}", message, e.getMessage(), e);
         try {
             logUtil.addLogMessage(message + ": " + e.getMessage());
             writeLogFile(filePath, logUtil.getLogMessages(), false, List.of(message + ": " + e.getMessage()), fileName);

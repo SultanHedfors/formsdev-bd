@@ -17,7 +17,6 @@ public class ReportCreator {
         String fileSuffix = success ? "_processing_successful_report.txt" : "_processing_failure_report.txt";
         String logFilePath = excelFilePath + fileSuffix;
 
-        // Usuń stare raporty
         deleteOldReports(excelFilePath);
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(logFilePath))) {

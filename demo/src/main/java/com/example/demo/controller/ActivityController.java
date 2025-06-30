@@ -52,15 +52,6 @@ public class ActivityController {
     }
 
 
-
-
-//    @GetMapping("/{id}")
-//    public ResponseEntity<ProcedureDto> getActivity(@PathVariable Long id) {
-//        ProcedureDto procedure = activityService.findById(id);
-//        return procedure != null ? ResponseEntity.ok(procedure)
-//                : ResponseEntity.notFound().build();
-//    }
-
     @PatchMapping
     public ResponseEntity<ActivityDto> markActivityAsOwn(@RequestBody ActivityDto activityDto) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

@@ -9,6 +9,7 @@ import com.example.demo.repository.ActivityRepository;
 import com.example.demo.repository.ScheduleRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,6 +41,7 @@ public class ScheduledActivityToWSService {
     private volatile boolean cancelled = false;  // Flaga do anulowania procesu
 
     @Scheduled(fixedDelayString = "${scheduler.assign-activities.delay:10000}")
+    @Transactional
     public void scheduledAssignActivitiesToSchedules() {
         log.debug(">>> scheduledAssignActivitiesToSchedules() called – checking processLock...");
 
@@ -208,6 +210,13 @@ public class ScheduledActivityToWSService {
             cancelled = false;
         }
     }
+
+    @Async
+    @Transactional
+    public void assignActivitiesToSchedulesAsync(boolean fromScheduleImport, String yearMonth) {
+        assignActivitiesToSchedules(fromScheduleImport, yearMonth);
+    }
+
 
     // Method to cancel the process by setting the flag to true
     public void cancelProcessing() {
