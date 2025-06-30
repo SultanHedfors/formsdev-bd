@@ -98,7 +98,7 @@ public class ScheduleReaderHelper {
                     return employeesCodes.contains(cellValue);
                 })
                 .boxed()
-                .collect(Collectors.toList());
+                .toList();
     }
 
     static int getLastPopulatedRow(Sheet sheet) {
@@ -128,8 +128,8 @@ public class ScheduleReaderHelper {
     }
 
     @Async
-    public void sendSchedulesToReportCreator(List<WorkSchedule> workSchedules) {
+    public void sendSchedulesToReportCreator(List<WorkSchedule> workSchedules, String jwt) {
         var protoScheduleObjects = protoObjectsMapping.scheduleEntityToProtoObjMapper(workSchedules);
-        grpcClient.sendSchedulesRequest(protoScheduleObjects);
+        grpcClient.sendSchedulesRequest(protoScheduleObjects, jwt);
     }
 }

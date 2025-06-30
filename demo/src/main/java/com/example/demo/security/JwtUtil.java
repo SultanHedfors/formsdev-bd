@@ -12,7 +12,7 @@ import java.util.Map;
 
 @Component
 public class JwtUtil {
-    private final String secret = "yourSecretKey";
+    private static final String secret = "yourSecretKey";
     @SuppressWarnings("all")
     private final long expiration = 86400000;
 
@@ -21,8 +21,6 @@ public class JwtUtil {
                 .map(GrantedAuthority::getAuthority)
                 .findFirst()
                 .orElse(CustomUserDetailsService.Role.DEFAULT.name());
-
-        System.out.println("role: " + role);
 
         Map<String, Object> claims = new HashMap<>();
         claims.put("role", role);
@@ -49,7 +47,7 @@ public class JwtUtil {
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }
 
-    private boolean isTokenExpired(String token) {
+    public boolean isTokenExpired(String token) {
         Date expirationDate = Jwts.parser()
                 .setSigningKey(secret)
                 .parseClaimsJws(token)

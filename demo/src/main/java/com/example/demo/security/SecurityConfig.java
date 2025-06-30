@@ -1,5 +1,6 @@
 package com.example.demo.security;
 
+import io.grpc.ServerInterceptors;
 import net.devh.boot.grpc.server.security.authentication.GrpcAuthenticationReader;
 import net.devh.boot.grpc.server.serverfactory.GrpcServerConfigurer;
 import org.springframework.beans.factory.annotation.Value;
@@ -72,11 +73,6 @@ public class SecurityConfig {
         return (a,b )-> SecurityContextHolder.getContext().getAuthentication(); // nie czyta nic, wyłącza security
     }
 
-    @Bean
-    public GrpcServerConfigurer grpcServerConfigurer() {
-        return serverBuilder -> {
-        };
-    }
 
 
 

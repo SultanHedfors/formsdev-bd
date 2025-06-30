@@ -19,6 +19,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.FileTime;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 @RestController
@@ -35,8 +36,9 @@ public class ScheduleController {
 
 
     @PostMapping("/upload-schedule")
-    public ResponseEntity<UploadResponseDto> uploadSchedule(@RequestParam("file") MultipartFile file) {
-        if (file.isEmpty() || !file.getOriginalFilename().endsWith(".xlsx")) {
+    public ResponseEntity<UploadResponseDto> uploadSchedule(@RequestParam("file") MultipartFile file,
+                                                            @RequestHeader("Authorization") String authorizationHeader) {
+        if (file.isEmpty() || !Objects.requireNonNull(file.getOriginalFilename()).endsWith(".xlsx")) {
             return ResponseEntity.badRequest().body(new UploadResponseDto(false, "Nieprawidłowy format pliku. Wymagany .xlsx"));
         }
 
@@ -56,8 +58,13 @@ public class ScheduleController {
 
             log.info("Plik został zapisany na dysku: {}", targetPath);
 
+            String jwt = null;
+            if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+                jwt = authorizationHeader.substring(7);
+            }
+
             // Uruchom przetwarzanie na podstawie pełnej ścieżki pliku
-            scheduleReader.mapRowsToEntities(targetPath.toString());
+            scheduleReader.mapRowsToEntities(targetPath.toString(), jwt);
 
             return ResponseEntity.ok(new UploadResponseDto(true, "Plik został zapisany i przetworzony poprawnie."));
 

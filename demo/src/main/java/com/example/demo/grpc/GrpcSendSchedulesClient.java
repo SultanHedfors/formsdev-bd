@@ -1,5 +1,6 @@
 package com.example.demo.grpc;
 
+import com.example.demo.security.JwtInterceptor;
 import grpc.Schedules;
 import grpc.SendSchedulesServiceGrpc;
 import io.grpc.ManagedChannel;
@@ -15,7 +16,7 @@ import java.util.List;
 @Slf4j
 public class GrpcSendSchedulesClient {
 
-    private final SendSchedulesServiceGrpc.SendSchedulesServiceBlockingStub  stub;
+    private final SendSchedulesServiceGrpc.SendSchedulesServiceBlockingStub stub;
 
 
     public GrpcSendSchedulesClient(@Value("${microservice.report.creator.url.host}") String extServiceHost,
@@ -28,12 +29,19 @@ public class GrpcSendSchedulesClient {
         this.stub = SendSchedulesServiceGrpc.newBlockingStub(channel);
     }
 
-    public void sendSchedulesRequest(List<Schedules.WorkSchedule> workSchedules) {
+    public void sendSchedulesRequest(List<Schedules.WorkSchedule> workSchedules, String jwtToken) {
         var request = Schedules.SchedulesRequest.newBuilder()
                 .addAllScheduleRows(workSchedules)
                 .build();
-        var response = stub.sendSchedules(request);
+
+        var stubWithJwt = stub.withInterceptors(
+                new JwtInterceptor((jwtToken)
+                ));
+        log.info("stub {}",stubWithJwt.toString());
+        var response = stubWithJwt.sendSchedules(request);
+
         log.info(response.getMessage());
     }
+
 
 }

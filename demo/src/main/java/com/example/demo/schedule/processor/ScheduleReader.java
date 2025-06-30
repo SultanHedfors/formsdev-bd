@@ -46,7 +46,7 @@ public class ScheduleReader {
 
 
     @Transactional
-    public void mapRowsToEntities(String filePath) {
+    public void mapRowsToEntities(String filePath, String jwt) {
         checkAndSetProcessing();
 
         var workSchedules = new ArrayList<WorkSchedule>();
@@ -75,7 +75,7 @@ public class ScheduleReader {
         scheduleRepository.saveAll(workSchedules);
 
 //        async grpc service invocation
-        helper.sendSchedulesToReportCreator(workSchedules);
+        helper.sendSchedulesToReportCreator(workSchedules, jwt);
 
         if (cancelled) throwCancelled();
 
