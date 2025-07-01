@@ -1,0 +1,151 @@
+version: '3.8'
+services:
+  firebird:
+    image: firebirdsql/firebird:latest
+    container_name: firebird
+    ports:
+      - "55000:3050"
+    environment:
+      ISC_PASSWORD: masterkey
+      FIREBIRD_USER: SYSDBA
+      FIREBIRD_PASSWORD: masterkey
+    volumes:
+      - /home/boii/Desktop/Container_fold:/shared_fold
+      - ./init-scripts/restore-db.sh:/docker-entrypoint-initdb.d/restore-db.sh:ro
+    healthcheck:
+      test: ["CMD", "isql", "-user", "sysdba", "-password", "masterkey", "-q", "/shared_fold/baza.fdb"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  mongo:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: secret
+    healthcheck:
+      test: [ "CMD", "mongo", "--eval", "db.adminCommand('ping')" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+  demo:
+    build: .
+    command: ["tail", "-f", "/dev/null"]
+    depends_on:
+      firebird:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+      - "9091:9091" #gRPC client server
+    environment:
+      SPRING_PROFILES_ACTIVE: docker-local
+      SPRING_DATASOURCE_URL: jdbc:firebirdsql://firebird:3050//shared_fold/baza.fdb
+      SPRING_DATASOURCE_USERNAME: sysdba
+      SPRING_DATASOURCE_PASSWORD: masterkey
+      FRONTEND_URL: http://localhost:4200,http://stats-app:80
+      UPLOAD_DIRECTORY: uploads
+      GRPC_SERVER_PORT: 9091
+    volumes:
+      - /home/boii/Desktop/Container_fold:/shared_fold
+    healthcheck:
+      test: [ "CMD", "wget", "--spider", "-q", "http://localhost:8080" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+  kafka:
+    image: bitnami/kafka:latest
+    container_name: kafka
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_CFG_NODE_ID: 1
+      KAFKA_CFG_PROCESS_ROLES: broker,controller
+      KAFKA_CFG_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093
+      KAFKA_CFG_LISTENERS: PLAINTEXT://:9092,CONTROLLER://:9093
+      KAFKA_CFG_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_KRAFT_CLUSTER_ID: MWO8GJ9OQqGNXFk_aX9YhA
+      KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE: "true"
+      KAFKA_CFG_LOG_DIRS: /bitnami/kafka/data
+      KAFKA_CFG_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,CONTROLLER:PLAINTEXT
+
+    healthcheck:
+      test: ["CMD", "kafka-topics", "--bootstrap-server", "localhost:9092", "--list"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    volumes:
+      - kafka_data:/bitnami/kafka/data
+
+  kafka-producer:
+    build:
+      context: /home/boii/Desktop/proj/schedule-report-kafka-producer
+    depends_on:
+      - kafka
+      - firebird
+      - demo
+    ports:
+      - "8081:8081"
+      - "9090:9090" #gRPC service server
+    environment:
+      SPRING_PROFILES_ACTIVE: docker-local
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:8081"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+  notification-sender:
+    build:
+      context: /home/boii/Desktop/proj/notification-sender
+    depends_on:
+      - kafka
+      - demo
+      - mongo
+    ports:
+      - "8082:8082"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker-local
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      SPRING_DATA_MONGODB_HOST: mongo
+      SPRING_DATA_MONGODB_PORT: 27017
+      SPRING_DATA_MONGODB_DATABASE: admin
+      SPRING_DATA_MONGODB_USERNAME: admin
+      SPRING_DATA_MONGODB_PASSWORD: secret
+      SPRING_MAIL_HOST: smtp.mailersend.net
+      SPRING_MAIL_PORT: 587
+      SPRING_MAIL_USERNAME: MS_Imr0SC@test-2p0347zqxr9lzdrn.mlsender.net
+      SPRING_MAIL_PASSWORD: mssp.1tZvszJ.x2p03473z7pgzdrn.NCbQAwY
+      SPRING_MAIL_PROPERTIES_MAIL_SMTP_AUTH: "true"
+      SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_ENABLE: "true"
+    healthcheck:
+      test: [ "CMD", "wget", "--spider", "-q", "http://localhost:8082" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+  stats-app:
+    build:
+      context: /home/boii/Desktop/proj/stats-app-fe
+    container_name: stats-app
+    ports:
+      - "4200:80"
+    healthcheck:
+      test: [ "CMD", "wget", "--spider", "-q", "http://localhost" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+volumes:
+  kafka_data:
