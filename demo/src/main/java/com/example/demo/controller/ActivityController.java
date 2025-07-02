@@ -15,7 +15,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.time.YearMonth;
 
 @RestController
 @RequestMapping("/api/procedures")
@@ -34,12 +33,6 @@ public class ActivityController {
             @RequestParam(required = false) String month,
             @RequestParam(defaultValue = "asc") String sortDirection) {
 
-        if (month != null) {
-            YearMonth yearMonth = YearMonth.parse(month);
-            startDate = yearMonth.atDay(1);
-            endDate = yearMonth.atEndOfMonth();
-        }
-
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Object principal = authentication.getPrincipal();
 
@@ -48,7 +41,8 @@ public class ActivityController {
         }
 
         String username = userDetails.getUsername();
-        return ResponseEntity.ok(activityService.findAll(page, size, username, startDate, endDate, sortDirection));
+        return ResponseEntity.ok(activityService.findAll(page, size, username, startDate,
+                endDate, month, sortDirection));
     }
 
 

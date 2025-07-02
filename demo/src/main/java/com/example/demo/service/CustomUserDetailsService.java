@@ -44,7 +44,6 @@ public class CustomUserDetailsService implements UserDetailsService {
         if (loyaltyPin==null) {
             loyaltyPin=0;
         }
-        System.out.println("loyalty pin: "+ loyaltyPin) ;
         return switch (loyaltyPin) {
             case 1 -> REASSIGN_ALLOWED;
             case 2 -> ADMIN;

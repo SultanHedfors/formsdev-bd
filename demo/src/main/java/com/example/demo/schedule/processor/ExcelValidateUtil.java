@@ -1,5 +1,6 @@
 package com.example.demo.schedule.processor;
 
+import com.example.demo.exception.ScheduleValidationException;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Cell;
@@ -24,48 +25,48 @@ import static com.example.demo.util.ExcelUtil.getCellValueAsString;
 public class ExcelValidateUtil {
     private final LogUtil logUtil;
 
-
     @Getter
     private final List<String> validationErrors;
 
     public void addValidationError(String error) {
         this.validationErrors.add(error);
     }
+
     public ExcelValidateUtil(LogUtil logUtil) {
         this.logUtil = logUtil;
         validationErrors = new ArrayList<>();
     }
-     void checkFileExists(File excelFile, String filePath) throws FileNotFoundException {
+
+    void checkFileExists(File excelFile, String filePath) throws FileNotFoundException {
         if (!excelFile.exists())
             throw new FileNotFoundException("File not found: " + filePath);
     }
 
-     void handleValidationErrors(String filePath, String fileName) {
+    void handleValidationErrors(String filePath, String fileName) {
         if (!validationErrors.isEmpty()) {
             logUtil.getLogMessages().addAll(validationErrors);
             writeLogFile(filePath, logUtil.getLogMessages(), false, validationErrors, fileName);
-            throw new RuntimeException("Validation errors in uploaded file." + validationErrors);
+            throw new ScheduleValidationException(validationErrors.toString());
         }
     }
 
-     void handleCriticalFailure(Exception e, String filePath, String fileName, String message) {
-         log.error("{}: {}", message, e.getMessage(), e);
+    void handleCriticalFailure(Exception e, String filePath, String fileName, String message) {
         try {
             logUtil.addLogMessage(message + ": " + e.getMessage());
             writeLogFile(filePath, logUtil.getLogMessages(), false, List.of(message + ": " + e.getMessage()), fileName);
         } catch (Exception logEx) {
             log.error("Failed to write error log file: {}", logEx.getMessage(), logEx);
         }
-        throw new RuntimeException(message + ": " + e.getMessage());
+        throw new ScheduleValidationException(message + ": " + e.getMessage());
     }
 
-     void validateFile(Sheet sheet, List<String> employeesCodes, List<String> roomCodes, List<Integer> employeesRowsIndexes) {
+    void validateFile(Sheet sheet, List<String> employeesCodes, List<String> roomCodes, List<Integer> employeesRowsIndexes) {
         validateFirstColumnEntries(sheet, employeesCodes, roomCodes);
         validateEmployeeRowEntries(sheet, employeesRowsIndexes, employeesCodes);
         validateRoomRows(sheet, employeesCodes, roomCodes);
     }
 
-     boolean isValidDay(YearMonth yearMonth, int day) {
+    boolean isValidDay(YearMonth yearMonth, int day) {
         try {
             var date = LocalDate.of(yearMonth.getYear(), yearMonth.getMonth(), day);
             return !date.isAfter(yearMonth.atEndOfMonth());
@@ -80,28 +81,29 @@ public class ExcelValidateUtil {
 
         for (Row row : sheet) {
             Cell firstCell = row.getCell(0);
-            if (firstCell == null) continue;
+            String cellValue = (firstCell == null) ? "" : dataFormatter.formatCellValue(firstCell).trim();
 
-            String cellValue = dataFormatter.formatCellValue(firstCell).trim();
+            boolean headerJustFound = false;
             if (!headerFound && cellValue.equalsIgnoreCase(ScheduleReader.EMPLOYEE_CODE_HEADER)) {
                 headerFound = true;
+                headerJustFound = true;
+            }
+
+            if (!headerFound || headerJustFound ||
+                    cellValue.isBlank() ||
+                    employeesCodes.contains(cellValue.toUpperCase()) ||
+                    cellValue.equalsIgnoreCase("OK") ||
+                    roomNames.contains(cellValue.toUpperCase())) {
                 continue;
             }
 
-            if (!headerFound) continue;
-
-            if (!cellValue.isBlank() &&
-                    !employeesCodes.contains(cellValue.toUpperCase()) &&
-                    !cellValue.equalsIgnoreCase("OK") &&
-                    !roomNames.contains(cellValue.toUpperCase())) {
-                String errorMsg = String.format("❌ Invalid entry in first column at row %d: '%s' is not an employee code or a room name.",
-                        row.getRowNum() + 1, cellValue);
-                addValidationError(errorMsg);
-                throw new IllegalStateException(errorMsg);
-            }
+            String errorMsg = String.format(
+                    "❌ Invalid entry in first column at row %d: '%s' is not an employee code or a room name.",
+                    row.getRowNum() + 1, cellValue);
+            addValidationError(errorMsg);
+            throw new IllegalStateException(errorMsg);
         }
 
-        // ❗ Rzuć wyjątek, jeśli nagłówek nie został znaleziony
         if (!headerFound) {
             throw new IllegalStateException("❌ Header 'Kod pracownika' not found in the first column.");
         }
@@ -109,8 +111,8 @@ public class ExcelValidateUtil {
     }
 
     protected void validateEmployeeRowEntries(Sheet sheet, List<Integer> employeesRowsIndexes, List<String> employeesCodes) {
-        if(employeesRowsIndexes.isEmpty()) {
-            String errorMsg= "No rows with employees codes were found. Schedule file is invalid.";
+        if (employeesRowsIndexes.isEmpty()) {
+            String errorMsg = "No rows with employees codes were found. Schedule file is invalid.";
             addValidationError(errorMsg);
         }
         for (Integer rowIndex : employeesRowsIndexes) {
@@ -121,10 +123,8 @@ public class ExcelValidateUtil {
                 Cell cell = row.getCell(colIndex);
                 String cellValue = getCellValueAsString(cell).trim().toUpperCase();
 
-                // Allow empty values
                 if (cellValue.isEmpty()) continue;
 
-                // Check if value is in employeesCodes or MODE_SET
                 if (!employeesCodes.contains(cellValue) && !MODE_SET.contains(cellValue)) {
                     String errorMsg = String.format("❌ Invalid value at row %d, column %d: '%s'. It is neither a valid employee code nor a valid mode.",
                             rowIndex + 1, colIndex + 1, cellValue);
@@ -134,6 +134,7 @@ public class ExcelValidateUtil {
             }
         }
     }
+
     public void validateRoomRows(Sheet sheet, List<String> employeesCodes, List<String> roomNames) {
         for (Row row : sheet) {
             Cell firstCell = row.getCell(0);

@@ -42,7 +42,7 @@ public class SecurityConfig {
         return http.build();
     }
 
-    //Client requested no password encoding, for public version I might change this
+    //Client requested no password encoding, for public version I might want to change this
     @Bean
     public PasswordEncoder passwordEncoder() {
         return NoOpPasswordEncoder.getInstance();

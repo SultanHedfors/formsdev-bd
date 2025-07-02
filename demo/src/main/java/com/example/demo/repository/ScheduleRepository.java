@@ -10,11 +10,18 @@ import java.util.List;
 
 @Repository
 public interface ScheduleRepository extends JpaRepository<WorkSchedule, Integer> {
+
     @Transactional
     void deleteByYearMonth(String yearMonth);
+
     boolean existsByEmployee_IdAndYearMonthAndDayOfMonth(Integer employeeId, String yearMonth, Integer dayOfMonth);
 
-    @Query("SELECT ws.id FROM WorkSchedule ws WHERE ws.processed IS NULL OR ws.processed = false")
+    @Query("""
+             SELECT ws.id
+             FROM WorkSchedule ws
+             WHERE ws.processed
+             IS NULL OR ws.processed = false
+            """)
     List<Integer> findIdsOfUnprocessedSchedules();
 
 

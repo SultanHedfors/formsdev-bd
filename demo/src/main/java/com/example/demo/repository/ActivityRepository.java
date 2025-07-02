@@ -18,20 +18,14 @@ public interface ActivityRepository extends JpaRepository<ActivityEntity, Intege
     Page<ActivityEntity> findByActivityDateBetween(LocalDateTime start, LocalDateTime end, Pageable pageable);
 
     @Query("""
-SELECT a FROM ActivityEntity a
-WHERE a.activityDate BETWEEN :start AND :end
-AND a.procedure IS NOT NULL
-""")
+            SELECT a FROM ActivityEntity a
+            WHERE a.activityDate BETWEEN :start AND :end
+            AND a.procedure IS NOT NULL
+            """)
     List<ActivityEntity> findActivitiesInDateRangeWithProcedure(
             @Param("start") Timestamp start,
             @Param("end") Timestamp end
     );
-    // Zwraca ID aktywności, które mają przypisanych pracowników z flagą user_modified = true
-
-
-
-
-
 
 
 

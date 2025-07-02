@@ -24,34 +24,41 @@ public interface ActivityEmployeeRepository extends JpaRepository<ActivityEmploy
 
     @Modifying
     @Query("""
-    DELETE FROM ActivityEmployeeEntity ae
-    WHERE ae.userModified = false
-    AND ae.activity.activityDate BETWEEN :from AND :to
-""")
+                DELETE FROM ActivityEmployeeEntity ae
+                WHERE ae.userModified = false
+                AND ae.activity.activityDate BETWEEN :from AND :to
+            """)
     int deleteAllByActivityDateRangeAndUserModifiedFalse(@Param("from") Timestamp from,
                                                          @Param("to") Timestamp to);
 
-
-    @Query(value = "SELECT DISTINCT activity_id FROM activity_employee WHERE user_modified = 1 AND activity_id IN (:ids)", nativeQuery = true)
+    @Query(value = """
+            SELECT DISTINCT activity_id
+            FROM activity_employee
+            WHERE user_modified = 1
+            AND activity_id IN (:ids)
+            """, nativeQuery = true)
     List<Integer> findManualModifiedActivityIds(@Param("ids") List<Integer> activityIds);
 
-    @Query(value = "SELECT CAST(activity_id AS VARCHAR(20)) || ':' || CAST(employee_id AS VARCHAR(20)) FROM activity_employee", nativeQuery = true)
+    @Query(value = """
+            SELECT CAST(activity_id AS VARCHAR(20)) || ':' ||
+            CAST(employee_id AS VARCHAR(20))
+            FROM activity_employee
+            """,
+            nativeQuery = true)
     Set<String> findAllExistingActivityEmployeePairs();
 
     @EntityGraph(attributePaths = {
             "activity", "activity.procedure", "workSchedule"
     })
     @Query("""
-    SELECT ae FROM ActivityEmployeeEntity ae
-    WHERE ae.activity.activityDate >= :startOfDay
-      AND ae.activity.activityDate < :endOfDay
-""")
+                SELECT ae FROM ActivityEmployeeEntity ae
+                WHERE ae.activity.activityDate >= :startOfDay
+                  AND ae.activity.activityDate < :endOfDay
+            """)
     List<ActivityEmployeeEntity> findWithGraphByActivityDate(
             @Param("startOfDay") LocalDateTime startOfDay,
             @Param("endOfDay") LocalDateTime endOfDay
     );
-
-
 
 
 }

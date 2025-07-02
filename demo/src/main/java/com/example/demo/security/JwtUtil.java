@@ -12,7 +12,7 @@ import java.util.Map;
 
 @Component
 public class JwtUtil {
-    private static final String secret = "yourSecretKey";
+    private static final String SECRET = "yourSecretKey";
     @SuppressWarnings("all")
     private final long expiration = 86400000;
 
@@ -30,13 +30,13 @@ public class JwtUtil {
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + expiration))
-                .signWith(SignatureAlgorithm.HS512, secret)
+                .signWith(SignatureAlgorithm.HS512, SECRET)
                 .compact();
     }
 
     public String extractUsername(String token) {
         return Jwts.parser()
-                .setSigningKey(secret)
+                .setSigningKey(SECRET)
                 .parseClaimsJws(token)
                 .getBody()
                 .getSubject();
@@ -49,7 +49,7 @@ public class JwtUtil {
 
     public boolean isTokenExpired(String token) {
         Date expirationDate = Jwts.parser()
-                .setSigningKey(secret)
+                .setSigningKey(SECRET)
                 .parseClaimsJws(token)
                 .getBody()
                 .getExpiration();
@@ -58,7 +58,7 @@ public class JwtUtil {
 
     public String extractRole(String token) {
         return Jwts.parser()
-                .setSigningKey(secret)
+                .setSigningKey(SECRET)
                 .parseClaimsJws(token)
                 .getBody()
                 .get("role", String.class);

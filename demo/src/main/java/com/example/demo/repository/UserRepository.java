@@ -11,7 +11,10 @@ import java.util.Optional;
 
 @Repository
 public interface UserRepository extends JpaRepository<UserEntity, Integer> {
-    Optional<UserEntity> findByUsername(String username);
-    @Query("SELECT u FROM UserEntity u WHERE UPPER(u.employeeCode) = UPPER(:employeeCode)")
+    @Query("""
+             SELECT u
+             FROM UserEntity u
+             WHERE UPPER(u.employeeCode) = UPPER(:employeeCode)
+            """)
     Optional<UserEntity> findByEmployeeCode(@Param("employeeCode") String employeeCode);
 }

@@ -3,6 +3,7 @@ package com.example.demo.security;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.util.ContentCachingRequestWrapper;
@@ -16,7 +17,7 @@ import java.nio.charset.StandardCharsets;
 public class HttpLoggingFilter extends OncePerRequestFilter {
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request,
+    protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
 

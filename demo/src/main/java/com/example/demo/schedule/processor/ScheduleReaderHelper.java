@@ -3,7 +3,7 @@ package com.example.demo.schedule.processor;
 import com.example.demo.entity.RoomEntity;
 import com.example.demo.entity.UserEntity;
 import com.example.demo.entity.WorkSchedule;
-
+import com.example.demo.exception.InvalidAuthHeaderException;
 import com.example.demo.grpc.GrpcSendSchedulesClient;
 import com.example.demo.mapper.ProtoObjectsMapping;
 import com.example.demo.repository.RoomRepository;
@@ -23,7 +23,6 @@ import org.springframework.stereotype.Component;
 
 import java.time.YearMonth;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static com.example.demo.schedule.processor.ScheduleReader.EMPLOYEE_CODE_HEADER;
@@ -125,6 +124,16 @@ public class ScheduleReaderHelper {
     static void throwCancelled() {
         log.warn(">>> Przetwarzanie zostało przerwane w trakcie.");
         throw new RuntimeException("Przetwarzanie zostało anulowane przez użytkownika.");
+    }
+
+    String retrieveJwt(String authorizationHeader) {
+        String jwt;
+        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+            jwt = authorizationHeader.substring(7);
+        } else {
+            throw new InvalidAuthHeaderException();
+        }
+        return jwt;
     }
 
     @Async

@@ -2,6 +2,7 @@ package com.example.demo.schedule.processor;
 
 import com.example.demo.entity.UserEntity;
 import com.example.demo.entity.WorkSchedule;
+import com.example.demo.exception.InvalidAuthHeaderException;
 import com.example.demo.repository.ScheduleRepository;
 import com.example.demo.service.ScheduledActivityToWSService;
 import jakarta.transaction.Transactional;
@@ -46,7 +47,8 @@ public class ScheduleReader {
 
 
     @Transactional
-    public void mapRowsToEntities(String filePath, String jwt) {
+    public void mapRowsToEntities(String filePath, String authorizationHeader) {
+        String jwt = helper.retrieveJwt(authorizationHeader);
         checkAndSetProcessing();
 
         var workSchedules = new ArrayList<WorkSchedule>();
@@ -83,6 +85,8 @@ public class ScheduleReader {
         logUtil.logSuccess(workSchedules);
         logUtil.writeSummaryLog(filePath, workSchedules, excelFile.getName());
     }
+
+
 
     private Sheet loadAndValidateExcelSheet(FileInputStream fis, File excelFile, String filePath) throws Exception {
         validateUtil.checkFileExists(excelFile, filePath);
