@@ -2,13 +2,11 @@ package com.example.demo.schedule.processor;
 
 import com.example.demo.entity.UserEntity;
 import com.example.demo.entity.WorkSchedule;
-import com.example.demo.exception.InvalidAuthHeaderException;
 import com.example.demo.repository.ScheduleRepository;
 import com.example.demo.service.ScheduledActivityToWSService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Component;
@@ -16,6 +14,7 @@ import org.springframework.stereotype.Component;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,8 +22,8 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.IntStream;
 
-import static com.example.demo.util.ExcelUtil.getCellValueAsString;
 import static com.example.demo.schedule.processor.ScheduleReaderHelper.*;
+import static com.example.demo.util.ExcelUtil.getCellValueAsString;
 import static com.example.demo.util.TimeUtil.*;
 
 @Slf4j
@@ -87,26 +86,27 @@ public class ScheduleReader {
     }
 
 
-
-    private Sheet loadAndValidateExcelSheet(FileInputStream fis, File excelFile, String filePath) throws Exception {
+    private Sheet loadAndValidateExcelSheet(FileInputStream fis, File excelFile, String filePath) throws IOException {
         validateUtil.checkFileExists(excelFile, filePath);
-        var workbook = new XSSFWorkbook(fis);
-        var sheet = workbook.getSheetAt(0);
+        try (XSSFWorkbook workbook = new XSSFWorkbook(fis)) {
+            var sheet = workbook.getSheetAt(0);
 
-        yearMonth = parseYearMonthFromFileName(excelFile.getName());
+            yearMonth = parseYearMonthFromFileName(excelFile.getName());
 
-        List<String> employeesCodes = helper.employeesCodes();
-        var roomCodes = helper.getAllRoomCodes();
-        var employeesRowsIndexes = getRowsWithEmployees(sheet, employeesCodes);
+            List<String> employeesCodes = helper.employeesCodes();
+            var roomCodes = helper.getAllRoomCodes();
+            var employeesRowsIndexes = getRowsWithEmployees(sheet, employeesCodes);
 
-        validateUtil.validateFile(sheet, employeesCodes, roomCodes, employeesRowsIndexes);
-        validateUtil.handleValidationErrors(filePath, excelFile.getName());
+            validateUtil.validateFile(sheet, employeesCodes, roomCodes, employeesRowsIndexes);
+            validateUtil.handleValidationErrors(filePath, excelFile.getName());
 
-        return sheet;
+            return sheet;
+        }
     }
 
+
     private void checkAndSetProcessing() {
-        if (processing) throw new IllegalStateException("Grafik już jest w trakcie przetwarzania.");
+        if (processing) throw new IllegalStateException("Schedule is already processed.");
         processing = true;
         cancelled = false;
     }
@@ -122,6 +122,7 @@ public class ScheduleReader {
             processEmployeeRow(sheet, rowIndex, yearMonth, workSchedules, employeesCodes);
         }
     }
+
     private void processEmployeeRow(
             Sheet sheet,
             int rowIndex,
@@ -130,46 +131,23 @@ public class ScheduleReader {
             List<String> employeesCodes
     ) {
         //Ustawienie zmiennych
-        var employeeRow = sheet.getRow(rowIndex);
-        if (employeeRow == null) return;
-        var aboveRow = (rowIndex > 0) ? sheet.getRow(rowIndex - 1) : null;
-        var roomSymbol = extractRoomSymbol(aboveRow);
+        var workModeRow = sheet.getRow(rowIndex);
+        if (workModeRow == null) return;
+        var daysRow = (rowIndex > 0) ? sheet.getRow(rowIndex - 1) : null;
+        var roomSymbol = extractRoomSymbol(daysRow);
         var startTimeRow = sheet.getRow(rowIndex + 1);
         var endTimeRow = sheet.getRow(rowIndex + 2);
-        var employeeName = getCellValueAsString(employeeRow.getCell(0)).trim();
+        var employeeName = getCellValueAsString(workModeRow.getCell(0)).trim();
 
-        //Wywolanie metody process
+        //Utworzenie schedule rows
         if (startTimeRow != null && endTimeRow != null) {
-            processWorkScheduleRows(
-                    aboveRow,
-                    employeeRow,
-                    startTimeRow,
-                    endTimeRow,
-                    yearMonth,
-                    employeeName,
-                    roomSymbol,
-                    workSchedules,
-                    employeesCodes
-            );
+                IntStream.range(1, 32)
+                        .filter(day -> validateUtil.isValidDay(yearMonth, day))
+                        .mapToObj(day ->
+                                WorkScheduleRow.of(daysRow, workModeRow, startTimeRow, endTimeRow, day, employeesCodes))
+                        .filter(Objects::nonNull)
+                        .forEach(row -> addWorkSchedule(row, yearMonth, employeeName, roomSymbol, workSchedules));
         }
-    }
-
-    public void processWorkScheduleRows(
-            Row aboveRow,
-            Row workModeRow,
-            Row startTimeRow,
-            Row endTimeRow,
-            YearMonth yearMonth,
-            String employeeName,
-            String roomSymbol,
-            List<WorkSchedule> workSchedules,
-            List<String> employeesCodes
-    ) {
-        IntStream.range(1, 32)
-                .filter(day -> validateUtil.isValidDay(yearMonth, day))
-                .mapToObj(day -> WorkScheduleRow.of(aboveRow, workModeRow, startTimeRow, endTimeRow, day, employeesCodes))
-                .filter(Objects::nonNull)
-                .forEach(row -> addWorkSchedule(row, yearMonth, employeeName, roomSymbol, workSchedules));
     }
 
     private void addWorkSchedule(
@@ -216,9 +194,10 @@ public class ScheduleReader {
         }
         return builder;
     }
+
     public void cancelProcessing() {
         this.cancelled = true;
-        log.warn(">>> Przetwarzanie grafiku zostało anulowane na żądanie użytkownika.");
+        log.warn(">>> Schedule processing has been cancelled by user.");
     }
 }
 

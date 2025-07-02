@@ -14,11 +14,11 @@ public record WorkScheduleRow(
         String infoVal,
         List<String> employeesCodes
 ) {
-    static WorkScheduleRow of(Row aboveRow, Row workModeRow, Row startTimeRow, Row endTimeRow, int day, List<String> employeesCodes) {
-        String dayBasedSubCode = null;
-        if (aboveRow != null) {
-            var aboveVal = getCellValueAsString(aboveRow.getCell(day)).trim().toUpperCase();
-            if (employeesCodes.contains(aboveVal)) dayBasedSubCode = aboveVal;
+    static WorkScheduleRow of(Row daysRow, Row workModeRow, Row startTimeRow, Row endTimeRow, int day, List<String> employeesCodes) {
+        String workMode = null;
+        if (daysRow != null) {
+            var aboveVal = getCellValueAsString(daysRow.getCell(day)).trim().toUpperCase();
+            if (employeesCodes.contains(aboveVal)) workMode = aboveVal;
         }
         var startCell = startTimeRow.getCell(day);
         var endCell = endTimeRow.getCell(day);
@@ -27,8 +27,8 @@ public record WorkScheduleRow(
 
         if (startVal.isEmpty() || endVal.isEmpty()) return null;
 
-        var workInfoCell = workModeRow.getCell(day);
-        var infoVal = getCellValueAsString(workInfoCell).toUpperCase().trim();
-        return new WorkScheduleRow(day, dayBasedSubCode, startVal, endVal, infoVal, employeesCodes);
+        var workModeCell = workModeRow.getCell(day);
+        var infoVal = getCellValueAsString(workModeCell).toUpperCase().trim();
+        return new WorkScheduleRow(day, workMode, startVal, endVal, infoVal, employeesCodes);
     }
 }

@@ -33,7 +33,7 @@ public class FileHandlerService {
 
     public void handleScheduleUpload(MultipartFile file, String authorizationHeader) throws IOException {
         if (file.isEmpty() || !Objects.requireNonNull(file.getOriginalFilename()).endsWith(".xlsx")) {
-            throw new ScheduleValidationException("Nieprawidłowy format pliku. Wymagany .xlsx");
+            throw new ScheduleValidationException("Unsupported file format. Required .xlsx");
         }
 
         deleteAllFilesInDirectory(uploadDir);
@@ -43,7 +43,7 @@ public class FileHandlerService {
         Files.createDirectories(targetPath.getParent());
         Files.copy(file.getInputStream(), targetPath);
 
-        log.info("Plik został zapisany na dysku: {}", targetPath);
+        log.info("The file was saved on server in path: {}", targetPath);
 
         scheduleReader.mapRowsToEntities(targetPath.toString(), authorizationHeader);
     }
@@ -58,14 +58,14 @@ public class FileHandlerService {
                         .forEach(path -> {
                             try {
                                 Files.delete(path);
-                                log.info("Usunięto plik: {}", path);
+                                log.info("Deleted a file in path: {}", path);
                             } catch (IOException e) {
-                                log.error("Błąd podczas usuwania pliku: {}", path, e);
+                                log.error("Error has occurred when deleting file in path: {}", path, e);
                             }
                         });
             }
         } else {
-            log.warn("Katalog {} nie istnieje lub nie jest katalogiem.", directoryPath);
+            log.error("{} doesn't exist or is not a directory.", directoryPath);
         }
     }
 
@@ -80,11 +80,11 @@ public class FileHandlerService {
                             return FileTime.fromMillis(0);
                         }
                     }))
-                    .orElseThrow(() -> new FileNotFoundException("Nie znaleziono pliku .txt"));
+                    .orElseThrow(() -> new FileNotFoundException(String.format(".txt file not found here %s", paths)));
 
             Resource resource = new UrlResource(latestFile.toUri());
             if (!resource.exists() || !resource.isReadable()) {
-                throw new IOException("Plik jest niedostępny do odczytu");
+                throw new IOException(String.format("Could not read file: %s", latestFile));
             }
             return resource;
         }

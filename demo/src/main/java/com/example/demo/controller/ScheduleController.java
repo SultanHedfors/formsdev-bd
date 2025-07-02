@@ -38,10 +38,10 @@ public class ScheduleController {
     public ResponseEntity<String> cancelProcessing() {
 
         scheduleReader.cancelProcessing();
-        log.info(">>> Schedule processing was cancelled in schedule reader");
+        log.info(">>> Schedule processing in ScheduleReader was cancelled.");
 
         scheduledActivityToWSService.cancelProcessing();
-        log.info(">>> Schedule processing was cancelled in ScheduledActivityToWSService.");
+        log.info(">>> Schedule processing in ScheduledActivityToWSService was cancelled.");
 
         return ResponseEntity.ok("Processing was cancelled.");
     }

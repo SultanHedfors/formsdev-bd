@@ -4,6 +4,7 @@ import com.example.demo.entity.RoomEntity;
 import com.example.demo.entity.UserEntity;
 import com.example.demo.entity.WorkSchedule;
 import com.example.demo.exception.InvalidAuthHeaderException;
+import com.example.demo.exception.ProcessCancelledException;
 import com.example.demo.grpc.GrpcSendSchedulesClient;
 import com.example.demo.mapper.ProtoObjectsMapping;
 import com.example.demo.repository.RoomRepository;
@@ -122,8 +123,8 @@ public class ScheduleReaderHelper {
     }
 
     static void throwCancelled() {
-        log.warn(">>> Przetwarzanie zostało przerwane w trakcie.");
-        throw new RuntimeException("Przetwarzanie zostało anulowane przez użytkownika.");
+        log.info(">>> Processing was cancelled by user.");
+        throw new ProcessCancelledException();
     }
 
     String retrieveJwt(String authorizationHeader) {

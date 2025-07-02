@@ -13,6 +13,10 @@ import java.util.stream.Stream;
 
 @Slf4j
 public class ReportCreator {
+
+    //preventing class instantiation
+    private ReportCreator() {}
+
     static void writeLogFile(String excelFilePath, List<String> logMessages, boolean success, List<String> scheduleSummary, String excelName) {
         String fileSuffix = success ? "_processing_successful_report.txt" : "_processing_failure_report.txt";
         String logFilePath = excelFilePath + fileSuffix;
