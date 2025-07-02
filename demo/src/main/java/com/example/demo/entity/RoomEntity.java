@@ -3,6 +3,7 @@ package com.example.demo.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -14,7 +15,7 @@ import java.util.Set;
 @Table(name = "STANOWISKO")
 @ToString(exclude = {"activities", "procedures"})
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class RoomEntity {
+public class RoomEntity implements Serializable {
 
     @Id
     @Column(name = "STANOWISKO_ID")
@@ -28,7 +29,7 @@ public class RoomEntity {
     private String roomCode;
 
     @OneToMany(mappedBy = "room")
-    private Set<ActivityEntity> activities = new HashSet<>();
+    private transient Set<ActivityEntity> activities = new HashSet<>();
 
     @ManyToMany
     @JoinTable(
@@ -36,5 +37,5 @@ public class RoomEntity {
             joinColumns = @JoinColumn(name = "stanowisko_id"),
             inverseJoinColumns = @JoinColumn(name = "zabieg_id")
     )
-    private Set<ProcedureEntity> procedures = new HashSet<>();
+    private transient Set<ProcedureEntity> procedures = new HashSet<>();
 }
