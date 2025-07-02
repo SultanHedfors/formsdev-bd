@@ -30,7 +30,7 @@ public class ScheduleController {
     public ResponseEntity<UploadResponseDto> uploadSchedule(@RequestParam("file") MultipartFile file,
                                                             @RequestHeader("Authorization") String authorizationHeader) throws IOException {
         fileHandlerService.handleScheduleUpload(file, authorizationHeader);
-        return ResponseEntity.ok(new UploadResponseDto(true, "Plik został zapisany i przetworzony poprawnie."));
+        return ResponseEntity.ok(new UploadResponseDto(true, "The file was processed and saved successfully."));
     }
 
 
@@ -38,12 +38,12 @@ public class ScheduleController {
     public ResponseEntity<String> cancelProcessing() {
 
         scheduleReader.cancelProcessing();
-        log.info(">>> Schedule processing was canceled in schedule reader");
+        log.info(">>> Schedule processing was cancelled in schedule reader");
 
         scheduledActivityToWSService.cancelProcessing();
-        log.info(">>> Schedule processing was canceled in ScheduledActivityToWSService.");
+        log.info(">>> Schedule processing was cancelled in ScheduledActivityToWSService.");
 
-        return ResponseEntity.ok("Przetwarzanie zostało anulowane.");
+        return ResponseEntity.ok("Processing was cancelled.");
     }
 
     @GetMapping("/download-latest-report")

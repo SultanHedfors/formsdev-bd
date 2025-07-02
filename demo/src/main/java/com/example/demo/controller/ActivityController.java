@@ -33,29 +33,15 @@ public class ActivityController {
             @RequestParam(required = false) String month,
             @RequestParam(defaultValue = "asc") String sortDirection) {
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Object principal = authentication.getPrincipal();
-
-        if (!(principal instanceof UserDetails userDetails)) {
-            throw new CurrentUserNotFoundException();
-        }
-
-        String username = userDetails.getUsername();
-        return ResponseEntity.ok(activityService.findAll(page, size, username, startDate,
+        String username = getUsernameFromAuthContext();
+        return ResponseEntity.ok(activityService.findAllActivities(page, size, username, startDate,
                 endDate, month, sortDirection));
     }
 
 
     @PatchMapping
     public ResponseEntity<ActivityDto> markActivityAsOwn(@RequestBody ActivityDto activityDto) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Object principal = authentication.getPrincipal();
-
-        if (!(principal instanceof UserDetails userDetails)) {
-            throw new CurrentUserNotFoundException();
-        }
-
-        String username = userDetails.getUsername();
+        String username = getUsernameFromAuthContext();
         ActivityDto returnedDto = activityService.markActivityAsOwn(activityDto, username);
         return ResponseEntity.ok(returnedDto);
     }
@@ -63,14 +49,17 @@ public class ActivityController {
 
     @PostMapping("/old")
     public ResponseEntity<ActivityDto> returnToOldAssignment(@RequestBody ActivityDto activityDto) {
+        String username = getUsernameFromAuthContext();
+        ActivityDto returnedActivityDto = activityService.returnToOldAssignment(activityDto, username);
+        return new ResponseEntity<>(returnedActivityDto, HttpStatus.CREATED);
+    }
+
+    private String getUsernameFromAuthContext() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Object principal = authentication.getPrincipal();
-
         if (!(principal instanceof UserDetails userDetails)) {
             throw new CurrentUserNotFoundException();
         }
-        String username = userDetails.getUsername();
-        ActivityDto returnedActivityDto = activityService.returnToOldAssignment(activityDto, username);
-        return new ResponseEntity<>(returnedActivityDto, HttpStatus.CREATED);
+        return userDetails.getUsername();
     }
 }

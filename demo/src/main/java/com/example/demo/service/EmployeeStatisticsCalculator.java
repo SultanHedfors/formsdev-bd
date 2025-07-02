@@ -26,114 +26,155 @@ public class EmployeeStatisticsCalculator {
     private final YearlyEmployeeStatisticRepository yearlyRepo;
 
     public Map<Integer, Double> calculateDailyScores(LocalDate date) {
+
+        BiFunction<Integer, Double, EmployeeDailyStatsEntity> dailyStatsEntityCreator =
+                (empId, score) ->
+                        new EmployeeDailyStatsEntity(empId, date, score, LocalDateTime.now());
+
         return calculateAndSave(
                 date.atStartOfDay(),
                 date.plusDays(1).atStartOfDay(),
                 date,
-                (empId, score) -> new EmployeeDailyStatsEntity(empId, date, score, LocalDateTime.now()),
+                dailyStatsEntityCreator,
                 dailyRepo::save
         );
     }
 
     public void calculateWeeklyScores(LocalDate monday) {
-        LocalDateTime start = monday.atStartOfDay();
-        LocalDateTime end = start.plusWeeks(1);
+        var start = monday.atStartOfDay();
+        var end = start.plusWeeks(1);
+
+        BiFunction<Integer, Double, EmployeeWeeklyStatsEntity> weeklyStatsEntityCreator =
+                (empId, score) ->
+                        new EmployeeWeeklyStatsEntity(empId, monday, score, LocalDateTime.now());
+
         calculateAndSave(
-                start, end, monday,
-                (empId, score) -> new EmployeeWeeklyStatsEntity(empId, monday, score, LocalDateTime.now()),
+                start,
+                end,
+                monday,
+                weeklyStatsEntityCreator,
                 weeklyRepo::save
         );
     }
 
-
     public void calculateMonthlyScores(YearMonth month) {
-        LocalDateTime start = month.atDay(1).atStartOfDay();
-        LocalDateTime end = month.plusMonths(1).atDay(1).atStartOfDay();
+        var start = month.atDay(1).atStartOfDay();
+        var end = month.plusMonths(1).atDay(1).atStartOfDay();
+
+        BiFunction<Integer, Double, EmployeeMonthlyStatsEntity> monthlyStatsEntityCreator =
+                (empId, score) ->
+                        new EmployeeMonthlyStatsEntity(empId, month.toString(), score, LocalDateTime.now());
+
         calculateAndSave(
-                start, end, month.toString(),
-                (empId, score) -> new EmployeeMonthlyStatsEntity(empId, month.toString(), score, LocalDateTime.now()),
+                start,
+                end,
+                month.toString(),
+                monthlyStatsEntityCreator,
                 monthlyRepo::save
         );
     }
 
     public void calculateYearlyScores(Year year) {
-        LocalDateTime start = year.atDay(1).atStartOfDay();
-        LocalDateTime end = start.plusYears(1);
+        var start = year.atDay(1).atStartOfDay();
+        var end = start.plusYears(1);
+
+        BiFunction<Integer, Double, EmployeeYearlyStatsEntity> yearlyStatsEntityCreator =
+                (empId, score) ->
+                        new EmployeeYearlyStatsEntity(empId, year.getValue(), score, LocalDateTime.now());
+
         calculateAndSave(
-                start, end, year.getValue(),
-                (empId, score) -> new EmployeeYearlyStatsEntity(empId, year.getValue(), score, LocalDateTime.now()),
+                start,
+                end,
+                year.getValue(),
+                yearlyStatsEntityCreator,
                 yearlyRepo::save
         );
     }
-
 
     private <T> Map<Integer, Double> calculateAndSave(
             LocalDateTime start,
             LocalDateTime end,
             Object periodKey,
-            BiFunction<Integer, Double, T> entityFactory,
+            BiFunction<Integer, Double, T> entityCreator,
             java.util.function.Consumer<T> saver
     ) {
         log.info("Calculating stats for period starting {} to {} (key={})", start, end, periodKey);
 
-        // pobierz i odfiltruj
-        List<ActivityEmployeeEntity> raw = activityRepo.findWithGraphByActivityDate(start, end);
-        List<ActivityEmployeeEntity> entries = raw.stream()
-                .filter(ae -> {
-                    WorkSchedule ws = ae.getWorkSchedule();
-                    return ws == null || ws.getSubstituteEmployee() != null
-                            || !("UW".equalsIgnoreCase(ws.getWorkMode()) || "ZL".equalsIgnoreCase(ws.getWorkMode()));
-                })
-                .collect(Collectors.toList());
+        List<ActivityEmployeeEntity> allEmployeesActivities = getEntitiesBySelectedPeriod(start, end);
 
-        // grupuj po pracowniku
-        var byEmp = entries.stream()
-                .collect(Collectors.groupingBy(ae -> ae.getEmployee().getId()));
+        var entriesGroupedByEmployee = allEmployeesActivities.stream()
+                .collect(Collectors
+                        .groupingBy(ae -> ae.getEmployee().getId()));
 
-        // oblicz i zapisz
-        Map<Integer, Double> result = new HashMap<>();
-        byEmp.forEach((empId, list) -> {
-            double score = computeScore(list, entries);
-            log.info("Period key={} empId={} → score {}", periodKey, empId, score);
-            result.put(empId, score);
-            saver.accept(entityFactory.apply(empId, score));
-        });
+        // calculate & save
+        var result = new HashMap<Integer, Double>();
+        entriesGroupedByEmployee
+                .forEach((empId, activitiesForEmployee) -> {
+                    double score = computeScore(activitiesForEmployee, allEmployeesActivities);
+                    log.debug("Period key={} empId={} → score {}", periodKey, empId, score);
+                    result.put(empId, score);
+                    saver.accept(entityCreator.apply(empId, score));
+                });
 
         return result;
     }
 
-    /**
-     * Numerator/denominator według zasad F/B, S, U oraz jednorazowe zliczanie work_schedule.
-     */
-    private double computeScore(List<ActivityEmployeeEntity> mine, List<ActivityEmployeeEntity> all) {
-        double num = 0, den = 0;
-        Set<Integer> seenWS = new HashSet<>();
+    private List<ActivityEmployeeEntity> getEntitiesBySelectedPeriod(LocalDateTime start, LocalDateTime end) {
+        List<ActivityEmployeeEntity> entitiesInSelectedPeriod = activityRepo.findWithGraphByActivityDate(start, end);
 
-        for (ActivityEmployeeEntity ae : mine) {
-            ProcedureEntity proc = ae.getActivity().getProcedure();
-            String workMode = proc.getWorkMode();
-            Integer pts = proc.getProcedureActualTime();
-            long total = all.stream()
-                    .filter(x -> x.getActivity().getActivityId().equals(ae.getActivity().getActivityId()))
-                    .count();
+        //filter leaving in the list only assignments with no schedule with no absence
+        return entitiesInSelectedPeriod
+                .stream()
+                .filter(ae -> {
+                    WorkSchedule ws = ae.getWorkSchedule();
+                    return ws == null
+                            || ws.getSubstituteEmployee() != null
+                            || Optional.ofNullable(ws.getWorkMode())
+                            .map(String::toUpperCase)
+                            .map(mode -> !Set.of("UW", "ZL").contains(mode))
+                            .orElse(true);
+                }).toList();
+    }
 
-            // numerator
-            if ("F".equalsIgnoreCase(workMode) || "B".equalsIgnoreCase(workMode)) {
-                if (pts != null && total > 0) num += (double) pts / total;
-            } else if ("S".equalsIgnoreCase(workMode)) {
-                if (pts != null) num += pts;
-            } else if ("U".equalsIgnoreCase(workMode)) {
-                num += 1;
-            }
+    private double computeScore(List<ActivityEmployeeEntity> currentEmployeesActivities,
+                                List<ActivityEmployeeEntity> allActivities) {
+        double numerator = currentEmployeesActivities.stream()
+                .mapToDouble(currEmployeeActivity ->
+                        computeNumeratorFor(currEmployeeActivity, allActivities))
+                .sum();
 
-            // denominator — raz na każdy WS
-            WorkSchedule ws = ae.getWorkSchedule();
-            if (ws != null && ws.getId() != null && seenWS.add(ws.getId())) {
-                Integer dur = ws.getWorkDurationMinutes();
-                if (dur != null) den += dur;
-            }
+        double denominator = currentEmployeesActivities.stream()
+                .map(ActivityEmployeeEntity::getWorkSchedule)
+                .filter(Objects::nonNull)
+                .filter(ws -> ws.getId() != null)
+                .distinct()
+                .mapToDouble(ws -> Optional.ofNullable(ws.getWorkDurationMinutes())
+                        .orElse(0))
+                .sum();
+
+        return denominator > 0 ? numerator / denominator : 0.0;
+    }
+
+    private double computeNumeratorFor(ActivityEmployeeEntity currentEmployeesActivity,
+                                       List<ActivityEmployeeEntity> allActivities) {
+        ProcedureEntity proc = currentEmployeesActivity.getActivity().getProcedure();
+        String workMode = proc.getWorkMode();
+        Integer procedureMinutes = proc.getProcedureActualTime();
+
+        long numEmployeesAssignedToActivity = allActivities.stream()
+                .filter(act ->
+                        act.getActivity().getActivityId()
+                                .equals(currentEmployeesActivity.getActivity().getActivityId()))
+                .count();
+
+        if ("F".equalsIgnoreCase(workMode) || "B".equalsIgnoreCase(workMode)) {
+            return (procedureMinutes != null && numEmployeesAssignedToActivity > 0) ?
+                    (double) procedureMinutes / numEmployeesAssignedToActivity : 0.0;
+        } else if ("S".equalsIgnoreCase(workMode)) {
+            return procedureMinutes != null ? procedureMinutes : 0.0;
+        } else if ("U".equalsIgnoreCase(workMode)) {
+            return 1.0;
         }
-
-        return den>0 ? num/den : 0.0;
+        return 0.0;
     }
 }

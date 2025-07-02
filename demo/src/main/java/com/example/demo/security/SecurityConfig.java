@@ -4,6 +4,7 @@ import net.devh.boot.grpc.server.security.authentication.GrpcAuthenticationReade
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -57,10 +58,10 @@ public class SecurityConfig {
     public WebMvcConfigurer corsConfigurer() {
         return new WebMvcConfigurer() {
             @Override
-            public void addCorsMappings(CorsRegistry registry) {
+            public void addCorsMappings(@NonNull CorsRegistry registry) {
                 registry.addMapping("/**")
                         .allowedOriginPatterns(frontendUrls)
-                        .allowedMethods("GET", "POST", "PUT","PATCH", "DELETE", "OPTIONS")
+                        .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
                         .allowedHeaders("*")
                         .allowCredentials(true);
             }
@@ -70,10 +71,8 @@ public class SecurityConfig {
 
     @Bean
     public GrpcAuthenticationReader grpcAuthenticationReader() {
-        return (a,b )-> SecurityContextHolder.getContext().getAuthentication(); // nie czyta nic, wyłącza security
+        return (a, b) -> SecurityContextHolder.getContext().getAuthentication();
     }
-
-
 
 
 }

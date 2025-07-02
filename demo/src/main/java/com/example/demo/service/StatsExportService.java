@@ -27,17 +27,17 @@ public class StatsExportService {
     private final UserRepository userRepository;
 
     public File generateXlsx(LocalDate from, LocalDate to) throws IOException {
-        List<EmployeeDailyStatsEntity> stats = statsRepository.findAllByStartDayBetween(from, to);
-        Map<Integer, String> employeeNames = userRepository.findAllById(
+        var stats = statsRepository.findAllByStartDayBetween(from, to);
+        var employeeNames = userRepository.findAllById(
                 stats.stream().map(EmployeeDailyStatsEntity::getEmployeeId).collect(Collectors.toSet())
         ).stream().collect(Collectors.toMap(UserEntity::getId, UserEntity::getFullName));
 
         // Grupa po employeeId
-        Map<Integer, Map<LocalDate, Double>> grouped = stats.stream()
+        var grouped = stats.stream()
                 .collect(Collectors.groupingBy(EmployeeDailyStatsEntity::getEmployeeId,
                         Collectors.toMap(EmployeeDailyStatsEntity::getStartDay, EmployeeDailyStatsEntity::getScore)));
 
-        List<LocalDate> days = stats.stream()
+        var days = stats.stream()
                 .map(EmployeeDailyStatsEntity::getStartDay)
                 .distinct()
                 .sorted(Comparator.reverseOrder()) // najnowsze z lewej
@@ -60,12 +60,11 @@ public class StatsExportService {
         header.createCell(days.size() + 1).setCellValue("Średnia dzienna pracownika");
         header.createCell(days.size() + 2).setCellValue("Średnia dla okresu");
 
-        for (Map.Entry<Integer, Map<LocalDate, Double>> entry : grouped.entrySet()) {
+        for (var entry : grouped.entrySet()) {
             Row row = sheet.createRow(rowIdx);
             String employeeName = employeeNames.getOrDefault(entry.getKey(), "Nieznany");
             row.createCell(0).setCellValue(employeeName);
 
-            double employeeTotal = 0;
             int employeeCount = 0;
 
             for (int i = 0; i < days.size(); i++) {
@@ -74,7 +73,6 @@ public class StatsExportService {
                 if (score != null) {
                     cell.setCellValue(score); // score to już np. 0.35
                     cell.setCellStyle(percentStyle);
-                    employeeTotal += score;
                     employeeCount++;
                 } else {
                     cell.setCellValue("");

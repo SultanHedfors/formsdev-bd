@@ -1,23 +1,22 @@
 package com.example.demo.service;
 
 import com.example.demo.dto.bsn_logic_dto.ActivityDto;
-import com.example.demo.entity.*;
+import com.example.demo.entity.ActivityEmployeeEntity;
+import com.example.demo.entity.ActivityEntity;
+import com.example.demo.entity.UserEntity;
 import com.example.demo.mapper.ActivityMapper;
-import com.example.demo.repository.*;
+import com.example.demo.repository.ActivityAssignmentLogRepository;
+import com.example.demo.repository.ActivityEmployeeRepository;
+import com.example.demo.repository.ActivityRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.YearMonth;
-import java.time.format.DateTimeFormatter;
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -26,125 +25,38 @@ public class ActivityService {
 
     private final ActivityRepository activityRepository;
     private final ActivityAssignmentLogRepository activityAssignmentLogRepository;
-    private final ScheduleRepository scheduleRepository;
     private final ActivityMapper activityMapper;
-    private final UserRepository userRepository;
+    private final ActivityServiceHelper helper;
     private final ActivityEmployeeRepository activityEmployeeRepository;
-    private final ActivityService activityServ;
 
     @Transactional
-    public Page<ActivityDto> findAll(int page, int size, String username,
-                                     LocalDate startDate, LocalDate endDate,
-                                     String month, String sortDirection) {
-        if (month != null) {
-            YearMonth yearMonth = YearMonth.parse(month);
-            startDate = yearMonth.atDay(1);
-            endDate = yearMonth.atEndOfMonth();
-        }
+    public Page<ActivityDto> findAllActivities(int page, int size, String username,
+                                               LocalDate startDateFromRequest, LocalDate endDateFromRequest,
+                                               String monthFromRequest, String sortDirection) {
 
-        UserEntity user = getUserByEmployeeCode(username);
-        var direction = sortDirection.equalsIgnoreCase("desc") ?
-                Sort.Direction.DESC : Sort.Direction.ASC;
+        var sortedPageable = helper.getSortedPageable(page, size, sortDirection);
+        var activityPage = helper.fetchActivityEntities(startDateFromRequest, endDateFromRequest, monthFromRequest, sortedPageable);
+        Page<ActivityDto> dtoPage = activityPage.map(activityMapper::activityEntityToDto);
 
-        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, "activityDate", "activityTime"));
+        List<ActivityDto> updatedDtos = helper.mapActivityEmployeeToDtos(dtoPage);
 
-        var activityPage = fetchActivityEntities(startDate, endDate, pageable);
-        var dtoPage = activityPage.map(activityMapper::activityEntityToDto);
+        UserEntity user = helper.getUserByEmployeeCode(username);
+        helper.setWorkdayFlag(activityPage, updatedDtos, user.getId());
+        helper.markAssignedForUser(updatedDtos, user.getId());
+        helper.markHistoryFlag(updatedDtos);
 
-        List<ActivityDto> updatedDtos = activityServ.mapActivityEmployeeToDtos(dtoPage);
-
-        setWorkdayFlag(activityPage, updatedDtos, user.getId());
-        markAssignedForUser(updatedDtos, user.getId());
-        markHistoryFlag(updatedDtos);
-
-        return new PageImpl<>(updatedDtos, pageable, dtoPage.getTotalElements());
+        return new PageImpl<>(updatedDtos, sortedPageable, dtoPage.getTotalElements());
     }
 
-    private UserEntity getUserByEmployeeCode(String username) {
-        return userRepository.findByEmployeeCode(username)
-                .orElseThrow(() -> new RuntimeException("User not found for employee code: " + username));
-    }
-
-    private Page<ActivityEntity> fetchActivityEntities(LocalDate startDate, LocalDate endDate, Pageable pageable) {
-        if (startDate != null && endDate != null) {
-            LocalDateTime start = startDate.atStartOfDay();
-            LocalDateTime end = endDate.atTime(LocalTime.MAX);
-            return activityRepository.findByActivityDateBetween(start, end, pageable);
-        }
-        return activityRepository.findAll(pageable);
-    }
-
-    private void markAssignedForUser(List<ActivityDto> dtoList, Integer userId) {
-        dtoList.forEach(dto -> {
-            List<Integer> employeeIds = Optional.ofNullable(dto.getEmployeeIdsAssigned()).orElse(Collections.emptyList());
-            dto.setAssignedToLoggedUser(employeeIds.contains(userId));
-        });
-    }
-
-    private void markHistoryFlag(List<ActivityDto> dtoList) {
-        List<Integer> activityIds = dtoList.stream()
-                .map(ActivityDto::getActivityId)
-                .toList();
-
-        Set<Integer> historySet = new HashSet<>(activityAssignmentLogRepository.findExistingActivityIdsInLog(activityIds));
-
-        dtoList.forEach(dto -> dto.setHasHistory(historySet.contains(dto.getActivityId())));
-    }
-
-    @Transactional
-    public List<ActivityDto> mapActivityEmployeeToDtos(Page<ActivityDto> dtoPage) {
-        List<Integer> activityIds = dtoPage.getContent().stream()
-                .map(ActivityDto::getActivityId)
-                .toList();
-
-        var assignments = activityEmployeeRepository.findByActivityActivityIdIn(activityIds);
-
-        Map<Integer, List<UserEntity>> activityEmployeeMap = assignments.stream()
-                .collect(Collectors.groupingBy(
-                        a -> a.getActivity().getActivityId(),
-                        Collectors.mapping(ActivityEmployeeEntity::getEmployee, Collectors.toList())
-                ));
-
-        return getActivityDtos(dtoPage, activityEmployeeMap);
-    }
-
-    private static List<ActivityDto> getActivityDtos(Page<ActivityDto> dtoPage, Map<Integer, List<UserEntity>> activityEmployeeMap) {
-        List<ActivityDto> dtoList = dtoPage.getContent();
-        dtoList.forEach(dto -> {
-            List<UserEntity> employees = activityEmployeeMap.getOrDefault(dto.getActivityId(), Collections.emptyList());
-
-            dto.setEmployeesAssigned(employees.stream()
-                    .map(UserEntity::getFullName)
-                    .distinct()
-                    .toList());
-
-            dto.setEmployeeIdsAssigned(employees.stream()
-                    .map(UserEntity::getId)
-                    .distinct()
-                    .toList());
-        });
-        return dtoList;
-    }
-
-    private void setWorkdayFlag(Page<ActivityEntity> activityPage, List<ActivityDto> dtoList, Integer employeeId) {
-        List<ActivityEntity> entities = activityPage.getContent();
-        IntStream.range(0, entities.size())
-                .filter(i -> entities.get(i).getActivityDate() != null)
-                .forEach(i -> {
-                    ActivityEntity entity = entities.get(i);
-                    ActivityDto dto = dtoList.get(i);
-                    setWorkdayFlagForSingleActivity(dto, entity, employeeId);
-                });
-    }
 
     @Transactional
     public ActivityDto markActivityAsOwn(ActivityDto activityDto, String username) {
         ActivityEntity activityEntity = activityRepository.findById(activityDto.getActivityId())
                 .orElseThrow(() -> new RuntimeException("Activity not found"));
 
-        UserEntity user = getUserByEmployeeCode(username);
+        UserEntity user = helper.getUserByEmployeeCode(username);
 
-        saveOldProcedureAssignment(activityEntity);
+        helper.saveOldProcedureAssignment(activityEntity);
         activityEmployeeRepository.deleteByActivityActivityId(activityEntity.getActivityId());
 
         ActivityEmployeeEntity newAssignment = new ActivityEmployeeEntity();
@@ -159,45 +71,9 @@ public class ActivityService {
         dto.setEmployeesAssigned(List.of(user.getFullName()));
         dto.setEmployeeIdsAssigned(List.of(user.getId()));
 
-        setWorkdayFlagForSingleActivity(dto, activityEntity, user.getId());
+        helper.setWorkdayFlagForSingleActivity(dto, activityEntity, user.getId());
 
         return dto;
-    }
-
-    private void saveOldProcedureAssignment(ActivityEntity activityEntity) {
-        List<ActivityEmployeeEntity> existingAssignments =
-                activityEmployeeRepository.findByActivityActivityId(activityEntity.getActivityId());
-
-        if (existingAssignments.isEmpty()) {
-            log.info("No existing assignments to log for activity {}", activityEntity.getActivityId());
-            return;
-        }
-
-        List<UserEntity> employees = existingAssignments.stream()
-                .map(ActivityEmployeeEntity::getEmployee)
-                .filter(Objects::nonNull)
-                .distinct()
-                .toList();
-
-        if (employees.isEmpty()) {
-            log.warn("No valid employee entities found for logging in activity {}", activityEntity.getActivityId());
-            return;
-        }
-
-        for (UserEntity employee : employees) {
-            ActivityAssignmentLogEntity logEntity = ActivityAssignmentLogEntity.builder()
-                    .activity(activityEntity)
-                    .employee(employee)
-                    .assignedAt(LocalDateTime.now())
-                    .build();
-
-            activityAssignmentLogRepository.save(logEntity);
-
-            log.info("Saved assignment log: ACTIVITY ID={} -> EMPLOYEE ID={}",
-                    activityEntity.getActivityId(), employee.getId());
-        }
-
-        log.info("Finished saving {} assignment log entries for activity {}", employees.size(), activityEntity.getActivityId());
     }
 
 
@@ -206,7 +82,7 @@ public class ActivityService {
         ActivityEntity activityEntity = activityRepository.findById(activityDto.getActivityId())
                 .orElseThrow(() -> new RuntimeException("Activity not found"));
 
-        UserEntity user = getUserByEmployeeCode(username);
+        UserEntity user = helper.getUserByEmployeeCode(username);
 
         var assignmentHistoryEntries = activityAssignmentLogRepository
                 .findByActivity_ActivityIdOrderByAssignedAtDesc(activityDto.getActivityId());
@@ -216,10 +92,10 @@ public class ActivityService {
         ActivityDto dto = activityMapper.activityEntityToDto(activityEntity);
 
         if (assignmentHistoryEntries.isEmpty()) {
-            return removeAssignment(activityEntity, dto, user);
+            return helper.removeAssignment(activityEntity, dto, user);
         }
 
-        var uniqueLatestEmployees = getUniqueLatestEmployees(assignmentHistoryEntries);
+        var uniqueLatestEmployees = helper.getUniqueLatestEmployees(assignmentHistoryEntries);
 
         var restoredAssignments = uniqueLatestEmployees.values().stream()
                 .map(employee -> {
@@ -233,60 +109,8 @@ public class ActivityService {
 
         activityEmployeeRepository.saveAll(restoredAssignments);
 
-        return mapToDto(dto, restoredAssignments, activityEntity, user);
+        return helper.mapToDto(dto, restoredAssignments, activityEntity, user);
     }
 
-    private ActivityDto mapToDto(ActivityDto dto, List<ActivityEmployeeEntity> restoredAssignments, ActivityEntity activityEntity, UserEntity user) {
-        dto.setHasHistory(true);
-        dto.setEmployeesAssigned(
-                restoredAssignments.stream()
-                        .map(a -> a.getEmployee().getFullName())
-                        .toList()
-        );
-        dto.setEmployeeIdsAssigned(
-                restoredAssignments.stream()
-                        .map(a -> a.getEmployee().getId())
-                        .toList()
-        );
 
-        setWorkdayFlagForSingleActivity(dto, activityEntity, user.getId());
-        return dto;
-    }
-
-    private static Map<Integer, UserEntity> getUniqueLatestEmployees(List<ActivityAssignmentLogEntity> assignmentHistoryEntries) {
-        return assignmentHistoryEntries.stream()
-                .map(ActivityAssignmentLogEntity::getEmployee)
-                .filter(Objects::nonNull)
-                .collect(Collectors.toMap(
-                        UserEntity::getId,
-                        emp -> emp,
-                        (existing, duplicate) -> existing
-                ));
-    }
-
-    private ActivityDto removeAssignment(ActivityEntity activityEntity, ActivityDto dto, UserEntity user) {
-        log.info("No assignment history found for activity {}. Current assignments removed.",
-                activityEntity.getActivityId());
-
-        dto.setHasHistory(false);
-        dto.setEmployeesAssigned(Collections.emptyList());
-        dto.setEmployeeIdsAssigned(Collections.emptyList());
-        setWorkdayFlagForSingleActivity(dto, activityEntity, user.getId());
-        return dto;
-    }
-
-    private void setWorkdayFlagForSingleActivity(ActivityDto dto, ActivityEntity entity, Integer employeeId) {
-        if (entity.getActivityDate() == null) {
-            dto.setProcedureScheduledOnEmployeesWorkingDay(false);
-            return;
-        }
-
-        LocalDate date = entity.getActivityDate().toLocalDateTime().toLocalDate();
-        String yearMonthStr = date.format(DateTimeFormatter.ofPattern("yyyy-MM"));
-        int dayOfMonth = date.getDayOfMonth();
-
-        boolean exists = scheduleRepository.existsByEmployee_IdAndYearMonthAndDayOfMonth(employeeId, yearMonthStr, dayOfMonth);
-
-        dto.setProcedureScheduledOnEmployeesWorkingDay(exists);
-    }
 }

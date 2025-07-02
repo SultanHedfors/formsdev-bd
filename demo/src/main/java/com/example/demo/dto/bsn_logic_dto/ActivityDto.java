@@ -34,6 +34,5 @@ public class ActivityDto {
 
     private List<String> employeesAssigned;
 
-    // Dodane pole do rozróżniania jednoznacznie userów
     private List<Integer> employeeIdsAssigned;
 }

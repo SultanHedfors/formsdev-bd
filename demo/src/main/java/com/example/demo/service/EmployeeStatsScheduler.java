@@ -33,7 +33,7 @@ public class EmployeeStatsScheduler {
         Map<Integer, Double> stats = calculator.calculateDailyScores(today);  // Używamy metody kalkulacji dla dzisiejszej daty
 
         stats.forEach((empId, score) ->
-                log.info("[SCHEDULER] Daily score for employee {}: {}", empId, score)
+                log.debug("[SCHEDULER] Daily score for employee {}: {}", empId, score)
         );
 
         log.info("[SCHEDULER] Finished daily stats calculation for date: {}", today);
