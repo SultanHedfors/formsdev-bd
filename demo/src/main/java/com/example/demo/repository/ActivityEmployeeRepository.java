@@ -31,7 +31,10 @@ public interface ActivityEmployeeRepository extends JpaRepository<ActivityEmploy
                                                          @Param("to") Timestamp to);
 
     @EntityGraph(attributePaths = {
-            "activity", "activity.procedure", "workSchedule"
+            "activity",
+            "activity.procedure",
+            "workSchedule",
+            "activity.employee"
     })
     @Query("""
                 SELECT ae FROM ActivityEmployeeEntity ae
