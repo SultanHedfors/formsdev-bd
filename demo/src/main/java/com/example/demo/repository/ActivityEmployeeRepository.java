@@ -11,7 +11,6 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 public interface ActivityEmployeeRepository extends JpaRepository<ActivityEmployeeEntity, Integer> {
 
@@ -30,22 +29,6 @@ public interface ActivityEmployeeRepository extends JpaRepository<ActivityEmploy
             """)
     int deleteAllByActivityDateRangeAndUserModifiedFalse(@Param("from") Timestamp from,
                                                          @Param("to") Timestamp to);
-
-    @Query(value = """
-            SELECT DISTINCT activity_id
-            FROM activity_employee
-            WHERE user_modified = 1
-            AND activity_id IN (:ids)
-            """, nativeQuery = true)
-    List<Integer> findManualModifiedActivityIds(@Param("ids") List<Integer> activityIds);
-
-    @Query(value = """
-            SELECT CAST(activity_id AS VARCHAR(20)) || ':' ||
-            CAST(employee_id AS VARCHAR(20))
-            FROM activity_employee
-            """,
-            nativeQuery = true)
-    Set<String> findAllExistingActivityEmployeePairs();
 
     @EntityGraph(attributePaths = {
             "activity", "activity.procedure", "workSchedule"

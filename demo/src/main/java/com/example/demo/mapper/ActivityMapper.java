@@ -11,9 +11,6 @@ import org.mapstruct.Named;
 @Mapper(componentModel = "spring")
 public interface ActivityMapper {
 
-    @Mapping(target = "activityId", ignore = true)
-    ActivityEntity userRegistrationDtoToEntity(ActivityDto activityDto);
-
     @Mapping(target = "employeeId", ignore = true)
     @Mapping(target = "employeeCode", ignore = true)
     @Mapping(target = "employeeFullName", ignore = true)

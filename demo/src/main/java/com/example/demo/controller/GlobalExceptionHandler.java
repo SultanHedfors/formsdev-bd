@@ -22,7 +22,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(AuthenticationException.class)
-    public ResponseEntity<String> handleAuthException(AuthenticationException ex) {
+    public ResponseEntity<String> handleAuthException() {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body("Invalid credentials");
     }
@@ -39,6 +39,6 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<UploadResponseDto> handleGeneric(Exception ex) {
-        return ResponseEntity.internalServerError().body(new UploadResponseDto(false, "Błąd serwera: " + ex.getMessage()));
+        return ResponseEntity.internalServerError().body(new UploadResponseDto(false, "Server error: " + ex.getMessage()));
     }
 }

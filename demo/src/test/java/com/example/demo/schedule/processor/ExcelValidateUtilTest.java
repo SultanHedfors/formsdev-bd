@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class ExcelValidateUtilTest {
+class ExcelValidateUtilTest {
 
     @Mock
     private LogUtil logUtil;
@@ -52,7 +52,7 @@ public class ExcelValidateUtilTest {
         var ex = assertThrows(RuntimeException.class,
                 () -> excelValidateUtil.handleValidationErrors("path", "name"));
         //assert
-        assertEquals("Validation errors in uploaded file." + List.of("test error"), ex.getMessage());
+        assertEquals("Schedule validation errors have occurred" + List.of("test error"), ex.getMessage());
         assertTrue(list.contains("test error"));
 
     }
@@ -70,7 +70,7 @@ public class ExcelValidateUtilTest {
     }
 
     @Nested
-    public class ExcelSheetValidations {
+     class ExcelSheetValidations {
         XSSFWorkbook okWorkbook;
         XSSFWorkbook nonExistingEmployeeWorkbook;
         XSSFWorkbook missingHeaderWorkbook;
@@ -87,10 +87,6 @@ public class ExcelValidateUtilTest {
                 "GABINET MASAŻU 10", "GABINET MASAŻU 1", "GABINET MASAŻU 6",
                 "MASAŻ KLASYCZNY E"
         );
-
-//        private static final Set<Integer> excpectedEmployeeRowIndecies = Set.of(
-//                3, 6, 9, 12, 15, 18, 24, 27, 30, 33, 36, 39, 42, 45, 48, 51, 54, 58, 62, 66, 70, 74, 78, 82, 86, 90, 94, 98, 102, 106, 110, 114, 118
-//        );
 
         enum TestData {
             OK, NON_EXISTING_EMPLOYEE, MISSING_HEADER

@@ -1,5 +1,6 @@
 package com.example.demo.util;
 
+import com.example.demo.exception.ScheduleValidationException;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalTime;
@@ -9,6 +10,10 @@ import java.util.regex.Pattern;
 
 @Slf4j
 public class TimeUtil {
+
+    //preventing class instantiation
+    private TimeUtil(){}
+
     private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm");
      public static String formatTime(String time) {
         if (time == null || time.trim().isEmpty()) return null;
@@ -18,7 +23,7 @@ public class TimeUtil {
             LocalTime localTime = LocalTime.parse(cleanedTime, DateTimeFormatter.ofPattern("[H:mm][HH:mm]"));
             return localTime.format(TIME_FORMATTER);
         } catch (Exception e) {
-            log.error("Invalid time format: " + time);
+            log.error("Invalid time format: {}", time);
             return null;
         }
     }
@@ -31,7 +36,7 @@ public class TimeUtil {
         if (time.matches("\\d{1,2}:\\d{2}")) {
             return time;
         }
-        log.error("Invalid time format after cleaning: " + time);
+        log.error("Invalid time format after cleaning: {}", time);
         return "";
     }
 
@@ -51,12 +56,11 @@ public class TimeUtil {
 
             return endMinutes - startMinutes;
         } catch (NumberFormatException e) {
-            log.error("Error parsing cleaned time: " + startTime + " - " + endTime);
+            log.error("Error parsing cleaned time: {} - {}", startTime, endTime);
             return null;
         }
     }
 
-    // Dodaj metodę pomocniczą, jeśli jeszcze nie masz:
      public static String addOneSecondToTimeString(String time) {
         try {
             String[] parts = time.split(":");
@@ -90,7 +94,8 @@ public class TimeUtil {
             int month = Integer.parseInt(matcher.group(2));
             return YearMonth.of(year, month);
         }
-        throw new RuntimeException("Nazwa pliku ma niepoprawny format. Oczekiwany: grafik_pracy_YYYY-MM.xlsx");
+        throw new ScheduleValidationException("Nazwa pliku ma niepoprawny format. Oczekiwany: grafik_pracy_YYYY-MM.xlsx");
     }
+
 
 }

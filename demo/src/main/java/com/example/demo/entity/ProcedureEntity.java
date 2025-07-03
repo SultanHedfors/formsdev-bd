@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.io.Serializable;
 import java.util.List;
 
 @Data
@@ -13,7 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "ZABIEG")
-public class ProcedureEntity implements Serializable {
+public class ProcedureEntity {
 
     @Id
     @Column(name = "ZABIEG_ID")
@@ -23,7 +22,7 @@ public class ProcedureEntity implements Serializable {
     private Integer procedureActualTime;
 
     @OneToMany(mappedBy = "activityId")
-    private transient List<ActivityEntity> activities;
+    private List<ActivityEntity> activities;
 
     @Column(name = "ZABIEG_NAZWA")
     private String procedureName;

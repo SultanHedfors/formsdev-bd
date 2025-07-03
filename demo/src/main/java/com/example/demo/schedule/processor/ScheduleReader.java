@@ -46,7 +46,7 @@ public class ScheduleReader {
 
 
     @Transactional
-    public void mapRowsToEntities(String filePath, String authorizationHeader) {
+    public void mapRowsToEntities(String filePath, String authorizationHeader) throws IOException {
         String jwt = helper.retrieveJwt(authorizationHeader);
         checkAndSetProcessing();
 
@@ -66,9 +66,9 @@ public class ScheduleReader {
             lateSchedulesHandler.addLateWorkSchedulesForLatestEndTime(workSchedules, yearMonth);
 
         } catch (FileNotFoundException e) {
-            validateUtil.handleCriticalFailure(e, filePath, excelFile.getName(), "Nie znaleziono pliku");
+            validateUtil.handleCriticalFailure(e, filePath, excelFile.getName(), " Xlsx file not found");
         } catch (Exception e) {
-            validateUtil.handleCriticalFailure(e, filePath, excelFile.getName(), "Processing failed");
+            validateUtil.handleCriticalFailure(e, filePath, excelFile.getName(), " Processing failed ");
         } finally {
             processing = false;
         }
@@ -106,7 +106,7 @@ public class ScheduleReader {
 
 
     private void checkAndSetProcessing() {
-        if (processing) throw new IllegalStateException("Schedule is already processed.");
+        if (processing) throw new IllegalStateException("Schedule is already processed. ");
         processing = true;
         cancelled = false;
     }
@@ -130,7 +130,7 @@ public class ScheduleReader {
             List<WorkSchedule> workSchedules,
             List<String> employeesCodes
     ) {
-        //Ustawienie zmiennych
+        //Variable setup
         var workModeRow = sheet.getRow(rowIndex);
         if (workModeRow == null) return;
         var daysRow = (rowIndex > 0) ? sheet.getRow(rowIndex - 1) : null;
@@ -139,17 +139,18 @@ public class ScheduleReader {
         var endTimeRow = sheet.getRow(rowIndex + 2);
         var employeeName = getCellValueAsString(workModeRow.getCell(0)).trim();
 
-        //Utworzenie schedule rows
+        //Creating schedule row objects
         if (startTimeRow != null && endTimeRow != null) {
-                IntStream.range(1, 32)
-                        .filter(day -> validateUtil.isValidDay(yearMonth, day))
-                        .mapToObj(day ->
-                                WorkScheduleRow.of(daysRow, workModeRow, startTimeRow, endTimeRow, day, employeesCodes))
-                        .filter(Objects::nonNull)
-                        .forEach(row -> addWorkSchedule(row, yearMonth, employeeName, roomSymbol, workSchedules));
+            IntStream.range(1, 32)
+                    .filter(day -> validateUtil.isValidDay(yearMonth, day))
+                    .mapToObj(day ->
+                            WorkScheduleRow.of(daysRow, workModeRow, startTimeRow, endTimeRow, day, employeesCodes))
+                    .filter(Objects::nonNull)
+                    .forEach(row -> addWorkSchedule(row, yearMonth, employeeName, roomSymbol, workSchedules));
         }
     }
 
+    //Building schedule entity
     private void addWorkSchedule(
             WorkScheduleRow row,
             YearMonth yearMonth,

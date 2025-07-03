@@ -4,9 +4,11 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DataFormatter;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class ExcelUtil {
+
+    //Preventing class instantiation
+    private ExcelUtil() {}
 
     public static String getCellValueAsString(Cell cell) {
         if (cell == null) {
@@ -37,8 +39,8 @@ public class ExcelUtil {
     }
 
 
-    public static List<Integer> getActualExcelIndexes(List<Integer> poiReadIndexes){
-        return poiReadIndexes.stream().map(i->i+1)
-                .collect(Collectors.toList());
+    public static List<Integer> getActualExcelIndexes(List<Integer> poiReadIndexes) {
+        return poiReadIndexes.stream().map(i -> i + 1)
+                .toList();
     }
 }

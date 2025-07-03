@@ -3,7 +3,6 @@ package com.example.demo.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.HashSet;
 import java.util.Set;
@@ -16,7 +15,7 @@ import java.util.Set;
 @Table(name = "ZAJECIE")
 @ToString(exclude = {"procedure", "employee", "room", "employees"})
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class ActivityEntity implements Serializable {
+public class ActivityEntity {
 
     @Id
     @Column(name = "ZAJECIE_ID")
@@ -34,11 +33,11 @@ public class ActivityEntity implements Serializable {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "zabieg_id", referencedColumnName = "zabieg_id")
-    private transient ProcedureEntity procedure;
+    private ProcedureEntity procedure;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "employee_id", referencedColumnName = "employee_id")
-    private transient UserEntity employee;
+    private UserEntity employee;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "stanowisko_id", referencedColumnName = "STANOWISKO_ID")

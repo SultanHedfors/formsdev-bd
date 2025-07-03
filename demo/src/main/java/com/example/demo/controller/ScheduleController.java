@@ -22,7 +22,6 @@ import java.io.IOException;
 public class ScheduleController {
 
     private final ScheduleReader scheduleReader;
-    private final ScheduledActivityToWSService scheduledActivityToWSService;
     private final FileHandlerService fileHandlerService;
 
 
@@ -39,9 +38,6 @@ public class ScheduleController {
 
         scheduleReader.cancelProcessing();
         log.info(">>> Schedule processing in ScheduleReader was cancelled.");
-
-        scheduledActivityToWSService.cancelProcessing();
-        log.info(">>> Schedule processing in ScheduledActivityToWSService was cancelled.");
 
         return ResponseEntity.ok("Processing was cancelled.");
     }
