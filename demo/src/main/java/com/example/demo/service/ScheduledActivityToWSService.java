@@ -13,29 +13,24 @@ import org.springframework.stereotype.Service;
 public class ScheduledActivityToWSService {
 
     private final ScheduleRepository scheduleRepository;
-    private final ScheduledActivityToWSServiceHelper helper;
+    private final ActivityEmployeeAssignmentsCreator assignmentsCreator;
     private final ScheduleAssignmentJobQueue jobQueue;
 
     @Scheduled(fixedDelayString = "${scheduler.assign-activities.delay:10000}")
     public void scheduledAssignActivitiesToSchedules() {
         log.info(">>> scheduledAssignActivitiesToSchedules() called – submitting to queue...");
-
         jobQueue.submitJob(() -> {
             try {
                 if (!unprocessedSchedulesExist()) {
                     log.info("No unprocessed schedules found. Skipping assignment process..");
                     return;
                 }
-                helper.createActivityEmployeeAssignments(false, null);
+                assignmentsCreator.createActivityEmployeeAssignments(false, null);
             } catch (Exception e) {
-
                 log.error("Error running scheduled assignment.", e);
-
-
             }
         });
     }
-
 
     private boolean unprocessedSchedulesExist() {
         return scheduleRepository.existsUnprocessedSchedules();

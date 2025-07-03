@@ -30,7 +30,7 @@ public class StatsExportController {
             @RequestParam("from") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
             @RequestParam("to") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to) throws IOException {
 
-        File file = statsExportService.generateXlsx(from, to);
+        File file = statsExportService.generateStatsXlsx(from, to);
         InputStreamResource resource = new InputStreamResource(new FileInputStream(file));
 
         return ResponseEntity.ok()

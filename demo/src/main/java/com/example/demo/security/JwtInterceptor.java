@@ -3,6 +3,7 @@ package com.example.demo.security;
 import io.grpc.*;
 import lombok.extern.slf4j.Slf4j;
 
+//Used by gRPC
 @Slf4j
 public class JwtInterceptor implements ClientInterceptor {
 

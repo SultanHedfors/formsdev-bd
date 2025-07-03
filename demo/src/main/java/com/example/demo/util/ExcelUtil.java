@@ -8,7 +8,8 @@ import java.util.List;
 public class ExcelUtil {
 
     //Preventing class instantiation
-    private ExcelUtil() {}
+    private ExcelUtil() {
+    }
 
     public static String getCellValueAsString(Cell cell) {
         if (cell == null) {
@@ -32,9 +33,8 @@ public class ExcelUtil {
             case BLANK -> {
                 return "";
             }
-            default -> {
-                return "UNKNOWN";
-            }
+            default -> throw new UnsupportedOperationException("Unsupported Excel cell type");
+
         }
     }
 

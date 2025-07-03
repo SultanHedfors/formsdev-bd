@@ -94,7 +94,7 @@ public class TimeUtil {
             int month = Integer.parseInt(matcher.group(2));
             return YearMonth.of(year, month);
         }
-        throw new ScheduleValidationException("Nazwa pliku ma niepoprawny format. Oczekiwany: grafik_pracy_YYYY-MM.xlsx");
+        throw new ScheduleValidationException("Incorrect format for file name. Expected: grafik_pracy_YYYY-MM.xlsx");
     }
 
 

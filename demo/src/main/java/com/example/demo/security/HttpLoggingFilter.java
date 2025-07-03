@@ -12,6 +12,7 @@ import org.springframework.web.util.ContentCachingResponseWrapper;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
+//Logs REST communication
 @Component
 @Slf4j
 public class HttpLoggingFilter extends OncePerRequestFilter {

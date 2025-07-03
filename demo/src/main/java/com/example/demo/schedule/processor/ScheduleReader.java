@@ -4,7 +4,7 @@ import com.example.demo.entity.UserEntity;
 import com.example.demo.entity.WorkSchedule;
 import com.example.demo.repository.ScheduleRepository;
 import com.example.demo.service.ScheduleAssignmentJobQueue;
-import com.example.demo.service.ScheduledActivityToWSServiceHelper;
+import com.example.demo.service.ActivityEmployeeAssignmentsCreator;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -44,8 +44,7 @@ public class ScheduleReader {
     private final ScheduleReaderHelper helper;
     private final LogUtil logUtil;
     private final ExcelValidateUtil validateUtil;
-    private final ScheduledActivityToWSServiceHelper scheduledActivityToWSServiceHelper;
-
+    private final ActivityEmployeeAssignmentsCreator assignmentsCreator;
 
     @Transactional
     public void mapRowsToEntities(String filePath, String authorizationHeader) {
@@ -84,9 +83,10 @@ public class ScheduleReader {
 
         jobQueue.submitJob(() -> {
             try {
-                scheduledActivityToWSServiceHelper.createActivityEmployeeAssignments(true, String.valueOf(yearMonth));
+                assignmentsCreator
+                        .createActivityEmployeeAssignments(true, String.valueOf(yearMonth));
             } catch (Exception e) {
-                log.error("error running user triggered assignment");
+                log.error("Error running user triggered assignment", e);
             }
         });
 
@@ -112,7 +112,6 @@ public class ScheduleReader {
             return sheet;
         }
     }
-
 
     private void checkAndSetProcessing() {
         if (processing) throw new IllegalStateException("Schedule is already processed. ");
@@ -178,7 +177,7 @@ public class ScheduleReader {
         workSchedules.add(builder.build());
     }
 
-
+    //Preparing the builder
     private WorkSchedule.WorkScheduleBuilder getWorkScheduleBuilder(WorkScheduleRow row, YearMonth yearMonth, String roomSymbol, String cleanedStart, String cleanedEnd, UserEntity employee) {
         var builder = WorkSchedule.builder()
                 .yearMonth(yearMonth.toString())

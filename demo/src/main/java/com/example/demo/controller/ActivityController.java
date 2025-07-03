@@ -1,7 +1,6 @@
 package com.example.demo.controller;
 
 import com.example.demo.dto.bsn_logic_dto.ActivityDto;
-import com.example.demo.exception.CurrentUserNotFoundException;
 import com.example.demo.service.ActivityService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -9,12 +8,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+
+import static com.example.demo.util.AuthUtil.userFromSecurityContext;
 
 @RestController
 @RequestMapping("/api/procedures")
@@ -33,7 +31,7 @@ public class ActivityController {
             @RequestParam(required = false) String month,
             @RequestParam(defaultValue = "asc") String sortDirection) {
 
-        String username = getUsernameFromAuthContext();
+        String username = userFromSecurityContext();
         return ResponseEntity.ok(activityService.findAllActivities(page, size, username, startDate,
                 endDate, month, sortDirection));
     }
@@ -41,7 +39,7 @@ public class ActivityController {
 
     @PatchMapping
     public ResponseEntity<ActivityDto> markActivityAsOwn(@RequestBody ActivityDto activityDto) {
-        String username = getUsernameFromAuthContext();
+        String username = userFromSecurityContext();
         ActivityDto returnedDto = activityService.markActivityAsOwn(activityDto, username);
         return ResponseEntity.ok(returnedDto);
     }
@@ -49,17 +47,10 @@ public class ActivityController {
 
     @PostMapping("/old")
     public ResponseEntity<ActivityDto> returnToOldAssignment(@RequestBody ActivityDto activityDto) {
-        String username = getUsernameFromAuthContext();
+        String username = userFromSecurityContext();
         ActivityDto returnedActivityDto = activityService.returnToOldAssignment(activityDto, username);
         return new ResponseEntity<>(returnedActivityDto, HttpStatus.CREATED);
     }
 
-    private String getUsernameFromAuthContext() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Object principal = authentication.getPrincipal();
-        if (!(principal instanceof UserDetails userDetails)) {
-            throw new CurrentUserNotFoundException();
-        }
-        return userDetails.getUsername();
-    }
+
 }

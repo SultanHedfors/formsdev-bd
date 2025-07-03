@@ -1,31 +1,18 @@
 package com.example.demo.entity.id_class;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.util.Objects;
 
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class EmployeeWeekKey implements Serializable {
+
     private Integer employeeId;
     private LocalDate weekStart;
 
-    public EmployeeWeekKey() {
-    }
-
-    public EmployeeWeekKey(Integer employeeId, LocalDate weekStart) {
-        this.employeeId = employeeId;
-        this.weekStart = weekStart;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof EmployeeWeekKey that)) return false;
-        return Objects.equals(employeeId, that.employeeId) &&
-                Objects.equals(weekStart, that.weekStart);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(employeeId, weekStart);
-    }
 }

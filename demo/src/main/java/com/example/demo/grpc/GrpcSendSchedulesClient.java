@@ -8,7 +8,6 @@ import io.grpc.ManagedChannelBuilder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
 import java.util.List;
 
 
@@ -17,7 +16,6 @@ import java.util.List;
 public class GrpcSendSchedulesClient {
 
     private final SendSchedulesServiceGrpc.SendSchedulesServiceBlockingStub stub;
-
 
     public GrpcSendSchedulesClient(@Value("${microservice.report.creator.url.host}") String extServiceHost,
                                    @Value("${microservice.report.creator.url.port}") int extServicePort) {

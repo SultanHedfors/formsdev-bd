@@ -1,30 +1,18 @@
 package com.example.demo.entity.id_class;
 
-import java.io.Serializable;
-import java.util.Objects;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
+
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class EmployeeYearKey implements Serializable {
+
     private Integer employeeId;
     private Integer year;
 
-    public EmployeeYearKey() {
-    }
-
-    public EmployeeYearKey(Integer employeeId, Integer year) {
-        this.employeeId = employeeId;
-        this.year = year;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof EmployeeYearKey that)) return false;
-        return Objects.equals(employeeId, that.employeeId) &&
-                Objects.equals(year, that.year);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(employeeId, year);
-    }
 }
