@@ -3,7 +3,6 @@ package com.example.demo.controller;
 import com.example.demo.dto.UploadResponseDto;
 import com.example.demo.schedule.processor.ScheduleReader;
 import com.example.demo.service.FileHandlerService;
-import com.example.demo.service.ScheduledActivityToWSService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;

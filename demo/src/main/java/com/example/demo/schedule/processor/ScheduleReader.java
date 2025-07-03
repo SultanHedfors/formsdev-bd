@@ -3,7 +3,8 @@ package com.example.demo.schedule.processor;
 import com.example.demo.entity.UserEntity;
 import com.example.demo.entity.WorkSchedule;
 import com.example.demo.repository.ScheduleRepository;
-import com.example.demo.service.ScheduledActivityToWSService;
+import com.example.demo.service.ScheduleAssignmentJobQueue;
+import com.example.demo.service.ScheduledActivityToWSServiceHelper;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -39,14 +40,15 @@ public class ScheduleReader {
 
     private final LateWorkSchedulesHandler lateSchedulesHandler;
     private final ScheduleRepository scheduleRepository;
-    private final ScheduledActivityToWSService scheduledActivityToWSService;
+    private final ScheduleAssignmentJobQueue jobQueue;
     private final ScheduleReaderHelper helper;
     private final LogUtil logUtil;
     private final ExcelValidateUtil validateUtil;
+    private final ScheduledActivityToWSServiceHelper scheduledActivityToWSServiceHelper;
 
 
     @Transactional
-    public void mapRowsToEntities(String filePath, String authorizationHeader) throws IOException {
+    public void mapRowsToEntities(String filePath, String authorizationHeader) {
         String jwt = helper.retrieveJwt(authorizationHeader);
         checkAndSetProcessing();
 
@@ -80,7 +82,14 @@ public class ScheduleReader {
 
         if (cancelled) throwCancelled();
 
-        scheduledActivityToWSService.assignActivitiesToSchedulesAsync(true, yearMonth.toString());
+        jobQueue.submitJob(() -> {
+            try {
+                scheduledActivityToWSServiceHelper.createActivityEmployeeAssignments(true, String.valueOf(yearMonth));
+            } catch (Exception e) {
+                log.error("error running user triggered assignment");
+            }
+        });
+
         logUtil.logSuccess(workSchedules);
         logUtil.writeSummaryLog(filePath, workSchedules, excelFile.getName());
     }

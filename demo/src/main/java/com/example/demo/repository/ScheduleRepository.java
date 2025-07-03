@@ -3,6 +3,7 @@ package com.example.demo.repository;
 import com.example.demo.entity.WorkSchedule;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
@@ -21,6 +22,8 @@ public interface ScheduleRepository extends JpaRepository<WorkSchedule, Integer>
             """)
     boolean existsUnprocessedSchedules();
 
-
+    @Modifying
+    @Query("UPDATE WorkSchedule ws SET ws.processed = true WHERE ws.yearMonth = :yearMonth")
+    void setProcessedByYearMonth(String yearMonth);
 
 }

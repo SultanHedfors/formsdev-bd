@@ -624,6 +624,11 @@ END
 </changeSet>
 
 
+    <changeSet id="add-created-at-to-activity-employee" author="kk">
+        <addColumn tableName="activity_employee">
+            <column name="created_at" type="TIMESTAMP"/>
+        </addColumn>
+    </changeSet>
 
 
 
