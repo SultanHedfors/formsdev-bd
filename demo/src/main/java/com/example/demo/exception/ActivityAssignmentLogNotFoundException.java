@@ -7,7 +7,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 public class ActivityAssignmentLogNotFoundException extends RuntimeException {
 
     public ActivityAssignmentLogNotFoundException(Integer activityId) {
-        super("Nie znaleziono rekordu przypisania dla zajęcia: " + activityId);
+        super(String.format("Nie znaleziono rekordu przypisania dla zajęcia: %s", activityId));
+
     }
 }
 

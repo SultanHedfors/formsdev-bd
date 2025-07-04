@@ -1,7 +1,7 @@
 package com.example.demo.controller;
 
-import com.example.demo.dto.AuthRequest;
-import com.example.demo.dto.AuthResponse;
+import com.example.demo.dto.AuthRequestDto;
+import com.example.demo.dto.AuthResponseDto;
 import com.example.demo.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,15 +25,15 @@ public class AuthController {
 
 
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest authRequest) {
+    public ResponseEntity<AuthResponseDto> login(@RequestBody AuthRequestDto authRequestDto) {
         var authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                        authRequest.getUsername(), authRequest.getPassword()));
+                        authRequestDto.getUsername(), authRequestDto.getPassword()));
 
         String token = jwtUtil.generateToken((UserDetails) authentication.getPrincipal());
         String role = jwtUtil.extractRole(token);
         String employeeCode = jwtUtil.extractUsername(token);
-        return ResponseEntity.ok(new AuthResponse(token, role, employeeCode));
+        return ResponseEntity.ok(new AuthResponseDto(token, role, employeeCode));
 
     }
 }

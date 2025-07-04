@@ -7,8 +7,13 @@ import org.hibernate.Hibernate;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
+import org.mapstruct.ReportingPolicy;
 
-@Mapper(componentModel = "spring")
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+
+@Mapper(componentModel = "spring",
+        unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface ActivityMapper {
 
     @Mapping(target = "employeeId", ignore = true)
@@ -41,5 +46,14 @@ public interface ActivityMapper {
             return null;
         }
         return procedureEntity.getWorkMode();
+    }
+
+    //For Dto-Entity datetime format compatibility
+    default Timestamp map(LocalDateTime value) {
+        return value == null ? null : Timestamp.valueOf(value);
+    }
+
+    default LocalDateTime map(Timestamp value) {
+        return value == null ? null : value.toLocalDateTime();
     }
 }

@@ -56,7 +56,7 @@ public class ScheduleReader {
 
         try (var fis = new FileInputStream(excelFile)) {
             var sheet = loadAndValidateExcelSheet(fis, excelFile, filePath);
-            List<String> employeesCodes = helper.employeesCodes();
+            Set<String> employeesCodes = helper.employeesCodes();
             var employeesRowsIndexes = getRowsWithEmployees(sheet, employeesCodes);
 
             logUtil.logEmployeesRowPositions(employeesRowsIndexes);
@@ -102,8 +102,8 @@ public class ScheduleReader {
 
             yearMonth = parseYearMonthFromFileName(excelFile.getName());
 
-            List<String> employeesCodes = helper.employeesCodes();
-            var roomCodes = helper.getAllRoomCodes();
+            Set<String> employeesCodes = helper.employeesCodes();
+            Set<String> roomCodes = helper.getAllRoomCodes();
             var employeesRowsIndexes = getRowsWithEmployees(sheet, employeesCodes);
 
             validateUtil.validateFile(sheet, employeesCodes, roomCodes, employeesRowsIndexes);
@@ -122,7 +122,7 @@ public class ScheduleReader {
     private void processAllEmployees(
             Sheet sheet,
             List<Integer> employeesRowsIndexes,
-            List<String> employeesCodes,
+            Set<String> employeesCodes,
             List<WorkSchedule> workSchedules
     ) {
         for (var rowIndex : employeesRowsIndexes) {
@@ -136,7 +136,7 @@ public class ScheduleReader {
             int rowIndex,
             YearMonth yearMonth,
             List<WorkSchedule> workSchedules,
-            List<String> employeesCodes
+            Set<String> employeesCodes
     ) {
         //Variable setup
         var workModeRow = sheet.getRow(rowIndex);
@@ -172,7 +172,7 @@ public class ScheduleReader {
 
         UserEntity employee = helper.findEmployeeByCode(employeeName);
 
-        WorkSchedule.WorkScheduleBuilder builder = getWorkScheduleBuilder(row, yearMonth, roomSymbol, cleanedStart, cleanedEnd, employee);
+        var builder = getWorkScheduleBuilder(row, yearMonth, roomSymbol, cleanedStart, cleanedEnd, employee);
 
         workSchedules.add(builder.build());
     }

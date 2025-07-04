@@ -11,5 +11,5 @@ public interface MonthlyEmployeeStatisticRepository extends JpaRepository<Employ
 
     List<EmployeeMonthlyStatsEntity> findTop24ByEmployeeIdOrderByMonthDesc(Integer employeeId);
 
-    void deleteByMonth(String month); // Usuwanie na podstawie month (yyyy-MM)
+    void deleteByMonth(String month);
 }

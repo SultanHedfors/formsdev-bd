@@ -65,7 +65,7 @@ public class ReportCreator {
                         }
                     });
         } catch (IOException e) {
-            log.error("Failed to list old reports in directory {}: {}", directory, e.getMessage());
+            log.debug("No old reports were found for deletion in directory {}: {}", directory, e.getMessage());
         }
     }
 }

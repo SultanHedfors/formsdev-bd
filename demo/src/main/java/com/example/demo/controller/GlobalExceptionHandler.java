@@ -1,9 +1,8 @@
 package com.example.demo.controller;
 
-import com.example.demo.dto.UploadResponseDto;
+import com.example.demo.dto.ScheduleUploadResponseDto;
 import com.example.demo.exception.ActivityAssignmentLogNotFoundException;
 import com.example.demo.exception.CurrentUserNotFoundException;
-import com.example.demo.exception.FileOperationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.AuthenticationException;
@@ -28,17 +27,14 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<UploadResponseDto> handleBadRequest(IllegalArgumentException ex) {
-        return ResponseEntity.badRequest().body(new UploadResponseDto(false, ex.getMessage()));
+    public ResponseEntity<ScheduleUploadResponseDto> handleBadRequest(IllegalArgumentException ex) {
+        return ResponseEntity.badRequest().body(new ScheduleUploadResponseDto(false, ex.getMessage()));
     }
 
-    @ExceptionHandler(FileOperationException.class)
-    public ResponseEntity<UploadResponseDto> handleFileOperation(FileOperationException ex) {
-        return ResponseEntity.internalServerError().body(new UploadResponseDto(false, ex.getMessage()));
-    }
+
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<UploadResponseDto> handleGeneric(Exception ex) {
-        return ResponseEntity.internalServerError().body(new UploadResponseDto(false, "Server error: " + ex.getMessage()));
+    public ResponseEntity<ScheduleUploadResponseDto> handleGeneric(Exception ex) {
+        return ResponseEntity.internalServerError().body(new ScheduleUploadResponseDto(false, "Server error: " + ex.getMessage()));
     }
 }

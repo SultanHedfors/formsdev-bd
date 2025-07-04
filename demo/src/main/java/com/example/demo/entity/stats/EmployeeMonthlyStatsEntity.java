@@ -26,5 +26,5 @@ public class EmployeeMonthlyStatsEntity {
     private Double score;
 
     @Column(name = "updated_at", nullable = false)
-    private LocalDateTime lastUpdated;
+    private LocalDateTime updatedAt;
 }

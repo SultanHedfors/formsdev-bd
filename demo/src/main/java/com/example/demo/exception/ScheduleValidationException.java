@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 public class ScheduleValidationException extends RuntimeException {
 
     public ScheduleValidationException(String validationErrors) {
-        super("Schedule validation errors have occurred" + validationErrors);
+        super(String.format("Schedule validation errors have occurred: %s", validationErrors));
+
     }
 }

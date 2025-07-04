@@ -9,8 +9,6 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.Year;
 import java.time.YearMonth;
-import java.time.temporal.TemporalAdjusters;
-import java.util.Map;
 
 @Component
 @RequiredArgsConstructor
@@ -19,107 +17,64 @@ public class EmployeeStatsScheduler {
 
     private final EmployeeStatisticsCalculator calculator;
 
-    /**
-     * Co 5 minut: aktualizacja statystyk dziennych dla dzisiejszej daty.
-     * Save() z JPA zrobi update istniejącego wiersza jeśli taki PK już jest,
-     * inaczej wstawi nowy.
-     */
-    @Scheduled(fixedDelay = 5 * 60 * 1000) // 5 minut
+    @Scheduled(fixedDelay = 5 * 60 * 1000)
     public void updateDailyStats() {
-        LocalDate today = LocalDate.now();  // Używamy bieżącej daty
-
+        LocalDate today = LocalDate.now();
         log.info("[SCHEDULER] Start daily stats calculation for date: {}", today);
-
-        Map<Integer, Double> stats = calculator.calculateDailyScores(today);  // Używamy metody kalkulacji dla dzisiejszej daty
-
-        stats.forEach((empId, score) ->
+        calculator.calculateDailyScores(today).forEach((empId, score) ->
                 log.debug("[SCHEDULER] Daily score for employee {}: {}", empId, score)
         );
-
         log.info("[SCHEDULER] Finished daily stats calculation for date: {}", today);
     }
 
-    /**
-     * Co godzinę: aktualizacja statystyk dla danych sprzed ostatnich 3 lat.
-     * Ta metoda uruchamia się co godzinę i oblicza statystyki dla pracowników na podstawie
-     * danych sprzed ostatnich 3 lat.
-     */
-    @Scheduled(fixedDelay = 15 * 60 * 1000) // 5 minut
-//    @Scheduled(cron = "0 0 * * * *") // Co godzinę
+    @Scheduled(fixedDelay = 15 * 60 * 1000)
     public void updateOldDataStats() {
         LocalDate today = LocalDate.now();
-        LocalDate threeYearsAgo = today.minusYears(3);
+        LocalDate from = today.minusYears(3);
+        log.info("[SCHEDULER] Start calculation for last 3 years: {} to {}", from, today);
 
-        log.info("[SCHEDULER] Start calculation for data from the last 3 years: {} to {}", threeYearsAgo, today);
-
-        // Pętla przez wszystkie dni w okresie ostatnich 3 lat
-        for (LocalDate date = threeYearsAgo; !date.isAfter(today); date = date.plusDays(1)) {
-            final LocalDate finalDate = date;  // Tworzymy finalną zmienną
-
-            Map<Integer, Double> dailyStats = calculator.calculateDailyScores(finalDate);  // Obliczamy statystyki dla każdego dnia
-
-            // Jeżeli brak danych, nie tworzysz pustego rekordu
-            if (!dailyStats.isEmpty()) {
-                dailyStats.forEach((empId, score) ->
-                        log.info("[SCHEDULER] Stats from the last 3 years for employee {} on date {}: {}", empId, finalDate, score)
-                );
-            }
+        // Daily
+        for (LocalDate d = from; !d.isAfter(today); d = d.plusDays(1)) {
+            calculator.calculateDailyScores(d);
         }
 
-        for (LocalDate date = threeYearsAgo; !date.isAfter(today); date = date.plusWeeks(1)) {
-            LocalDate monday = date.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
-            LocalDate firstOfMonth = date.with(TemporalAdjusters.firstDayOfMonth());
-
-            if (monday.isBefore(firstOfMonth)) {
-                monday = firstOfMonth;
-            }
-
-            log.info("[SCHEDULER] Start weekly stats calculation for week starting: {}", monday);
-            calculator.calculateWeeklyScores(monday);
+        // Weekly
+        for (LocalDate d = from.with(DayOfWeek.MONDAY); !d.isAfter(today); d = d.plusWeeks(1)) {
+            log.info("[SCHEDULER] Weekly stats for week starting: {}", d);
+            calculator.calculateWeeklyScores(d);
         }
 
-
-        // Obliczanie statystyk miesięcznych dla danych sprzed 3 lat
-        for (LocalDate date = threeYearsAgo; !date.isAfter(today); date = date.plusMonths(1)) {
-            YearMonth month = YearMonth.from(date);
-            log.info("[SCHEDULER] Start monthly stats calculation for month: {}", month);
-            calculator.calculateMonthlyScores(month);  // Obliczanie statystyk miesięcznych
+        // Monthly
+        for (YearMonth m = YearMonth.from(from); !m.isAfter(YearMonth.from(today)); m = m.plusMonths(1)) {
+            log.info("[SCHEDULER] Monthly stats for month: {}", m);
+            calculator.calculateMonthlyScores(m);
         }
 
-        // Obliczanie statystyk rocznych dla danych sprzed 3 lat
-        for (int year = threeYearsAgo.getYear(); year <= today.getYear(); year++) {
-            log.info("[SCHEDULER] Start yearly stats calculation for year: {}", year);
-            calculator.calculateYearlyScores(Year.of(year));  // Obliczanie statystyk rocznych
+        // Yearly
+        for (int y = from.getYear(); y <= today.getYear(); y++) {
+            log.info("[SCHEDULER] Yearly stats for year: {}", y);
+            calculator.calculateYearlyScores(Year.of(y));
         }
 
-        log.info("[SCHEDULER] Finished calculation for data from the last 3 years.");
+        log.info("[SCHEDULER] Finished calculation for last 3 years.");
     }
 
-    /**
-     * Co tydzień: aktualizacja statystyk tygodniowych dla tygodnia bieżącego.
-     * Ta metoda uruchamia się co tydzień (np. co poniedziałek).
-     */
-    @Scheduled(cron = "0 0 0 * * MON") // Co tydzień (poniedziałek o północy)
+    @Scheduled(cron = "0 0 0 * * MON")
     public void updateWeeklyStats() {
         LocalDate today = LocalDate.now();
-        log.info("[SCHEDULER] Start weekly stats calculation for week of: {}", today);
-        calculator.calculateWeeklyScores(today); // Obliczamy statystyki tygodniowe
-        log.info("[SCHEDULER] Finished weekly stats calculation for week of: {}", today);
+        log.info("[SCHEDULER] Start weekly stats calculation for week: {}", today);
+        calculator.calculateWeeklyScores(today);
+        log.info("[SCHEDULER] Finished weekly stats calculation for week: {}", today);
     }
 
-    /**
-     * Codziennie o 3:00: aktualizacja statystyk miesięcznych i rocznych.
-     */
-    @Scheduled(cron = "0 0 3 * * *")  // Codziennie o 3:00
+    @Scheduled(cron = "0 0 3 * * *")
     public void updateMonthlyAndYearlyStats() {
         YearMonth thisMonth = YearMonth.now();
-        log.info("[SCHEDULER] Start monthly stats calculation for month: {}", thisMonth);
+        log.info("[SCHEDULER] Start monthly stats for: {}", thisMonth);
         calculator.calculateMonthlyScores(thisMonth);
-        log.info("[SCHEDULER] Finished monthly stats calculation for month: {}", thisMonth);
 
         Year thisYear = Year.now();
-        log.info("[SCHEDULER] Start yearly stats calculation for year: {}", thisYear);
+        log.info("[SCHEDULER] Start yearly stats for: {}", thisYear);
         calculator.calculateYearlyScores(thisYear);
-        log.info("[SCHEDULER] Finished yearly stats calculation for year: {}", thisYear);
     }
 }

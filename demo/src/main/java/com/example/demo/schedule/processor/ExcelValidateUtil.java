@@ -15,6 +15,7 @@ import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import static com.example.demo.schedule.processor.ReportCreator.writeLogFile;
 import static com.example.demo.schedule.processor.ScheduleReader.MODE_SET;
@@ -39,7 +40,7 @@ public class ExcelValidateUtil {
 
     void checkFileExists(File excelFile, String filePath) throws FileNotFoundException {
         if (!excelFile.exists())
-            throw new FileNotFoundException("File not found: " + filePath);
+            throw new FileNotFoundException(String.format("File not found: %s", filePath));
     }
 
     void handleValidationErrors(String filePath, String fileName) {
@@ -60,7 +61,7 @@ public class ExcelValidateUtil {
         throw new ScheduleValidationException(message + ": " + e.getMessage());
     }
 
-    void validateFile(Sheet sheet, List<String> employeesCodes, List<String> roomCodes, List<Integer> employeesRowsIndexes) {
+    void validateFile(Sheet sheet, Set<String> employeesCodes, Set<String> roomCodes, List<Integer> employeesRowsIndexes) {
         validateFirstColumnEntries(sheet, employeesCodes, roomCodes);
         validateEmployeeRowEntries(sheet, employeesRowsIndexes, employeesCodes);
         validateRoomRows(sheet, employeesCodes, roomCodes);
@@ -75,7 +76,7 @@ public class ExcelValidateUtil {
         }
     }
 
-    protected boolean validateFirstColumnEntries(Sheet sheet, List<String> employeesCodes, List<String> roomNames) {
+    protected boolean validateFirstColumnEntries(Sheet sheet, Set<String> employeesCodes, Set<String> roomNames) {
         DataFormatter dataFormatter = new DataFormatter();
         boolean headerFound = false;
 
@@ -110,7 +111,7 @@ public class ExcelValidateUtil {
         return true;
     }
 
-    protected void validateEmployeeRowEntries(Sheet sheet, List<Integer> employeesRowsIndexes, List<String> employeesCodes) {
+    protected void validateEmployeeRowEntries(Sheet sheet, List<Integer> employeesRowsIndexes, Set<String> employeesCodes) {
         if (employeesRowsIndexes.isEmpty()) {
             String errorMsg = "No rows with employees codes were found. Schedule file is invalid.";
             addValidationError(errorMsg);
@@ -135,7 +136,7 @@ public class ExcelValidateUtil {
         }
     }
 
-    public void validateRoomRows(Sheet sheet, List<String> employeesCodes, List<String> roomNames) {
+    public void validateRoomRows(Sheet sheet, Set<String> employeesCodes, Set<String> roomNames) {
         for (Row row : sheet) {
             Cell firstCell = row.getCell(0);
             if (firstCell == null) continue;

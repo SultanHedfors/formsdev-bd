@@ -87,17 +87,17 @@ public class ActivityServiceHelper {
                          ActivityEntity activityEntity, UserEntity user) {
         dto.setHasHistory(true);
         dto.setEmployeesAssigned(restoredAssignments.stream()
-                .map(a -> a.getEmployee().getFullName()).toList());
+                .map(a -> a.getEmployee().getFullName()).collect(Collectors.toSet()));
         dto.setEmployeeIdsAssigned(restoredAssignments.stream()
-                .map(a -> a.getEmployee().getId()).toList());
+                .map(a -> a.getEmployee().getId()).collect(Collectors.toSet()));
         setWorkdayFlagForSingleActivity(dto, activityEntity, user.getId());
         return dto;
     }
 
     void markAssignedForUser(List<ActivityDto> dtoList, Integer userId) {
         dtoList.forEach(dto -> {
-            List<Integer> employeeIds = Optional.ofNullable(dto.getEmployeeIdsAssigned())
-                    .orElse(Collections.emptyList());
+            Set<Integer> employeeIds = Optional.ofNullable(dto.getEmployeeIdsAssigned())
+                    .orElse(Collections.emptySet());
             dto.setAssignedToLoggedUser(employeeIds.contains(userId));
         });
     }
@@ -121,7 +121,7 @@ public class ActivityServiceHelper {
             dto.setProcedureScheduledOnEmployeesWorkingDay(false);
             return;
         }
-        LocalDate date = entity.getActivityDate().toLocalDateTime().toLocalDate();
+        LocalDate date = entity.getActivityDate().toLocalDate();
         String yearMonthStr = date.format(DateTimeFormatter.ofPattern("yyyy-MM"));
         int dayOfMonth = date.getDayOfMonth();
         boolean exists = scheduleRepository
@@ -133,8 +133,8 @@ public class ActivityServiceHelper {
         log.info("No assignment history found for activity {}. Current assignments removed.",
                 activityEntity.getActivityId());
         dto.setHasHistory(false);
-        dto.setEmployeesAssigned(Collections.emptyList());
-        dto.setEmployeeIdsAssigned(Collections.emptyList());
+        dto.setEmployeesAssigned(Collections.emptySet());
+        dto.setEmployeeIdsAssigned(Collections.emptySet());
         setWorkdayFlagForSingleActivity(dto, activityEntity, user.getId());
         return dto;
     }
@@ -174,8 +174,8 @@ public class ActivityServiceHelper {
         List<ActivityDto> dtoList = dtoPage.getContent();
         dtoList.forEach(dto -> {
             List<UserEntity> employees = activityEmployeeMap.getOrDefault(dto.getActivityId(), Collections.emptyList());
-            dto.setEmployeesAssigned(employees.stream().map(UserEntity::getFullName).distinct().toList());
-            dto.setEmployeeIdsAssigned(employees.stream().map(UserEntity::getId).distinct().toList());
+            dto.setEmployeesAssigned(employees.stream().map(UserEntity::getFullName).collect(Collectors.toSet()));
+            dto.setEmployeeIdsAssigned(employees.stream().map(UserEntity::getId).collect(Collectors.toSet()));
         });
         return dtoList;
     }

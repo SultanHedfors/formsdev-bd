@@ -23,6 +23,7 @@ import java.time.LocalDate;
 @RequiredArgsConstructor
 public class StatsExportController {
 
+    public static final String MEDIA_TYPE = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
     private final StatsExportService statsExportService;
 
     @GetMapping("/xlsx")
@@ -35,7 +36,7 @@ public class StatsExportController {
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + file.getName())
-                .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+                .contentType(MediaType.parseMediaType(MEDIA_TYPE))
                 .contentLength(file.length())
                 .body(resource);
     }

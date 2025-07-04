@@ -2,7 +2,7 @@ package com.example.demo.schedule.processor;
 
 import org.apache.poi.ss.usermodel.Row;
 
-import java.util.List;
+import java.util.Set;
 
 import static com.example.demo.util.ExcelUtil.getCellValueAsString;
 
@@ -12,9 +12,9 @@ public record WorkScheduleRow(
         String startVal,
         String endVal,
         String infoVal,
-        List<String> employeesCodes
+        Set<String> employeesCodes
 ) {
-    static WorkScheduleRow of(Row daysRow, Row workModeRow, Row startTimeRow, Row endTimeRow, int day, List<String> employeesCodes) {
+    static WorkScheduleRow of(Row daysRow, Row workModeRow, Row startTimeRow, Row endTimeRow, int day, Set<String> employeesCodes) {
         String workMode = null;
         if (daysRow != null) {
             var aboveVal = getCellValueAsString(daysRow.getCell(day)).trim().toUpperCase();

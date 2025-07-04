@@ -1,6 +1,6 @@
 package com.example.demo.controller;
 
-import com.example.demo.dto.UploadResponseDto;
+import com.example.demo.dto.ScheduleUploadResponseDto;
 import com.example.demo.schedule.processor.ScheduleReader;
 import com.example.demo.service.FileHandlerService;
 import lombok.RequiredArgsConstructor;
@@ -25,10 +25,10 @@ public class ScheduleController {
 
 
     @PostMapping("/upload-schedule")
-    public ResponseEntity<UploadResponseDto> uploadSchedule(@RequestParam("file") MultipartFile file,
-                                                            @RequestHeader("Authorization") String authorizationHeader) throws IOException {
+    public ResponseEntity<ScheduleUploadResponseDto> uploadSchedule(@RequestParam("file") MultipartFile file,
+                                                                    @RequestHeader("Authorization") String authorizationHeader) throws IOException {
         fileHandlerService.handleScheduleUpload(file, authorizationHeader);
-        return ResponseEntity.ok(new UploadResponseDto(true, "The file was processed and saved successfully."));
+        return ResponseEntity.ok(new ScheduleUploadResponseDto(true, "The file was processed and saved successfully."));
     }
 
 

@@ -6,7 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.sql.Timestamp;
-import java.util.List;
+import java.util.Set;
 
 @Data
 @NoArgsConstructor
@@ -32,7 +32,7 @@ public class ActivityDto {
 
     private String workMode;
 
-    private List<String> employeesAssigned;
+    private Set<String> employeesAssigned;
 
-    private List<Integer> employeeIdsAssigned;
+    private Set<Integer> employeeIdsAssigned;
 }

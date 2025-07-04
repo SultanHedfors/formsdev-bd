@@ -15,6 +15,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.time.YearMonth;
 
 @Component
@@ -35,16 +36,20 @@ public class ActivityEmployeeAssignmentsCreator {
 
     @Transactional
     public void createActivityEmployeeAssignments(boolean fromScheduleImport, String yearMonth) throws IOException {
+
         log.info(">>> Assigning activities to unprocessed schedules");
+
         if (fromScheduleImport) {
             log.info("ActivityEmployee assignment triggerred by user's schedule upload.");
             deleteOldAssignmentsForPeriod(yearMonth);
         } else {
             log.info("ActivityEmployee assignment running from scheduled job.");
         }
+
         final Timestamp createdAt = new Timestamp(System.currentTimeMillis());
         log.info("Starting insert...");
         runInsertAssignments(INSERT_NEW_ACTIVITY_EMPLOYEE_SQL_PATH, "Insert assignments", createdAt);
+
         log.info("Assignments created, now updating processed flag..");
         runInsertAssignments(SET_ASSIGNED_SCHEDULES_PROCESSED_SQL_PATH, "Update PROCESSED flag", createdAt);
         entityManager.clear();
@@ -95,8 +100,8 @@ public class ActivityEmployeeAssignmentsCreator {
 
     private void deleteOldAssignmentsForPeriod(String yearMonth) {
         YearMonth ym = YearMonth.parse(yearMonth);
-        Timestamp from = Timestamp.valueOf(ym.atDay(1).atStartOfDay());
-        Timestamp to = Timestamp.valueOf(ym.atEndOfMonth().atTime(23, 59, 59));
+        LocalDateTime from = ym.atDay(1).atStartOfDay();
+        LocalDateTime to = ym.atEndOfMonth().atTime(23, 59, 59);
 
         int deleted = activityEmployeeRepository.deleteAllByActivityDateRangeAndUserModifiedFalse(from, to);
         log.info("Deleted {} non-user-modified activity_employee entries from {}", deleted, yearMonth);

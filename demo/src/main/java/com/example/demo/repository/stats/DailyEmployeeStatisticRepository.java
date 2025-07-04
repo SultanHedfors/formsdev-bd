@@ -12,7 +12,7 @@ import java.util.List;
 public interface DailyEmployeeStatisticRepository extends JpaRepository<EmployeeDailyStatsEntity, Integer> {
 
     @Transactional
-    void deleteByStartDayBetween(LocalDate start, LocalDate end); // Usuwamy rekordy w danym przedziale dat
+    void deleteByStartDayBetween(LocalDate start, LocalDate end);
 
     List<EmployeeDailyStatsEntity> findAllByStartDayBetween(LocalDate from, LocalDate to);
     List<EmployeeDailyStatsEntity> findTop100ByEmployeeIdOrderByStartDayDesc(Integer employeeId);

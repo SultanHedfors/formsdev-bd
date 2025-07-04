@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
 
 @Slf4j
 @Service
@@ -68,8 +69,8 @@ public class ActivityService {
         ActivityDto dto = activityMapper.activityEntityToDto(activityEntity);
         dto.setAssignedToLoggedUser(true);
         dto.setHasHistory(true);
-        dto.setEmployeesAssigned(List.of(user.getFullName()));
-        dto.setEmployeeIdsAssigned(List.of(user.getId()));
+        dto.setEmployeesAssigned(Set.of(user.getFullName()));
+        dto.setEmployeeIdsAssigned(Set.of(user.getId()));
 
         helper.setWorkdayFlagForSingleActivity(dto, activityEntity, user.getId());
 

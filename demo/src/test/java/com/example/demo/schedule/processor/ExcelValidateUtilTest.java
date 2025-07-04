@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Stream;
 
 import static com.example.demo.schedule.processor.ExcelValidateUtilTest.ExcelSheetValidations.TestData.*;
@@ -52,7 +53,7 @@ class ExcelValidateUtilTest {
         var ex = assertThrows(RuntimeException.class,
                 () -> excelValidateUtil.handleValidationErrors("path", "name"));
         //assert
-        assertEquals("Schedule validation errors have occurred" + List.of("test error"), ex.getMessage());
+        assertEquals("Schedule validation errors have occurred: " + List.of("test error"), ex.getMessage());
         assertTrue(list.contains("test error"));
 
     }
@@ -75,13 +76,13 @@ class ExcelValidateUtilTest {
         XSSFWorkbook nonExistingEmployeeWorkbook;
         XSSFWorkbook missingHeaderWorkbook;
 
-        private static final List<String> employeesCodes1 = List.of(
-                "197", "AB", "201", "219", "221", "202", "191", "195", "203", "214", "223", "220",
+        private static final Set<String> employeesCodes1 = Set.of(
+                "197", "AB", "201", "219", "221", "202", "191", "195", "214", "223", "220",
                 "EWR", "227", "222", "231", "171", "192", "DPI", "187", "188", "212", "KRA", "190",
                 "206", "RKO", "205", "204", "203", "WMO", "209", "229", "228"
         );
 
-        private static final List<String> roomCodes1 = List.of(
+        private static final Set<String> roomCodes1 = Set.of(
                 "GAB1", "GAB2", "GAB3", "GAB4", "GAB5", "GAB6", "GAB7", "GAB8", "GAB9",
                 "GABINET MASAŻU 7", "GABINET MASAŻU 8", "GABINET MASAŻU 9",
                 "GABINET MASAŻU 10", "GABINET MASAŻU 1", "GABINET MASAŻU 6",
@@ -108,7 +109,7 @@ class ExcelValidateUtilTest {
 
         @ParameterizedTest
         @MethodSource("argumentsForValidateFirstColumnEntries")
-        void validateFirstColumnEntriesTest(Sheet sheet, List<String> employeesCodes, List<String> roomCodes, TestData testData, String errorMessage) {
+        void validateFirstColumnEntriesTest(Sheet sheet, Set<String> employeesCodes, Set<String> roomCodes, TestData testData, String errorMessage) {
             Exception exMissingHeader;
             Exception exNonExistingEmployee;
             Executable validateMethodCall = () -> excelValidateUtil.validateFirstColumnEntries(sheet, employeesCodes, roomCodes);

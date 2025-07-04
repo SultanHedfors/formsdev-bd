@@ -23,7 +23,10 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import java.time.YearMonth;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static com.example.demo.schedule.processor.ScheduleReader.EMPLOYEE_CODE_HEADER;
@@ -44,20 +47,17 @@ public class ScheduleReaderHelper {
     private final GrpcSendSchedulesClient grpcClient;
 
 
-    private List<UserEntity> findAllEmployees() {
-        return userRepository.findAll();
-    }
-
-    List<String> employeesCodes() {
-        return findAllEmployees().stream()
+    Set<String> employeesCodes() {
+        Set<UserEntity> allEmployees = new HashSet<>(userRepository.findAll());
+        return allEmployees.stream()
                 .map(e -> e.getEmployeeCode().toUpperCase())
-                .toList();
+                .collect(Collectors.toSet());
     }
 
-    List<String> getAllRoomCodes() {
+    Set<String> getAllRoomCodes() {
         return roomRepository.findAll().stream()
                 .map(RoomEntity::getRoomCode)
-                .toList();
+                .collect(Collectors.toSet());
     }
 
     UserEntity findEmployeeByCode(String employeeCode) {
@@ -86,7 +86,7 @@ public class ScheduleReaderHelper {
     }
 
     //util static methods
-    static List<Integer> getRowsWithEmployees(Sheet sheet, List<String> employeesCodes) {
+    static List<Integer> getRowsWithEmployees(Sheet sheet, Set<String> employeesCodes) {
         var lastPopulatedRow = getLastPopulatedRow(sheet);
         return IntStream.rangeClosed(0, lastPopulatedRow)
                 .filter(rowIndex -> {

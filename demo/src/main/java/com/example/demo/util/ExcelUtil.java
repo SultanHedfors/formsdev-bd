@@ -1,8 +1,9 @@
 package com.example.demo.util;
 
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.DataFormatter;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.util.CellReference;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public class ExcelUtil {
@@ -38,9 +39,33 @@ public class ExcelUtil {
         }
     }
 
-
     public static List<Integer> getActualExcelIndexes(List<Integer> poiReadIndexes) {
         return poiReadIndexes.stream().map(i -> i + 1)
                 .toList();
+    }
+
+    public static CellStyle formattedPercentStyle(Workbook workbook) {
+        CellStyle percentStyle = workbook.createCellStyle();
+        DataFormat format = workbook.createDataFormat();
+        percentStyle.setDataFormat(format.getFormat("0.00%"));
+        return percentStyle;
+    }
+
+    public static String averageFormula(List<LocalDate> statsDates, int rowIdx) {
+        String startCol = CellReference.convertNumToColString(1);
+        String endCol = CellReference.convertNumToColString(statsDates.size());
+        return String.format("AVERAGEIF(%s%d:%s%d,\"<>\")", startCol, rowIdx + 1, endCol, rowIdx + 1);
+    }
+
+    public static String totalAverageFormula(List<LocalDate> statsDates, int rowIdx) {
+        String startCol = CellReference.convertNumToColString(1);
+        String endCol = CellReference.convertNumToColString(statsDates.size());
+        return String.format("AVERAGEIF(%s2:%s%d,\"<>\")", startCol, endCol, rowIdx);
+    }
+
+    public static void setColumnSize(List<LocalDate> statsDates, Sheet sheet) {
+        for (int i = 0; i < statsDates.size() + 3; i++) {
+            sheet.autoSizeColumn(i);
+        }
     }
 }

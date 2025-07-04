@@ -6,7 +6,7 @@ import com.example.demo.repository.UserRepository;
 import com.example.demo.repository.stats.DailyEmployeeStatisticRepository;
 import lombok.RequiredArgsConstructor;
 import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.ss.util.CellReference;
+import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +19,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.example.demo.util.ExcelUtil.*;
+
 @Service
 @RequiredArgsConstructor
 public class StatsExportService {
@@ -27,105 +29,95 @@ public class StatsExportService {
     private final UserRepository userRepository;
 
     public File generateStatsXlsx(LocalDate from, LocalDate to) throws IOException {
-
         var stats = statsRepository.findAllByStartDayBetween(from, to);
 
-        var employeeNames = userRepository.findAllById(stats
-                        .stream()
-                        .map(EmployeeDailyStatsEntity::getEmployeeId)
-                        .collect(Collectors.toSet()))
-                .stream()
-                .collect(Collectors.toMap(UserEntity::getId, UserEntity::getFullName));
-
+        var employeeNames = userRepository.findAllById(
+                stats.stream().map(EmployeeDailyStatsEntity::getEmployeeId).collect(Collectors.toSet())
+        ).stream().collect(Collectors.toMap(UserEntity::getId, UserEntity::getFullName));
 
         var groupedByEmployee = stats.stream()
-                .collect(Collectors
-                        .groupingBy(EmployeeDailyStatsEntity::getEmployeeId,
+                .collect(Collectors.groupingBy(EmployeeDailyStatsEntity::getEmployeeId,
                         Collectors.toMap(EmployeeDailyStatsEntity::getStartDay, EmployeeDailyStatsEntity::getScore)));
 
-        List<LocalDate> statsDates = stats.stream()
+        var statsDates = stats.stream()
                 .map(EmployeeDailyStatsEntity::getStartDay)
                 .distinct()
-                .sorted(Comparator.reverseOrder()) // najnowsze z lewej
+                .sorted(Comparator.reverseOrder())
                 .toList();
 
-        Workbook workbook = new XSSFWorkbook();
-        Sheet sheet = workbook.createSheet("Statistics from " + from + " to " + to);
+        File file;
+        try (var workbook = new XSSFWorkbook()) {
+            var percentStyle = formattedPercentStyle(workbook);
+            var sheet = workbook.createSheet("Statistics from " + from + " to " + to);
 
-        CellStyle percentStyle = workbook.createCellStyle();
-        DataFormat format = workbook.createDataFormat();
-        percentStyle.setDataFormat(format.getFormat("0.00%"));
+            createHeaders(sheet, statsDates);
 
-        int rowIdx = 1;
+            int rowIdx = 1;
+            for (var entry : groupedByEmployee.entrySet()) {
+                var row = sheet.createRow(rowIdx);
+                row.createCell(0).setCellValue(employeeNames.getOrDefault(entry.getKey(), "Unknown employee"));
 
-        // Nagłówek
-        Row header = sheet.createRow(0);
+                boolean hasScore = false;
+
+                //populate stats
+                for (int i = 0; i < statsDates.size(); i++) {
+                    var score = entry.getValue().get(statsDates.get(i));
+                    var cell = row.createCell(i + 1);
+                    if (score != null) {
+                        cell.setCellValue(score);
+                        cell.setCellStyle(percentStyle);
+                        hasScore = true;
+                    } else {
+                        cell.setCellValue("");
+                    }
+                }
+                createPerEmployeeAverage(hasScore, row, statsDates, rowIdx, percentStyle);
+                rowIdx++;
+            }
+            createOverallAverages(sheet, rowIdx, statsDates, percentStyle);
+            setColumnSize(statsDates, sheet);
+
+            file = createFile(workbook);
+        }
+        return file;
+    }
+
+
+    private static void createPerEmployeeAverage(boolean hasScore, XSSFRow row, List<LocalDate> statsDates, int rowIdx, CellStyle percentStyle) {
+        if (hasScore) {
+            var avgCell = row.createCell(statsDates.size() + 1);
+            avgCell.setCellFormula(averageFormula(statsDates, rowIdx));
+            avgCell.setCellStyle(percentStyle);
+        }
+    }
+
+    private static void createHeaders(Sheet sheet, List<LocalDate> statsDates) {
+        var header = sheet.createRow(0);
         for (int i = 0; i < statsDates.size(); i++) {
             header.createCell(i + 1).setCellValue(statsDates.get(i).format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
         }
-        header.createCell(statsDates.size() + 1).setCellValue("Średnia dzienna pracownika");
-        header.createCell(statsDates.size() + 2).setCellValue("Średnia dla okresu");
+        header.createCell(statsDates.size() + 1).setCellValue("Per employee daily average");
+        header.createCell(statsDates.size() + 2).setCellValue("Average for period");
+    }
 
-        for (var entry : groupedByEmployee.entrySet()) {
-            Row row = sheet.createRow(rowIdx);
-            String employeeName = employeeNames.getOrDefault(entry.getKey(), "Nieznany");
-            row.createCell(0).setCellValue(employeeName);
 
-            int employeeCount = 0;
-
-            for (int i = 0; i < statsDates.size(); i++) {
-                Double score = entry.getValue().get(statsDates.get(i));
-                Cell cell = row.createCell(i + 1);
-                if (score != null) {
-                    cell.setCellValue(score); // score to już np. 0.35
-                    cell.setCellStyle(percentStyle);
-                    employeeCount++;
-                } else {
-                    cell.setCellValue("");
-                }
-            }
-
-            // Średnia dzienna (formuła Excel)
-            if (employeeCount > 0) {
-                String startCol = CellReference.convertNumToColString(1);
-                String endCol = CellReference.convertNumToColString(statsDates.size());
-                String averageFormula = String.format("AVERAGEIF(%s%d:%s%d,\"<>\")", startCol, rowIdx + 1, endCol, rowIdx + 1);
-
-                Cell avgCell = row.createCell(statsDates.size() + 1);
-                avgCell.setCellFormula(averageFormula);
-                avgCell.setCellStyle(percentStyle);
-            }
-
-            rowIdx++;
+    private static void createOverallAverages(Sheet sheet, int rowIdx, List<LocalDate> statsDates, CellStyle percentStyle) {
+        var totalRow = sheet.createRow(rowIdx);
+        var overallAverageFormula = totalAverageFormula(statsDates, rowIdx);
+        for (int i = statsDates.size() + 1; i <= statsDates.size() + 2; i++) {
+            var cell = totalRow.createCell(i);
+            cell.setCellFormula(overallAverageFormula);
+            cell.setCellStyle(percentStyle);
         }
+    }
 
-        // Średnia globalna (dla wszystkich)
-        Row totalRow = sheet.createRow(rowIdx);
-        String startCol = CellReference.convertNumToColString(1);
-        String endCol = CellReference.convertNumToColString(statsDates.size());
-        String overallAverageFormula = String.format("AVERAGEIF(%s2:%s%d,\"<>\")", startCol, endCol, rowIdx);
-
-        Cell avgAll1 = totalRow.createCell(statsDates.size() + 1);
-        avgAll1.setCellFormula(overallAverageFormula);
-        avgAll1.setCellStyle(percentStyle);
-
-        Cell avgAll2 = totalRow.createCell(statsDates.size() + 2);
-        avgAll2.setCellFormula(overallAverageFormula);
-        avgAll2.setCellStyle(percentStyle);
-
-        // Auto szerokość kolumn
-        for (int i = 0; i < statsDates.size() + 3; i++) {
-            sheet.autoSizeColumn(i);
-        }
-
-        // Zapis do pliku
+    private static File createFile(Workbook workbook) throws IOException {
         File file = Files.createTempFile("stats_", ".xlsx").toFile();
-        try (FileOutputStream out = new FileOutputStream(file)) {
+        try (var out = new FileOutputStream(file)) {
             workbook.write(out);
-            out.flush();
         }
         workbook.close();
-
         return file;
     }
+
 }

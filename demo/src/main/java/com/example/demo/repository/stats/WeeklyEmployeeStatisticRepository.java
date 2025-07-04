@@ -14,6 +14,6 @@ public interface WeeklyEmployeeStatisticRepository extends JpaRepository<Employe
     List<EmployeeWeeklyStatsEntity> findTop36ByEmployeeIdOrderByWeekStartDesc(Integer employeeId);
 
     @Transactional
-    void deleteByWeekStartBetween(LocalDate start, LocalDate end); // Usuwamy rekordy w danym przedziale dat
+    void deleteByWeekStartBetween(LocalDate start, LocalDate end);
 
 }

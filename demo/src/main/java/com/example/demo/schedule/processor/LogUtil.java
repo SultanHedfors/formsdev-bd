@@ -31,14 +31,17 @@ public class LogUtil {
         addLogMessage("Processing completed successfully. Total employees processed: " + workSchedules.size());
     }
      void writeSummaryLog(String filePath, List<WorkSchedule> workSchedules, String fileName) {
-        var scheduleSummary = workSchedules.stream()
-                .map(ws -> "YearMonth: " + ws.getYearMonth()
-                        + ", Day: " + ws.getDayOfMonth()
-                        + ", Employee: " + (ws.getEmployee() != null ? ws.getEmployee().getEmployeeCode() : "None")
-                        + ", Start: " + ws.getWorkStartTime()
-                        + ", End: " + ws.getWorkEndTime()
-                        + ", Room: " + (ws.getRoomSymbol() != null ? ws.getRoomSymbol() : "None"))
-                .toList();
+         var scheduleSummary = workSchedules.stream()
+                 .map(ws -> String.format(
+                         "YearMonth: %s, Day: %s, Employee: %s, Start: %s, End: %s, Room: %s",
+                         ws.getYearMonth(),
+                         ws.getDayOfMonth(),
+                         ws.getEmployee() != null ? ws.getEmployee().getEmployeeCode() : "None",
+                         ws.getWorkStartTime(),
+                         ws.getWorkEndTime(),
+                         ws.getRoomSymbol() != null ? ws.getRoomSymbol() : "None"
+                 ))
+                 .toList();
 
         try {
             writeLogFile(filePath, logMessages, true, scheduleSummary, fileName);

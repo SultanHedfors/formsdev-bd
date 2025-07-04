@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UploadResponseDto {
+public class ScheduleUploadResponseDto {
     private boolean success;
     private String message;
 }

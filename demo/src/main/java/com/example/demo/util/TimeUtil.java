@@ -12,10 +12,11 @@ import java.util.regex.Pattern;
 public class TimeUtil {
 
     //preventing class instantiation
-    private TimeUtil(){}
+    private TimeUtil() {}
 
     private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm");
-     public static String formatTime(String time) {
+
+    public static String formatTime(String time) {
         if (time == null || time.trim().isEmpty()) return null;
 
         try {
@@ -40,7 +41,7 @@ public class TimeUtil {
         return "";
     }
 
-     public static Integer calculateDuration(String startTime, String endTime) {
+    public static Integer calculateDuration(String startTime, String endTime) {
         if (startTime == null || endTime == null) return null;
 
         startTime = formatTime(startTime);
@@ -61,25 +62,11 @@ public class TimeUtil {
         }
     }
 
-     public static String addOneSecondToTimeString(String time) {
+
+    public static String addOneSecondToTimeString(String time) {
         try {
-            String[] parts = time.split(":");
-            int h = Integer.parseInt(parts[0]);
-            int m = Integer.parseInt(parts[1]);
-            int s = 0;
-            if (parts.length >= 3) {
-                s = Integer.parseInt(parts[2]);
-            }
-            s++;
-            if (s >= 60) {
-                s = 0;
-                m++;
-                if (m >= 60) {
-                    m = 0;
-                    h = (h + 1) % 24;
-                }
-            }
-            return String.format("%02d:%02d:%02d", h, m, s);
+            LocalTime t = LocalTime.parse(time.length() == 5 ? time + ":00" : time, DateTimeFormatter.ofPattern("HH:mm[:ss]"));
+            return t.plusSeconds(1).format(DateTimeFormatter.ofPattern("HH:mm:ss"));
         } catch (Exception ex) {
             log.error("Cannot parse time string: {}", time, ex);
             return time;

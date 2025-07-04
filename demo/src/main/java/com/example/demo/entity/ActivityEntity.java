@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -23,13 +24,10 @@ public class ActivityEntity {
     private Integer activityId;
 
     @Column(name = "ZAJECIE_DATA")
-    private Timestamp activityDate;
+    private LocalDateTime activityDate;
 
     @Column(name = "ZAJECIE_GODZ")
     private Timestamp activityTime;
-
-    @Column(name = "ZAJECIE_DATA_DODANIA")
-    private Timestamp recordAddedTime;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "zabieg_id", referencedColumnName = "zabieg_id")

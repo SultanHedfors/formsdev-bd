@@ -98,7 +98,7 @@ public class EmployeeStatisticsCalculator {
             BiFunction<Integer, Double, T> entityCreator,
             java.util.function.Consumer<T> saver
     ) {
-        log.info("Calculating stats for period starting {} to {} (key={})", start, end, periodKey);
+        log.debug("Calculating stats for period starting {} to {} (key={})", start, end, periodKey);
 
         List<ActivityEmployeeEntity> allEmployeesActivities = getEntitiesBySelectedPeriod(start, end);
 
