@@ -83,7 +83,7 @@ public class LateWorkSchedulesHandler {
     ) {
         return workSchedules.stream().anyMatch(ws ->
                 workMode.equals(ws.getWorkMode()) &&
-                        (ws.getSubstituteEmployee() != null ? ws.getSubstituteEmployee() : ws.getEmployee()) == employee &&
+                        (ws.getSubstituteEmployee() != null ? ws.getSubstituteEmployee() : ws.getEmployee()).equals(employee) &&
                         YearMonth.parse(ws.getYearMonth()).equals(yearMonth) &&
                         LocalDate.of(
                                 yearMonth.getYear(),

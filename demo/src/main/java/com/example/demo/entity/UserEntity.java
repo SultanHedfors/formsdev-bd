@@ -19,7 +19,7 @@ import java.util.Set;
 @Entity
 @Table(name = "EMPLOYEE")
 @ToString(exclude = {"procedures", "activities"})
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@EqualsAndHashCode()
 public class UserEntity implements UserDetails {
 
     @Id
@@ -60,6 +60,7 @@ public class UserEntity implements UserDetails {
     private List<String> roles;
 
     @ManyToMany(mappedBy = "activityEmployees")
+    @Builder.Default
     private Set<ActivityEntity> activities = new HashSet<>();
 
     @Override

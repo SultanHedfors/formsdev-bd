@@ -181,7 +181,7 @@ public class ScheduleReader {
     //Preparing the builder
     private WorkSchedule.WorkScheduleBuilder getWorkScheduleBuilder(WorkScheduleRow row, YearMonth yearMonth, String roomSymbol, String cleanedStart, String cleanedEnd, UserEntity employee) {
         Integer duration = calculateDuration(cleanedStart, cleanedEnd);
-        if(duration == -1) {
+        if (Integer.valueOf(-1).equals(duration)) {
             String invalidDurationMessage = "Work duration should be greater than 0. Make sure that working time ranges are correct.";
             logUtil.addLogMessage(invalidDurationMessage);
             throw new ScheduleValidationException(invalidDurationMessage);

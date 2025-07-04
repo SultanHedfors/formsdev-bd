@@ -42,11 +42,11 @@ public class TimeUtil {
     }
 
     public static Integer calculateDuration(String startTime, String endTime) {
-        if (startTime == null || endTime == null) return null;
 
         startTime = formatTime(startTime);
         endTime = formatTime(endTime);
 
+        if (startTime == null || endTime == null) return null;
 
         try {
             String[] startParts = startTime.split(":");

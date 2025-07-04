@@ -23,8 +23,8 @@ import java.time.YearMonth;
 @RequiredArgsConstructor
 public class ActivityEmployeeAssignmentsCreator {
 
-    private static final String INSERT_NEW_ACTIVITY_EMPLOYEE_SQL_PATH = "sql/ins_activity_employee_assignments_for_unprocessed_ws.sql";
-    private static final String SET_ASSIGNED_SCHEDULES_PROCESSED_SQL_PATH = "sql/set_assigned_schedules_processed.sql";
+    static final String INSERT_NEW_ACTIVITY_EMPLOYEE_SQL_PATH = "sql/ins_activity_employee_assignments_for_unprocessed_ws.sql";
+    static final String SET_ASSIGNED_SCHEDULES_PROCESSED_SQL_PATH = "sql/set_assigned_schedules_processed.sql";
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -98,7 +98,7 @@ public class ActivityEmployeeAssignmentsCreator {
     }
 
 
-    private void deleteOldAssignmentsForPeriod(String yearMonth) {
+    void deleteOldAssignmentsForPeriod(String yearMonth) {
         YearMonth ym = YearMonth.parse(yearMonth);
         LocalDateTime from = ym.atDay(1).atStartOfDay();
         LocalDateTime to = ym.atEndOfMonth().atTime(23, 59, 59);
@@ -106,4 +106,11 @@ public class ActivityEmployeeAssignmentsCreator {
         int deleted = activityEmployeeRepository.deleteAllByActivityDateRangeAndUserModifiedFalse(from, to);
         log.info("Deleted {} non-user-modified activity_employee entries from {}", deleted, yearMonth);
     }
+
+    //Used in unit tests
+    @SuppressWarnings("UnusedReturnValue")
+    InputStream getResourceAsStream(String resourcePath) {
+        return getClass().getClassLoader().getResourceAsStream(resourcePath);
+    }
+
 }

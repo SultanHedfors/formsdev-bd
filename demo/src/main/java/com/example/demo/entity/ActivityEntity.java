@@ -16,7 +16,7 @@ import java.util.Set;
 @Entity
 @Table(name = "ZAJECIE")
 @ToString(exclude = {"procedure", "employee", "room", "activityEmployees"})
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@EqualsAndHashCode()
 public class ActivityEntity {
 
     @Id
@@ -42,6 +42,7 @@ public class ActivityEntity {
     @JoinColumn(name = "stanowisko_id", referencedColumnName = "STANOWISKO_ID")
     private RoomEntity room;
 
+    @Builder.Default
     @ManyToMany
     @JoinTable(
             name = "activity_employee",

@@ -83,7 +83,7 @@ public class StatsExportService {
     }
 
 
-    private static void createPerEmployeeAverage(boolean hasScore, XSSFRow row, List<LocalDate> statsDates, int rowIdx, CellStyle percentStyle) {
+    static void createPerEmployeeAverage(boolean hasScore, XSSFRow row, List<LocalDate> statsDates, int rowIdx, CellStyle percentStyle) {
         if (hasScore) {
             var avgCell = row.createCell(statsDates.size() + 1);
             avgCell.setCellFormula(averageFormula(statsDates, rowIdx));
@@ -91,7 +91,7 @@ public class StatsExportService {
         }
     }
 
-    private static void createHeaders(Sheet sheet, List<LocalDate> statsDates) {
+    static void createHeaders(Sheet sheet, List<LocalDate> statsDates) {
         var header = sheet.createRow(0);
         for (int i = 0; i < statsDates.size(); i++) {
             header.createCell(i + 1).setCellValue(statsDates.get(i).format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
@@ -101,7 +101,7 @@ public class StatsExportService {
     }
 
 
-    private static void createOverallAverages(Sheet sheet, int rowIdx, List<LocalDate> statsDates, CellStyle percentStyle) {
+    static void createOverallAverages(Sheet sheet, int rowIdx, List<LocalDate> statsDates, CellStyle percentStyle) {
         var totalRow = sheet.createRow(rowIdx);
         var overallAverageFormula = totalAverageFormula(statsDates, rowIdx);
         for (int i = statsDates.size() + 1; i <= statsDates.size() + 2; i++) {
@@ -111,7 +111,7 @@ public class StatsExportService {
         }
     }
 
-    private static File createFile(Workbook workbook) throws IOException {
+    static File createFile(Workbook workbook) throws IOException {
         File file = Files.createTempFile("stats_", ".xlsx").toFile();
         try (var out = new FileOutputStream(file)) {
             workbook.write(out);

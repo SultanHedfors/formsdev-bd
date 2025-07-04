@@ -2,6 +2,7 @@ package com.example.demo.service;
 
 import com.example.demo.exception.ScheduleValidationException;
 import com.example.demo.schedule.processor.ScheduleReader;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,6 +26,7 @@ import java.util.stream.Stream;
 @RequiredArgsConstructor
 public class FileHandlerService {
 
+    @Getter
     @Value("${upload.directory}")
     private String uploadDir;
 
@@ -36,10 +38,10 @@ public class FileHandlerService {
             throw new ScheduleValidationException("Unsupported file format. Required .xlsx");
         }
 
-        deleteAllFilesInDirectory(uploadDir);
+        deleteAllFilesInDirectory(getUploadDir());
 
         String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
-        Path targetPath = Paths.get(uploadDir).resolve(fileName).toAbsolutePath().normalize();
+        Path targetPath = Paths.get(getUploadDir()).resolve(fileName).toAbsolutePath().normalize();
         Files.createDirectories(targetPath.getParent());
         Files.copy(file.getInputStream(), targetPath);
 
@@ -70,7 +72,7 @@ public class FileHandlerService {
     }
 
     public Resource getLatestTxtReport() throws IOException {
-        try (Stream<Path> paths = Files.list(Paths.get(uploadDir))) {
+        try (Stream<Path> paths = Files.list(Paths.get(getUploadDir()))) {
             Path latestFile = paths
                     .filter(p -> Files.isRegularFile(p) && p.toString().endsWith(".txt"))
                     .max(Comparator.comparing(p -> {

@@ -21,24 +21,24 @@ public class EmployeeStatisticsCalculatorTestHelper {
 
     static List<ProcedureEntity> createProcedures() {
         return List.of(
-                ProcedureEntity.builder().workMode("B").procedureActualTime(90).build(),   // index 0
-                ProcedureEntity.builder().workMode("F").procedureActualTime(120).build(),  // index 1
-                ProcedureEntity.builder().workMode("S").procedureActualTime(60).build(),   // index 2   <--- POPRAWKA!
-                ProcedureEntity.builder().workMode("U").procedureActualTime(10).build()    // index 3   <--- POPRAWKA!
+                ProcedureEntity.builder().workMode("B").procedureActualTime(90).build(),
+                ProcedureEntity.builder().workMode("F").procedureActualTime(120).build(),
+                ProcedureEntity.builder().workMode("S").procedureActualTime(60).build(),
+                ProcedureEntity.builder().workMode("U").procedureActualTime(10).build()
         );
     }
 
     static List<ActivityEntity> createActivities(List<ProcedureEntity> procedures) {
         List<ActivityEntity> activities = new ArrayList<>();
         int id = 10;
-        // 3 activities do procedure B
+        // 3 activities to procedure B
         activities.add(ActivityEntity.builder().activityId(id++).procedure(procedures.get(0)).build());
         activities.add(ActivityEntity.builder().activityId(id++).procedure(procedures.get(0)).build());
         activities.add(ActivityEntity.builder().activityId(id++).procedure(procedures.get(0)).build());
-        // 2 activities do procedure F
+        // 2 activities to procedure F
         activities.add(ActivityEntity.builder().activityId(id++).procedure(procedures.get(1)).build());
         activities.add(ActivityEntity.builder().activityId(id++).procedure(procedures.get(1)).build());
-        // po 1 activity do S i U
+        // po 1 activity to S & U
         activities.add(ActivityEntity.builder().activityId(id++).procedure(procedures.get(2)).build());
         activities.add(ActivityEntity.builder().activityId(id).procedure(procedures.get(3)).build());
         return activities;
@@ -71,7 +71,7 @@ public class EmployeeStatisticsCalculatorTestHelper {
                 .workMode("F")
                 .workDurationMinutes(150)
                 .build());
-        // dla S i U pojedyncze
+        // S & U
         schedules.add(WorkSchedule.builder()
                 .id(id++)
                 .substituteEmployee(employees.get(0))
