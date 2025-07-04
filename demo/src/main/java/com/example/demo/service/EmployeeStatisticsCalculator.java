@@ -156,12 +156,12 @@ public class EmployeeStatisticsCalculator {
     }
 
     private double computeNumeratorFor(ActivityEmployeeEntity currentEmployeesActivity,
-                                       List<ActivityEmployeeEntity> allActivities) {
+                                       List<ActivityEmployeeEntity> allActivityEmployees) {
         ProcedureEntity proc = currentEmployeesActivity.getActivity().getProcedure();
         String workMode = proc.getWorkMode();
         Integer procedureMinutes = proc.getProcedureActualTime();
 
-        long numEmployeesAssignedToActivity = allActivities.stream()
+        long numEmployeesAssignedToActivity = allActivityEmployees.stream()
                 .filter(act ->
                         act.getActivity().getActivityId()
                                 .equals(currentEmployeesActivity.getActivity().getActivityId()))

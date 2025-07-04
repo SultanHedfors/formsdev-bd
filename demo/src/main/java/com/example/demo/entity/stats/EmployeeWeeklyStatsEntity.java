@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "emp_week_stats")
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @IdClass(EmployeeWeekKey.class)

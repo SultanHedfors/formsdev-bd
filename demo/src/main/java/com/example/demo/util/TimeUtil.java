@@ -55,7 +55,9 @@ public class TimeUtil {
             int startMinutes = Integer.parseInt(startParts[0]) * 60 + Integer.parseInt(startParts[1]);
             int endMinutes = Integer.parseInt(endParts[0]) * 60 + Integer.parseInt(endParts[1]);
 
-            return endMinutes - startMinutes;
+            int result = endMinutes - startMinutes;
+
+            return result > 0 ? result : -1;
         } catch (NumberFormatException e) {
             log.error("Error parsing cleaned time: {} - {}", startTime, endTime);
             return null;

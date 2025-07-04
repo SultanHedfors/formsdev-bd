@@ -2,6 +2,7 @@ package com.example.demo.schedule.processor;
 
 import com.example.demo.entity.UserEntity;
 import com.example.demo.entity.WorkSchedule;
+import com.example.demo.exception.ScheduleValidationException;
 import com.example.demo.repository.ScheduleRepository;
 import com.example.demo.service.ScheduleAssignmentJobQueue;
 import com.example.demo.service.ActivityEmployeeAssignmentsCreator;
@@ -179,6 +180,13 @@ public class ScheduleReader {
 
     //Preparing the builder
     private WorkSchedule.WorkScheduleBuilder getWorkScheduleBuilder(WorkScheduleRow row, YearMonth yearMonth, String roomSymbol, String cleanedStart, String cleanedEnd, UserEntity employee) {
+        Integer duration = calculateDuration(cleanedStart, cleanedEnd);
+        if(duration == -1) {
+            String invalidDurationMessage = "Work duration should be greater than 0. Make sure that working time ranges are correct.";
+            logUtil.addLogMessage(invalidDurationMessage);
+            throw new ScheduleValidationException(invalidDurationMessage);
+        }
+
         var builder = WorkSchedule.builder()
                 .yearMonth(yearMonth.toString())
                 .dayOfMonth(row.day())

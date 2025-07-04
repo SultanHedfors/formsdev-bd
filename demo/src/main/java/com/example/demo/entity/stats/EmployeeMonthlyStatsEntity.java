@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "emp_month_stats")
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @IdClass(EmployeeMonthKey.class)

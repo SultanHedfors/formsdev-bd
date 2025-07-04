@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "emp_year_stats")
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @IdClass(EmployeeYearKey.class)

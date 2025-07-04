@@ -14,6 +14,7 @@ import java.util.Set;
 @Getter
 @Setter
 @NoArgsConstructor
+@Builder
 @AllArgsConstructor
 @Entity
 @Table(name = "EMPLOYEE")
@@ -58,7 +59,7 @@ public class UserEntity implements UserDetails {
     @Column(name = "ROLE")
     private List<String> roles;
 
-    @ManyToMany(mappedBy = "employees")
+    @ManyToMany(mappedBy = "activityEmployees")
     private Set<ActivityEntity> activities = new HashSet<>();
 
     @Override

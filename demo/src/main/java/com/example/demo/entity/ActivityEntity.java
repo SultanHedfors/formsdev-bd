@@ -10,11 +10,12 @@ import java.util.Set;
 
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
 @Table(name = "ZAJECIE")
-@ToString(exclude = {"procedure", "employee", "room", "employees"})
+@ToString(exclude = {"procedure", "employee", "room", "activityEmployees"})
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class ActivityEntity {
 
@@ -47,5 +48,5 @@ public class ActivityEntity {
             joinColumns = @JoinColumn(name = "activity_id", referencedColumnName = "ZAJECIE_ID"),
             inverseJoinColumns = @JoinColumn(name = "employee_id", referencedColumnName = "employee_id")
     )
-    private Set<UserEntity> employees = new HashSet<>();
+    private Set<UserEntity> activityEmployees = new HashSet<>();
 }
