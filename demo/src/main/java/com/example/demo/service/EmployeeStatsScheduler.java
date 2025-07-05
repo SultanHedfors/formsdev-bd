@@ -59,22 +59,4 @@ public class EmployeeStatsScheduler {
         log.info("[SCHEDULER] Finished calculation for last 3 years.");
     }
 
-    @Scheduled(cron = "0 0 0 * * MON")
-    public void updateWeeklyStats() {
-        LocalDate today = LocalDate.now();
-        log.info("[SCHEDULER] Start weekly stats calculation for week: {}", today);
-        calculator.calculateWeeklyScores(today);
-        log.info("[SCHEDULER] Finished weekly stats calculation for week: {}", today);
-    }
-
-    @Scheduled(cron = "0 0 3 * * *")
-    public void updateMonthlyAndYearlyStats() {
-        YearMonth thisMonth = YearMonth.now();
-        log.info("[SCHEDULER] Start monthly stats for: {}", thisMonth);
-        calculator.calculateMonthlyScores(thisMonth);
-
-        Year thisYear = Year.now();
-        log.info("[SCHEDULER] Start yearly stats for: {}", thisYear);
-        calculator.calculateYearlyScores(thisYear);
-    }
 }
