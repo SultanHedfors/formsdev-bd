@@ -38,7 +38,7 @@ public class EmployeeStatisticsCalculatorTestHelper {
         // 2 activities to procedure F
         activities.add(ActivityEntity.builder().activityId(id++).procedure(procedures.get(1)).build());
         activities.add(ActivityEntity.builder().activityId(id++).procedure(procedures.get(1)).build());
-        // po 1 activity to S & U
+        // 1 activity to S & U
         activities.add(ActivityEntity.builder().activityId(id++).procedure(procedures.get(2)).build());
         activities.add(ActivityEntity.builder().activityId(id).procedure(procedures.get(3)).build());
         return activities;

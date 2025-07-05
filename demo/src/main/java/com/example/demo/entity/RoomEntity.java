@@ -14,18 +14,20 @@ import java.util.Set;
 @Entity
 @Table(name = "STANOWISKO")
 @ToString(exclude = {"activities", "procedures"})
-@EqualsAndHashCode()
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class RoomEntity {
 
+    @EqualsAndHashCode.Include
     @Id
     @Column(name = "STANOWISKO_ID")
-    @EqualsAndHashCode.Include
     private Integer roomId;
 
     @Column(name = "STANOWISKO_NAZWA")
+    @EqualsAndHashCode.Include
     private String roomName;
 
     @Column(name = "STANOWISKO_UWAGI", unique = true)
+    @EqualsAndHashCode.Include
     private String roomCode;
 
     @OneToMany(mappedBy = "room")
@@ -41,3 +43,4 @@ public class RoomEntity {
     )
     private Set<ProcedureEntity> procedures = new HashSet<>();
 }
+

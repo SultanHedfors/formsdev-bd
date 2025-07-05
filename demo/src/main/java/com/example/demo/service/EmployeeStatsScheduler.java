@@ -40,19 +40,19 @@ public class EmployeeStatsScheduler {
 
         // Weekly
         for (LocalDate d = from.with(DayOfWeek.MONDAY); !d.isAfter(today); d = d.plusWeeks(1)) {
-            log.info("[SCHEDULER] Weekly stats for week starting: {}", d);
+            log.debug("[SCHEDULER] Weekly stats for week starting: {}", d);
             calculator.calculateWeeklyScores(d);
         }
 
         // Monthly
         for (YearMonth m = YearMonth.from(from); !m.isAfter(YearMonth.from(today)); m = m.plusMonths(1)) {
-            log.info("[SCHEDULER] Monthly stats for month: {}", m);
+            log.debug("[SCHEDULER] Monthly stats for month: {}", m);
             calculator.calculateMonthlyScores(m);
         }
 
         // Yearly
         for (int y = from.getYear(); y <= today.getYear(); y++) {
-            log.info("[SCHEDULER] Yearly stats for year: {}", y);
+            log.debug("[SCHEDULER] Yearly stats for year: {}", y);
             calculator.calculateYearlyScores(Year.of(y));
         }
 

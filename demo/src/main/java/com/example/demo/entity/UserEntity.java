@@ -19,16 +19,17 @@ import java.util.Set;
 @Entity
 @Table(name = "EMPLOYEE")
 @ToString(exclude = {"procedures", "activities"})
-@EqualsAndHashCode()
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class UserEntity implements UserDetails {
 
+    @EqualsAndHashCode.Include
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "EMPLOYEE_ID")
-    @EqualsAndHashCode.Include
     private Integer id;
 
     @Column(unique = true, name = "EMPLOYEE_USERNAME")
+    @EqualsAndHashCode.Include
     private String username;
 
     @Column(unique = true, name = "EMPLOYEE_FULLNAME")
@@ -38,12 +39,14 @@ public class UserEntity implements UserDetails {
     private String password;
 
     @Column(name = "EMPLOYEE_KODKASJERA")
+    @EqualsAndHashCode.Include
     private String employeeCode;
 
     @Column(name = "EMPLOYEE_LOYALTY_PIN")
     private Integer loyaltyPin;
 
     @ManyToMany
+    @Builder.Default
     @JoinTable(
             name = "stanzabieg",
             joinColumns = @JoinColumn(name = "stanowisko_id"),
@@ -82,3 +85,4 @@ public class UserEntity implements UserDetails {
     @Override
     public boolean isEnabled() { return true; }
 }
+

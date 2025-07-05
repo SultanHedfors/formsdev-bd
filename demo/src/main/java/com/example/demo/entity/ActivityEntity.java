@@ -16,7 +16,7 @@ import java.util.Set;
 @Entity
 @Table(name = "ZAJECIE")
 @ToString(exclude = {"procedure", "employee", "room", "activityEmployees"})
-@EqualsAndHashCode()
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class ActivityEntity {
 
     @Id
@@ -25,9 +25,11 @@ public class ActivityEntity {
     private Integer activityId;
 
     @Column(name = "ZAJECIE_DATA")
+    @EqualsAndHashCode.Include
     private LocalDateTime activityDate;
 
     @Column(name = "ZAJECIE_GODZ")
+    @EqualsAndHashCode.Include
     private Timestamp activityTime;
 
     @ManyToOne(fetch = FetchType.EAGER)

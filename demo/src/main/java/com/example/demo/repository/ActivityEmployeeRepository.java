@@ -33,7 +33,7 @@ public interface ActivityEmployeeRepository extends JpaRepository<ActivityEmploy
             "activity",
             "activity.procedure",
             "workSchedule",
-            "activity.employee"
+            "employee"
     })
     @Query("""
                 SELECT ae FROM ActivityEmployeeEntity ae

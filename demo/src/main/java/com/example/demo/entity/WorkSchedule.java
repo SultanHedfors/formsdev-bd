@@ -7,6 +7,7 @@ import lombok.*;
 import java.time.format.DateTimeFormatter;
 
 @Data
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
@@ -16,6 +17,7 @@ public class WorkSchedule {
 
     private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm:ss");
 
+    @EqualsAndHashCode.Include
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -46,12 +48,10 @@ public class WorkSchedule {
     @Column(name = "work_end_time", length = 8)
     private String workEndTime;
 
-    @Column
+    @Column(nullable = false)
     private Integer workDurationMinutes;
 
     @Convert(converter = BooleanToSmallIntConverter.class)
     @Column(name = "processed")
     private Boolean processed;
-
-
 }

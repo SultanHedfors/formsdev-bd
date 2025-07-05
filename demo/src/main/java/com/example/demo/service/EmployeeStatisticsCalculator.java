@@ -98,7 +98,7 @@ public class EmployeeStatisticsCalculator {
             BiFunction<Integer, Double, T> entityCreator,
             java.util.function.Consumer<T> saver
     ) {
-        log.debug("Calculating stats for period starting {} to {} (key={})", start, end, periodKey);
+        log.info("Calculating stats for period starting {} to {} (key={})", start, end, periodKey);
 
         List<ActivityEmployeeEntity> allEmployeesActivities = getEntitiesBySelectedPeriod(start, end);
 
@@ -108,10 +108,13 @@ public class EmployeeStatisticsCalculator {
 
         // calculate & save
         var result = new HashMap<Integer, Double>();
+
+        log.info("entires grouped size: {}",entriesGroupedByEmployee.size());
+
         entriesGroupedByEmployee
                 .forEach((empId, activitiesForEmployee) -> {
                     double score = computeScore(activitiesForEmployee, allEmployeesActivities);
-                    log.debug("Period key={} empId={} → score {}", periodKey, empId, score);
+                    log.info("Period key={} empId={} → score {}", periodKey, empId, score);
                     result.put(empId, score);
                     saver.accept(entityCreator.apply(empId, score));
                 });
@@ -143,6 +146,10 @@ public class EmployeeStatisticsCalculator {
                         computeNumeratorFor(currEmployeeActivity, allActivities))
                 .sum();
 
+
+        log.info("current ae size: {}", currentEmployeesActivities.size());
+
+
         double denominator = currentEmployeesActivities.stream()
                 .map(ActivityEmployeeEntity::getWorkSchedule)
                 .filter(Objects::nonNull)
@@ -151,6 +158,9 @@ public class EmployeeStatisticsCalculator {
                 .mapToDouble(ws -> Optional.ofNullable(ws.getWorkDurationMinutes())
                         .orElse(0))
                 .sum();
+
+        log.info("NUMERATOR: {}", numerator);
+        log.info("DENOMINATOR: {}", denominator);
 
         return denominator > 0 ? numerator / denominator : 0.0;
     }

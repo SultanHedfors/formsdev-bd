@@ -31,7 +31,7 @@ class TimeUtilTest {
     void calculateDuration_worksForCorrectTimes() {
         assertThat(TimeUtil.calculateDuration("9:00", "10:15")).isEqualTo(75);
         assertThat(TimeUtil.calculateDuration("09:30", "09:45")).isEqualTo(15);
-        assertThat(TimeUtil.calculateDuration("09:00", "08:00")).isEqualTo(-1); // koniec przed początkiem
+        assertThat(TimeUtil.calculateDuration("09:00", "08:00")).isEqualTo(-1);
     }
 
     @Test
