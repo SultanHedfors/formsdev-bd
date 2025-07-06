@@ -1,10 +1,6 @@
 pipeline {
   agent any
 
-  tools {
-    maven 'Maven 3.6.3'  // zmień na swoją nazwę z Global Tool Config
-  }
-
   stages {
     stage('Checkout') {
       steps {
@@ -26,30 +22,28 @@ pipeline {
     stage('Build & Test BE') {
       parallel {
         stage('main-be-service') {
+          agent { docker { image 'maven:3.6.3-openjdk-11' } }
           steps {
-            dir('stats-app-main-be-service') {
-              sh 'mvn clean package'
-            }
+            dir('stats-app-main-be-service') { sh 'mvn clean package' }
           }
         }
         stage('schedule-producer') {
+          agent { docker { image 'maven:3.6.3-openjdk-11' } }
           steps {
-            dir('schedule-report-kafka-producer') {
-              sh 'mvn clean package'
-            }
+            dir('schedule-report-kafka-producer') { sh 'mvn clean package' }
           }
         }
         stage('notification-sender') {
+          agent { docker { image 'maven:3.6.3-openjdk-11' } }
           steps {
-            dir('notification-sender') {
-              sh 'mvn clean package'
-            }
+            dir('notification-sender') { sh 'mvn clean package' }
           }
         }
       }
     }
 
     stage('Build FE') {
+      agent { docker { image 'node:22.14-alpine' } }
       steps {
         dir('stats-app-fe') {
           sh 'npm install'
@@ -59,25 +53,21 @@ pipeline {
     }
 
     stage('Build Docker Images') {
-      parallel {
-        stage('BE images') {
-          steps {
-            dir('stats-app-main-be-service') { sh 'docker build -t stats-app-main-be-service:latest .' }
-            dir('schedule-report-kafka-producer') { sh 'docker build -t schedule-report-kafka-producer:latest .' }
-            dir('notification-sender') { sh 'docker build -t notification-sender:latest .' }
-          }
-        }
-        stage('FE image') {
-          steps {
-            dir('stats-app-fe') { sh 'docker build -t stats-app-fe:latest .' }
-          }
-        }
+      agent any
+      steps {
+        dir('stats-app-main-be-service')           { sh 'docker build -t stats-app-main-be-service:latest .' }
+        dir('schedule-report-kafka-producer')     { sh 'docker build -t schedule-report-kafka-producer:latest .' }
+        dir('notification-sender')                { sh 'docker build -t notification-sender:latest .' }
+        dir('stats-app-fe')                        { sh 'docker build -t stats-app-fe:latest .' }
       }
     }
 
     stage('Compose Up') {
+      agent any
       steps {
-        dir('stats-app-main-be-service') { sh 'docker-compose up -d' }
+        dir('stats-app-main-be-service') {
+          sh 'docker-compose up -d'
+        }
       }
     }
   }
@@ -87,7 +77,11 @@ pipeline {
       junit 'stats-app-main-be-service/target/surefire-reports/*.xml'
       archiveArtifacts artifacts: 'stats-app-main-be-service/target/*.jar', fingerprint: true
     }
-    success { echo 'Build i testy OK!' }
-    failure { echo 'Coś nie działa, sprawdź logi.' }
+    success {
+      echo 'Build i testy OK!'
+    }
+    failure {
+      echo 'Coś nie działa, sprawdź logi.'
+    }
   }
 }
