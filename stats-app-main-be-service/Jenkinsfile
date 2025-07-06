@@ -1,118 +1,130 @@
 pipeline {
-    agent any
-    stages {
-        stage('Checkout') {
-            steps {
-                dir('stats-app-main-be-service') {
-                    git branch: 'master',
-                        credentialsId: 'my-cred',
-                        url: 'https://github.com/ktadiallo/formsdev-bd.git'
-                }
-                dir('stats-app-fe') {
-                    git branch: 'master',
-                        credentialsId: 'my-cred',
-                        url: 'https://github.com/SultanHedfors/stats-app-fe.git'
-                }
-                dir('schedule-report-kafka-producer') {
-                    git branch: 'master',
-                        credentialsId: 'my-cred',
-                        url: 'https://github.com/SultanHedfors/schedule-report-kafka-producer.git'
-                }
-                dir('notification-sender') {
-                    git branch: 'master',
-                        credentialsId: 'my-cred',
-                        url: 'https://github.com/SultanHedfors/notification-sender.git'
-                }
-            }
-        }
+  agent any
 
-        stage('Lint & Test BE') {
-            parallel {
-                stage('stats-app-main-be-service') {
-                    steps {
-                        dir('stats-app-main-be-service') {
-                            sh 'mvn checkstyle:check'
-                            sh 'mvn clean package'
-                            sh 'mvn jacoco:report'
-                            sh 'mvn org.owasp:dependency-check-maven:check'
-                        }
-                    }
-                }
-                stage('schedule-report-kafka-producer') {
-                    steps {
-                        dir('schedule-report-kafka-producer') {
-                            sh 'mvn checkstyle:check'
-                            sh 'mvn clean package'
-                            sh 'mvn jacoco:report'
-                            sh 'mvn org.owasp:dependency-check-maven:check'
-                        }
-                    }
-                }
-                stage('notification-sender') {
-                    steps {
-                        dir('notification-sender') {
-                            sh 'mvn checkstyle:check'
-                            sh 'mvn clean package'
-                            sh 'mvn jacoco:report'
-                            sh 'mvn org.owasp:dependency-check-maven:check'
-                        }
-                    }
-                }
-            }
-        }
+  tools {
+    maven 'Maven 3.6.3'
+  }
 
-        stage('Build FE') {
-            steps {
-                dir('stats-app-fe') {
-                    sh 'npm install'
-                    sh 'npm run build'
-                }
-            }
+  stages {
+    stage('Checkout') {
+      steps {
+        dir('stats-app-main-be-service') {
+          git branch: 'master',
+              credentialsId: 'my-cred',
+              url: 'https://github.com/ktadiallo/formsdev-bd.git'
         }
-
-        stage('Build Docker Images') {
-            parallel {
-                stage('BE images') {
-                    steps {
-                        dir('stats-app-main-be-service') {
-                            sh 'docker build -t stats-app-main-be-service:latest .'
-                        }
-                        dir('schedule-report-kafka-producer') {
-                            sh 'docker build -t schedule-report-kafka-producer:latest .'
-                        }
-                        dir('notification-sender') {
-                            sh 'docker build -t notification-sender:latest .'
-                        }
-                    }
-                }
-                stage('FE image') {
-                    steps {
-                        dir('stats-app-fe') {
-                            sh 'docker build -t stats-app-fe:latest .'
-                        }
-                    }
-                }
-            }
+        dir('stats-app-fe') {
+          git branch: 'master',
+              credentialsId: 'my-cred',
+              url: 'https://github.com/SultanHedfors/stats-app-fe.git'
         }
-
-        stage('Docker Compose Up') {
-            steps {
-                dir('stats-app-main-be-service') {
-                    sh 'docker-compose up -d'
-                }
-            }
+        dir('schedule-report-kafka-producer') {
+          git branch: 'master',
+              credentialsId: 'my-cred',
+              url: 'https://github.com/SultanHedfors/schedule-report-kafka-producer.git'
         }
+        dir('notification-sender') {
+          git branch: 'master',
+              credentialsId: 'my-cred',
+              url: 'https://github.com/SultanHedfors/notification-sender.git'
+        }
+      }
     }
-    post {
-        always {
-            junit 'stats-app-main-be-service/target/surefire-reports/*.xml'
-            archiveArtifacts artifacts: 'stats-app-main-be-service/target/*.jar', fingerprint: true
+
+    stage('Lint & Test BE') {
+      parallel {
+        stage('stats-app-main-be-service') {
+          steps {
+            dir('stats-app-main-be-service') {
+              withMaven(maven: 'Maven 3.6.3') {
+                sh 'mvn checkstyle:check'
+                sh 'mvn clean package'
+                sh 'mvn jacoco:report'
+                sh 'mvn org.owasp:dependency-check-maven:check'
+              }
+            }
+          }
         }
-        success {
-            echo 'Build i testy OK!'
+        stage('schedule-report-kafka-producer') {
+          steps {
+            dir('schedule-report-kafka-producer') {
+              withMaven(maven: 'Maven 3.6.3') {
+                sh 'mvn checkstyle:check'
+                sh 'mvn clean package'
+                sh 'mvn jacoco:report'
+                sh 'mvn org.owasp:dependency-check-maven:check'
+              }
+            }
+          }
         }
-        failure {
-            echo 'Coś nie działa, sprawdź logi.'
+        stage('notification-sender') {
+          steps {
+            dir('notification-sender') {
+              withMaven(maven: 'Maven 3.6.3') {
+                sh 'mvn checkstyle:check'
+                sh 'mvn clean package'
+                sh 'mvn jacoco:report'
+                sh 'mvn org.owasp:dependency-check-maven:check'
+              }
+            }
+          }
         }
+      }
     }
+
+    stage('Build FE') {
+      steps {
+        dir('stats-app-fe') {
+          sh 'npm install'
+          sh 'npm run build'
+        }
+      }
+    }
+
+    stage('Build Docker Images') {
+      parallel {
+        stage('BE images') {
+          steps {
+            dir('stats-app-main-be-service') {
+              sh 'docker build -t stats-app-main-be-service:latest .'
+            }
+            dir('schedule-report-kafka-producer') {
+              sh 'docker build -t schedule-report-kafka-producer:latest .'
+            }
+            dir('notification-sender') {
+              sh 'docker build -t notification-sender:latest .'
+            }
+          }
+        }
+        stage('FE image') {
+          steps {
+            dir('stats-app-fe') {
+              sh 'docker build -t stats-app-fe:latest .'
+            }
+          }
+        }
+      }
+    }
+
+    stage('Docker Compose Up') {
+      steps {
+        dir('stats-app-main-be-service') {
+          sh 'docker-compose up -d'
+        }
+      }
+    }
+  }
+
+  post {
+    always {
+      junit 'stats-app-main-be-service/target/surefire-reports/*.xml'
+      archiveArtifacts artifacts: 'stats-app-main-be-service/target/*.jar', fingerprint: true
+    }
+    success {
+      echo 'Build i testy OK!'
+    }
+    failure {
+      echo 'Coś nie działa, sprawdź logi.'
+    }
+  }
 }
