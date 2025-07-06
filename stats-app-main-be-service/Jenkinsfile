@@ -3,16 +3,16 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                dir('/home/boii/IdeaProjects/formsdev-bd/stats-app-main-be-service') {
+                dir('stats-app-main-be-service') {
                     git branch: 'main', url: 'https://github.com/ktadiallo/formsdev-bd.git'
                 }
-                dir('/home/boii/Desktop/proj/stats-app-fe') {
+                dir('stats-app-fe') {
                     git branch: 'main', url: 'https://github.com/SultanHedfors/stats-app-fe.git'
                 }
-                dir('/home/boii/Desktop/proj/schedule-report-kafka-producer') {
+                dir('schedule-report-kafka-producer') {
                     git branch: 'master', url: 'https://github.com/SultanHedfors/schedule-report-kafka-producer.git'
                 }
-                dir('/home/boii/Desktop/proj/notification-sender') {
+                dir('notification-sender') {
                     git branch: 'master', url: 'https://github.com/SultanHedfors/notification-sender.git'
                 }
             }
@@ -22,7 +22,7 @@ pipeline {
             parallel {
                 stage('stats-app-main-be-service') {
                     steps {
-                        dir('/home/boii/IdeaProjects/formsdev-bd/stats-app-main-be-service') {
+                        dir('stats-app-main-be-service') {
                             sh 'mvn checkstyle:check'
                             sh 'mvn clean package'
                             sh 'mvn jacoco:report'
@@ -32,7 +32,7 @@ pipeline {
                 }
                 stage('schedule-report-kafka-producer') {
                     steps {
-                        dir('/home/boii/Desktop/proj/schedule-report-kafka-producer') {
+                        dir('schedule-report-kafka-producer') {
                             sh 'mvn checkstyle:check'
                             sh 'mvn clean package'
                             sh 'mvn jacoco:report'
@@ -42,7 +42,7 @@ pipeline {
                 }
                 stage('notification-sender') {
                     steps {
-                        dir('/home/boii/Desktop/proj/notification-sender') {
+                        dir('notification-sender') {
                             sh 'mvn checkstyle:check'
                             sh 'mvn clean package'
                             sh 'mvn jacoco:report'
@@ -55,7 +55,7 @@ pipeline {
 
         stage('Build FE') {
             steps {
-                dir('/home/boii/Desktop/proj/stats-app-fe') {
+                dir('stats-app-fe') {
                     sh 'npm install'
                     sh 'npm run build'
                 }
@@ -66,20 +66,20 @@ pipeline {
             parallel {
                 stage('BE images') {
                     steps {
-                        dir('/home/boii/IdeaProjects/formsdev-bd/stats-app-main-be-service') {
+                        dir('stats-app-main-be-service') {
                             sh 'docker build -t stats-app-main-be-service:latest .'
                         }
-                        dir('/home/boii/Desktop/proj/schedule-report-kafka-producer') {
+                        dir('schedule-report-kafka-producer') {
                             sh 'docker build -t schedule-report-kafka-producer:latest .'
                         }
-                        dir('/home/boii/Desktop/proj/notification-sender') {
+                        dir('notification-sender') {
                             sh 'docker build -t notification-sender:latest .'
                         }
                     }
                 }
                 stage('FE image') {
                     steps {
-                        dir('/home/boii/Desktop/proj/stats-app-fe') {
+                        dir('stats-app-fe') {
                             sh 'docker build -t stats-app-fe:latest .'
                         }
                     }
@@ -89,7 +89,7 @@ pipeline {
 
         stage('Docker Compose Up') {
             steps {
-                dir('/home/boii/IdeaProjects/formsdev-bd/stats-app-main-be-service') {
+                dir('stats-app-main-be-service') {
                     sh 'docker-compose up -d'
                 }
             }
@@ -97,8 +97,8 @@ pipeline {
     }
     post {
         always {
-            junit '/home/boii/IdeaProjects/formsdev-bd/stats-app-main-be-service/target/surefire-reports/*.xml'
-            archiveArtifacts artifacts: '/home/boii/IdeaProjects/formsdev-bd/stats-app-main-be-service/target/*.jar', fingerprint: true
+            junit 'stats-app-main-be-service/target/surefire-reports/*.xml'
+            archiveArtifacts artifacts: 'stats-app-main-be-service/target/*.jar', fingerprint: true
         }
         success {
             echo 'Build i testy OK!'
