@@ -4,16 +4,24 @@ pipeline {
         stage('Checkout') {
             steps {
                 dir('stats-app-main-be-service') {
-                    git branch: 'main', url: 'https://github.com/ktadiallo/formsdev-bd.git'
+                    git branch: 'main',
+                        credentialsId: 'my-cred',
+                        url: 'https://github.com/ktadiallo/formsdev-bd.git'
                 }
                 dir('stats-app-fe') {
-                    git branch: 'main', url: 'https://github.com/SultanHedfors/stats-app-fe.git'
+                    git branch: 'main',
+                        credentialsId: 'my-cred',
+                        url: 'https://github.com/SultanHedfors/stats-app-fe.git'
                 }
                 dir('schedule-report-kafka-producer') {
-                    git branch: 'master', url: 'https://github.com/SultanHedfors/schedule-report-kafka-producer.git'
+                    git branch: 'master',
+                        credentialsId: 'my-cred',
+                        url: 'https://github.com/SultanHedfors/schedule-report-kafka-producer.git'
                 }
                 dir('notification-sender') {
-                    git branch: 'master', url: 'https://github.com/SultanHedfors/notification-sender.git'
+                    git branch: 'master',
+                        credentialsId: 'my-cred',
+                        url: 'https://github.com/SultanHedfors/notification-sender.git'
                 }
             }
         }
