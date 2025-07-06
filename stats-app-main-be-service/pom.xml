@@ -8,15 +8,15 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.4.1</version> <!-- cofnięte do 3.4.1 -->
+        <version>3.4.1</version>
         <relativePath/>
     </parent>
 
     <groupId>com.example</groupId>
-    <artifactId>be-app</artifactId>
+    <artifactId>stats-app-main-be-service</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>demo</name>
-    <description>Demo project for Spring Boot</description>
+    <name>stats-app-main-be-service</name>
+    <description>Backend for statistics calculation app</description>
 
     <properties>
         <java.version>17</java.version>
@@ -32,10 +32,12 @@
         <!--</dependency>-->
 
         <!-- Logback -->
+        <!-- https://mvnrepository.com/artifact/ch.qos.logback/logback-classic -->
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>1.4.11</version> <!-- cofnięte do 1.4.11 -->
+            <version>1.5.18</version>
+            <scope>compile</scope>
         </dependency>
 
         <!-- Starter Data REST -->

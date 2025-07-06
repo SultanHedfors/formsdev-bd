@@ -1,0 +1,12 @@
+Processing Report
+=============================================================
+File Processed: name
+
+❌ Processing failed!
+
+Errors and logs:
+  ⚠️ test error
+  ⚠️ test error
+
+=============================================================
+End of Report
