@@ -31,7 +31,7 @@ services:
       retries: 5
       start_period: 20s
 
-  demo:
+  stats-app-main-be:
     build: .
     command: ["tail", "-f", "/dev/null"]
     depends_on:
@@ -39,7 +39,7 @@ services:
         condition: service_healthy
     ports:
       - "8080:8080"
-      - "9091:9091" #gRPC client server
+      - "9091:9091" # gRPC client server
     environment:
       SPRING_PROFILES_ACTIVE: docker-local
       SPRING_DATASOURCE_URL: jdbc:firebirdsql://firebird:3050//shared_fold/baza.fdb
@@ -56,6 +56,7 @@ services:
       timeout: 5s
       retries: 5
       start_period: 20s
+
 
   kafka:
     image: bitnami/kafka:latest
@@ -89,7 +90,7 @@ services:
     depends_on:
       - kafka
       - firebird
-      - demo
+      - stats-app-main-be
     ports:
       - "8081:8081"
       - "9090:9090" #gRPC service server
@@ -109,7 +110,7 @@ services:
       context: /home/boii/Desktop/proj/notification-sender
     depends_on:
       - kafka
-      - demo
+      - stats-app-main-be
       - mongo
     ports:
       - "8082:8082"
