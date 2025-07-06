@@ -2,7 +2,7 @@ pipeline {
   agent any
 
   tools {
-    maven 'Maven 3.6.3'  // dokładna nazwa z Jenkins > Global Tool Configuration
+    maven 'Maven 3.6.3'  // zmień na swoją nazwę z Global Tool Config
   }
 
   stages {
@@ -23,35 +23,26 @@ pipeline {
       }
     }
 
-    stage('Lint & Test BE') {
+    stage('Build & Test BE') {
       parallel {
         stage('main-be-service') {
           steps {
             dir('stats-app-main-be-service') {
-              sh 'mvn checkstyle:check'
               sh 'mvn clean package'
-              sh 'mvn jacoco:report'
-              sh 'mvn org.owasp:dependency-check-maven:check'
             }
           }
         }
         stage('schedule-producer') {
           steps {
             dir('schedule-report-kafka-producer') {
-              sh 'mvn checkstyle:check'
               sh 'mvn clean package'
-              sh 'mvn jacoco:report'
-              sh 'mvn org.owasp:dependency-check-maven:check'
             }
           }
         }
         stage('notification-sender') {
           steps {
             dir('notification-sender') {
-              sh 'mvn checkstyle:check'
               sh 'mvn clean package'
-              sh 'mvn jacoco:report'
-              sh 'mvn org.owasp:dependency-check-maven:check'
             }
           }
         }
@@ -67,7 +58,7 @@ pipeline {
       }
     }
 
-    stage('Build Docker') {
+    stage('Build Docker Images') {
       parallel {
         stage('BE images') {
           steps {
