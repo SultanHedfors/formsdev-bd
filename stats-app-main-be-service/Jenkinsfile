@@ -4,12 +4,12 @@ pipeline {
         stage('Checkout') {
             steps {
                 dir('stats-app-main-be-service') {
-                    git branch: 'main',
+                    git branch: 'master',
                         credentialsId: 'my-cred',
                         url: 'https://github.com/ktadiallo/formsdev-bd.git'
                 }
                 dir('stats-app-fe') {
-                    git branch: 'main',
+                    git branch: 'master',
                         credentialsId: 'my-cred',
                         url: 'https://github.com/SultanHedfors/stats-app-fe.git'
                 }
