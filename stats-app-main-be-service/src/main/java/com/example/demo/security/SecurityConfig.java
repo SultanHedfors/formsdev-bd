@@ -44,6 +44,7 @@ public class SecurityConfig {
     }
 
     //Client requested no password encoding, for public version I might want to change this
+    @SuppressWarnings("all")
     @Bean
     public PasswordEncoder passwordEncoder() {
         return NoOpPasswordEncoder.getInstance();
