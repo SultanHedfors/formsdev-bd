@@ -11,7 +11,7 @@ altitude: 0.0000
 
 This is a custom application for a rehabilitation/wellness center. It calculates employee efficiency based on performed activities and work schedules from xlsx files.
 The basic version (one BE service and one FE service) is deployed on client's server, and serves many users.
-![Untitled diagram _ Mermaid Chart-2025-07-07-170409.png](./_resources/Untitled%20diagram%20_%20Mermaid%20Chart-2025-07-07-170409.png)
+![Untitled diagram _ Mermaid Chart-2025-07-07-170409.png](./stats-app-main-be-service/_resources/Untitled%20diagram%20_%20Mermaid%20Chart-2025-07-07-170409.png)
 ---
 ![Login screen.png](./stats-app-main-be-service/_resources/Login%20screen.png)
 ## Application Objective
